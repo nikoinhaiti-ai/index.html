@@ -1,755 +1,3139 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>CAMERA PARTOUT</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book Maker — Pro</title>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 <style>
-* {
-    box-sizing: border-box;
-}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#0f1117;color:#e6e8ef;overflow:hidden;-webkit-font-smoothing:antialiased;
+  }
+  button,input,select,textarea{font-family:inherit}
+  .app{display:flex;flex-direction:column;height:100vh;height:100dvh}
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f2f4f7;
-    color: #111;
-}
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:12px 18px;background:#151824;border-bottom:1px solid #232838;
+    flex:none;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{font-size:24px;line-height:1}
+  .brand-title{font-weight:700;font-size:15px;letter-spacing:.2px}
+  .brand-sub{font-size:11.5px;color:#8b93ab;margin-top:2px}
+  .topbar-actions{display:flex;gap:10px}
 
-header {
-    background: linear-gradient(135deg, #07152f, #0757c9);
-    color: white;
-    padding: 22px;
-    text-align: center;
-}
+  .btn{
+    border:1px solid #2e3448;background:#1d2130;color:#dfe3ee;
+    padding:9px 20px;border-radius:9px;font-size:13.5px;font-weight:600;
+    cursor:pointer;transition:.15s;letter-spacing:.2px;
+  }
+  .btn:hover{background:#262b3d;border-color:#3b4258}
+  .btn:active{transform:translateY(1px)}
+  .btn:disabled{opacity:.6;cursor:wait}
+  .btn.primary{
+    background:linear-gradient(180deg,#4f7cff,#3a63e0);border-color:#3a63e0;
+    color:#fff;box-shadow:0 4px 14px rgba(79,124,255,.28);
+  }
+  .btn.primary:hover:not(:disabled){background:linear-gradient(180deg,#5c87ff,#436ceb)}
+  .btn.small{padding:7px 14px;font-size:12.5px;border-radius:8px}
 
-header h1 {
-    margin: 0;
-    font-size: 30px;
-}
+  .btn.ai{
+    background:linear-gradient(180deg,#7c5cff,#5b3fd6);border-color:#5b3fd6;
+    color:#fff;box-shadow:0 4px 14px rgba(124,92,255,.28);
+  }
+  .btn.ai:hover:not(:disabled){background:linear-gradient(180deg,#8a6dff,#6a4de0)}
 
-header p {
-    margin: 7px 0 0;
-    opacity: .9;
-}
+  .btn.ghost{
+    background:transparent;border-color:#2e3448;color:#a8b0c4;
+  }
+  .btn.ghost:hover{background:#1d2130;color:#dfe3ee}
 
-.container {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 15px;
-}
+  .workspace{flex:1;display:flex;min-height:0}
 
-.box {
-    background: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,.08);
-}
+  .panel{
+    width:360px;flex:none;display:flex;flex-direction:column;gap:13px;
+    padding:18px;border-right:1px solid #232838;background:#12141d;overflow-y:auto;
+  }
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field.grow{flex:1;min-height:170px}
+  .field label{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:#8b93ab;font-weight:600}
+  .field .opt{color:#5b6379;font-weight:500;text-transform:none;letter-spacing:0}
+  .field input,.field textarea,.field select{
+    background:#1a1e2b;border:1px solid #2a3044;color:#e6e8ef;
+    border-radius:9px;padding:10px 12px;font-size:14px;outline:none;transition:.15s;width:100%;
+  }
+  .field input:focus,.field textarea:focus,.field select:focus{
+    border-color:#4f7cff;box-shadow:0 0 0 3px rgba(79,124,255,.14);
+  }
+  .field textarea{
+    flex:1;resize:none;line-height:1.6;font-size:13.5px;
+    font-family:Georgia,"Times New Roman",serif;
+  }
+  .field textarea::placeholder{color:#5b6379}
+  .field textarea.dragover{border-color:#4f7cff;background:#1e2536}
+  .field select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%238b93ab' stroke-width='1.5' fill='none'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+  .field select:disabled{opacity:.55;cursor:not-allowed}
 
-h2 {
-    margin-top: 0;
-}
+  .upload-row{display:flex;align-items:center;gap:10px;min-width:0}
+  .upload-status{
+    font-size:11.5px;color:#8b93ab;flex:1;min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .upload-status.ok{color:#7fd6a4}
+  .upload-status.err{color:#ff8f8f}
 
-label {
-    display: block;
-    margin-top: 15px;
-    margin-bottom: 6px;
-    font-weight: bold;
-}
+  details.cover-opts{
+    background:#161a26;border:1px solid #232838;border-radius:10px;padding:2px 12px 12px;
+  }
+  details.cover-opts summary{
+    cursor:pointer;font-size:11px;text-transform:uppercase;letter-spacing:.9px;
+    color:#8b93ab;font-weight:600;padding:10px 0;list-style:none;outline:none;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  details.cover-opts summary::-webkit-details-marker{display:none}
+  details.cover-opts summary::after{content:"▾";transition:.2s;font-size:11px}
+  details.cover-opts[open] summary::after{transform:rotate(180deg)}
+  .opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .opt-grid .field{gap:4px}
+  .opt-grid .field label{font-size:10px}
+  .opt-grid .field select,.opt-grid .field input{padding:7px 9px;font-size:12.5px}
+  .opt-grid .full{grid-column:1/-1}
 
-input,
-select,
-textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 7px;
-    font-size: 16px;
-}
+  .color-row{display:flex;align-items:center;gap:8px}
+  .color-row input[type="color"]{
+    width:34px;height:32px;padding:0;border:1px solid #2a3044;border-radius:8px;
+    background:#1a1e2b;cursor:pointer;flex:none;
+  }
+  .hexlabel{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;
+    color:#8b93ab;letter-spacing:.4px;
+  }
+  .auto-check{
+    display:flex;align-items:center;gap:7px;font-size:12.5px;color:#a8b0c4;
+    cursor:pointer;user-select:none;white-space:nowrap;
+  }
+  .auto-check input{width:15px;height:15px;accent-color:#4f7cff;cursor:pointer}
 
-textarea {
-    min-height: 180px;
-    resize: vertical;
-}
+  .stats{
+    font-size:12px;color:#8b93ab;background:#1a1e2b;border:1px solid #232838;
+    padding:9px 12px;border-radius:9px;text-align:center;letter-spacing:.3px;
+  }
 
-.publish {
-    width: 100%;
-    margin-top: 20px;
-    background: #e50914;
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 7px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
+  .manual-banner{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    font-size:11.5px;color:#ffcf8b;background:#2a2013;border:1px solid #4a3a1c;
+    padding:8px 11px;border-radius:9px;line-height:1.35;
+  }
+  .manual-banner b{color:#ffdca8}
+  .manual-banner .btn{padding:5px 10px;font-size:11px;border-radius:7px}
 
-.publish:hover {
-    background: #b80710;
-}
+  .ai-banner{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    font-size:12px;color:#c9b8ff;background:#1d1a2e;border:1px solid #3d2f6b;
+    padding:10px 12px;border-radius:10px;line-height:1.4;
+  }
+  .ai-banner b{color:#dccfff}
+  .ai-banner .ai-icon{font-size:16px}
 
-.publish:disabled {
-    opacity: .6;
-    cursor: not-allowed;
-}
+  .ai-progress{
+    height:3px;background:#2a3044;border-radius:2px;overflow:hidden;margin-top:4px;width:100%;
+  }
+  .ai-progress-bar{
+    height:100%;background:linear-gradient(90deg,#7c5cff,#4f7cff);
+    width:0%;transition:width .3s ease;border-radius:2px;
+  }
 
-.news-card {
-    background: white;
-    margin-bottom: 20px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,.08);
-}
+  .ai-options{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+  .ai-options .ai-row{display:flex;align-items:center;gap:8px}
+  .ai-options .ai-row input[type="checkbox"]{
+    width:15px;height:15px;accent-color:#7c5cff;cursor:pointer;flex:none;
+  }
+  .ai-options .ai-row label{
+    font-size:12px;color:#a8b0c4;cursor:pointer;text-transform:none;
+    letter-spacing:0;font-weight:500;
+  }
 
-.news-card img,
-.news-card video {
-    width: 100%;
-    max-height: 500px;
-    object-fit: cover;
-    display: block;
-}
+  .workflow{
+    display:flex;align-items:center;gap:6px;font-size:10.5px;
+    color:#5b6379;letter-spacing:.4px;text-transform:uppercase;font-weight:600;
+    padding:8px 12px;background:#161a26;border:1px solid #232838;border-radius:9px;
+    justify-content:space-between;
+  }
+  .workflow .step{display:flex;align-items:center;gap:5px}
+  .workflow .step.done{color:#7fd6a4}
+  .workflow .step.active{color:#4f7cff}
+  .workflow .step .dot{
+    width:14px;height:14px;border-radius:50%;border:1.5px solid currentColor;
+    display:inline-flex;align-items:center;justify-content:center;font-size:9px;
+  }
+  .workflow .step.done .dot{background:#7fd6a4;border-color:#7fd6a4;color:#0f1117}
+  .workflow .step.active .dot{background:#4f7cff;border-color:#4f7cff;color:#fff}
+  .workflow .arrow{color:#2e3448}
 
-.news-content {
-    padding: 18px;
-}
+  .fmt-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .fmt-btn{
+    width:30px;height:28px;border-radius:7px;border:1px solid #2a3044;background:#1a1e2b;
+    color:#cdd4e6;font-size:13px;cursor:pointer;padding:0;line-height:1;transition:.12s;
+    display:inline-flex;align-items:center;justify-content:center;flex:none;
+  }
+  .fmt-btn:hover{background:#262b3d;border-color:#3b4258;color:#fff}
+  .fmt-btn:active{transform:translateY(1px)}
+  .fmt-hint{font-size:10.5px;color:#5b6379;letter-spacing:.2px}
 
-.category {
-    display: inline-block;
-    background: #0757c9;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 13px;
-}
+  .preview{flex:1;min-width:0;display:flex;flex-direction:column;background:#0b0d13}
+  .tabs{
+    display:flex;align-items:center;gap:8px;padding:10px 18px;
+    border-bottom:1px solid #1d2230;flex:none;flex-wrap:wrap;
+  }
+  .tab{
+    background:transparent;border:1px solid transparent;color:#8b93ab;
+    padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s;
+  }
+  .tab:hover{color:#cdd4e6;background:#161a26}
+  .tab.active{background:#1d2233;color:#fff;border-color:#2e3448}
+  .hint{font-size:11.5px;color:#5b6379;margin-left:auto;letter-spacing:.2px}
 
-.news-title {
-    font-size: 24px;
-    margin: 12px 0 8px;
-}
+  .edit-toolbar{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:10px 18px;border-bottom:1px solid #1d2230;flex:none;background:#0e1016;
+  }
+  .edit-note{font-size:11.5px;color:#8b93ab;letter-spacing:.2px}
+  .edit-note.warn{color:#ffb46b}
 
-.date {
-    color: #777;
-    font-size: 13px;
-    margin-bottom: 12px;
-}
+  .stage{flex:1;overflow:auto;padding:26px;display:flex;flex-wrap:wrap;gap:26px;align-content:flex-start}
+  .stage.edit-mode{display:block;padding:18px}
+  .caption{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#7c85a0;font-weight:600}
+  .cell,.sheet-block{display:flex;flex-direction:column;gap:9px}
 
-.news-text {
-    line-height: 1.6;
-    white-space: pre-wrap;
-}
+  .frame{
+    width:calc(var(--w) * var(--s));height:calc(var(--h) * var(--s));
+    position:relative;overflow:hidden;background:#fff;border-radius:2px;
+    box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.05);
+  }
+  .frame > *{position:absolute;top:0;left:0;transform:scale(var(--s));transform-origin:top left}
 
-.delete {
-    background: #333;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 7px;
-    cursor: pointer;
-    margin-top: 10px;
-}
+  .ecard{
+    background:#12141d;border:1px solid #232838;border-radius:12px;
+    margin-bottom:16px;overflow:hidden;transition:border-color .15s;
+  }
+  .ecard.overflow{border-color:#7a3038}
+  .ecard.overflow .epreview .frame{box-shadow:0 0 0 2px #b3444f,0 10px 30px rgba(0,0,0,.55)}
+  .ecard.chapter{border-color:#5b3fd6}
+  .ecard.chapter .ehead{background:#1d1a2e}
+  .ehead{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:8px 12px;background:#161a26;border-bottom:1px solid #232838;
+  }
+  .etitle{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:#8b93ab;font-weight:700}
+  .etitle .chapter-tag{
+    background:#5b3fd6;color:#fff;padding:2px 7px;border-radius:5px;
+    font-size:10px;margin-left:6px;letter-spacing:.5px;
+  }
+  .emeta{font-size:11px;color:#5b6379}
+  .emeta.warn{color:#ff9a9a}
+  .eactions{display:flex;gap:4px;margin-left:auto}
+  .eactions button{
+    width:27px;height:27px;border-radius:6px;border:1px solid #2a3044;background:#1a1e2b;
+    color:#a8b0c4;font-size:12px;cursor:pointer;line-height:1;padding:0;transition:.12s;
+  }
+  .eactions button:hover:not(:disabled){background:#262b3d;color:#fff}
+  .eactions button:disabled{opacity:.32;cursor:default}
+  .eactions button.danger:hover:not(:disabled){background:#3a1d22;border-color:#6e2b33;color:#ff9a9a}
+  .ebody{display:flex;gap:16px;padding:14px;align-items:flex-start;flex-wrap:wrap}
+  .epreview{flex:none}
+  .eedit{flex:1;min-width:250px;display:flex;flex-direction:column;gap:7px}
+  .eedit label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#8b93ab;font-weight:600}
+  .eedit label .opt{color:#5b6379;font-weight:500;text-transform:none;letter-spacing:0}
+  .eedit textarea{
+    width:100%;min-height:300px;background:#1a1e2b;border:1px solid #2a3044;color:#e6e8ef;
+    border-radius:9px;padding:12px;font-family:Georgia,"Times New Roman",serif;
+    font-size:13px;line-height:1.55;resize:vertical;outline:none;transition:.15s;
+  }
+  .eedit textarea:focus{border-color:#4f7cff;box-shadow:0 0 0 3px rgba(79,124,255,.14)}
+  .eedit input{
+    background:#1a1e2b;border:1px solid #2a3044;color:#e6e8ef;
+    border-radius:9px;padding:9px 11px;font-size:13px;width:100%;outline:none;
+  }
+  .eedit input:focus{border-color:#4f7cff;box-shadow:0 0 0 3px rgba(79,124,255,.14)}
+  .eedit .edit-note{font-size:12px;color:#5b6379;padding:6px 0}
 
-.empty {
-    text-align: center;
-    color: #777;
-    padding: 30px;
-}
+  .empty-state{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;height:100%;min-height:300px;color:#5b6379;text-align:center;padding:40px;
+  }
+  .empty-state .icon{font-size:48px;opacity:.35}
+  .empty-state .title{font-size:15px;font-weight:600;color:#8b93ab}
+  .empty-state .sub{font-size:13px;max-width:340px;line-height:1.5}
 
-.status {
-    margin-top: 15px;
-    text-align: center;
-    font-weight: bold;
-}
+  .bottombar{
+    flex:none;display:flex;align-items:center;gap:16px;
+    padding:12px 18px;background:#151824;border-top:1px solid #232838;flex-wrap:wrap;
+  }
+  .bottombar .label{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:#8b93ab;font-weight:600}
+  .swatches{display:flex;gap:8px;flex-wrap:wrap}
+  .sw{
+    width:26px;height:26px;border-radius:50%;border:2px solid transparent;
+    cursor:pointer;padding:0;position:relative;transition:.15s;
+    box-shadow:0 2px 8px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.08);
+  }
+  .sw:hover{transform:scale(1.14)}
+  .sw.active{border-color:#fff;box-shadow:0 0 0 3px rgba(79,124,255,.55),0 2px 8px rgba(0,0,0,.5)}
 
-footer {
-    text-align: center;
-    padding: 25px;
-    color: #777;
-}
+  :root{
+    --body-font: Georgia,"Times New Roman",serif;
+    --body-size: 11pt;
+    --page-w: 5.5in;
+    --page-h: 8.5in;
+    --sheet-w: 11in;
+    --sheet-h: 8.5in;
+    --pad-x: 0.65in;
+    --pad-y: 0.75in;
+  }
+  .page{
+    width:var(--page-w);height:var(--page-h);background:#fff;color:#111;
+    padding:var(--pad-y) var(--pad-x);position:relative;overflow:hidden;flex:none;
+  }
+  .page-content{
+    width:calc(var(--page-w) - 2 * var(--pad-x));
+    height:calc(var(--page-h) - 2 * var(--pad-y));
+    overflow:hidden;
+    font-family:var(--body-font);
+    font-size:var(--body-size);line-height:1.5;color:#111;
+  }
+  .para{margin:0 0 .82em 0;text-align:justify;hyphens:auto;-webkit-hyphens:auto;text-indent:1.35em;orphans:2;widows:2}
+  .para:first-child{text-indent:0}
+  .para strong{font-weight:700}
+  .para em{font-style:italic}
+
+  .chapter-head{
+    font-family:var(--body-font);
+    text-align:center;
+    margin:0 0 1.6em 0;
+    padding:0;
+    text-indent:0;
+  }
+  .chapter-head .ch-label{
+    font-size:calc(var(--body-size) * 0.85);
+    letter-spacing:.35em;
+    text-transform:uppercase;
+    opacity:.65;
+    display:block;
+    margin-bottom:.8em;
+  }
+  .chapter-head .ch-title{
+    font-size:calc(var(--body-size) * 1.7);
+    font-weight:700;
+    line-height:1.25;
+    display:block;
+    letter-spacing:-.01em;
+  }
+  .chapter-head .ch-rule{
+    width:1in;height:1px;background:currentColor;opacity:.4;
+    margin:1.1em auto 0;
+  }
+  .chapter-head + .para{text-indent:0}
+  .para.drop::first-letter{
+    font-size:calc(var(--body-size) * 3.1);
+    float:left;
+    line-height:.82;
+    padding-right:.08em;
+    padding-top:.06em;
+    font-weight:700;
+  }
+
+  .folio{
+    position:absolute;left:0;right:0;bottom:.4in;text-align:center;
+    font-family:var(--body-font);font-size:9pt;color:#555;
+  }
+
+  .page.cover{
+    display:flex;flex-direction:column;text-align:center;
+    padding:.8in .7in;position:relative;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .page.cover.cv-center{justify-content:center}
+  .page.cover.cv-top{justify-content:flex-start}
+  .page.cover.cv-bottom{justify-content:flex-end}
+
+  .cv-frame{position:absolute;inset:.35in;pointer-events:none}
+  .cv-frame-thin{border:1px solid currentColor;opacity:.55}
+  .cv-frame-thick{border:3px solid currentColor;opacity:.75}
+  .cv-frame-double{border:1px solid currentColor;outline:1px solid currentColor;outline-offset:3px;opacity:.7}
+
+  .cv-block{width:100%}
+  .cv-title{
+    font-size:26pt;font-weight:700;line-height:1.15;margin:0;
+    word-break:break-word;letter-spacing:-.01em;
+  }
+  .cv-subtitle{font-size:13pt;font-style:italic;margin-top:10pt;opacity:.92}
+  .cv-rule{width:1in;height:1.5px;background:currentColor;opacity:.55;margin:20pt auto}
+  .cv-author{font-size:11pt;letter-spacing:.2em;text-transform:uppercase;opacity:.92}
+
+  .cv-serif .cv-title,.cv-serif .cv-subtitle,.cv-serif .cv-author{
+    font-family:Georgia,"Times New Roman",serif;
+  }
+  .cv-sans .cv-title,.cv-sans .cv-subtitle,.cv-sans .cv-author{
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  }
+  .cv-mono .cv-title,.cv-mono .cv-subtitle,.cv-mono .cv-author{
+    font-family:"Courier New",Courier,monospace;
+  }
+
+  .sheet{width:var(--sheet-w);height:var(--sheet-h);background:#fff;display:flex}
+  .sheet.grid-2x2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr 1fr;
+  }
+  .half{width:var(--page-w);height:var(--page-h);overflow:hidden;position:relative;flex:none}
+  .half + .half{box-shadow:inset 1px 0 0 rgba(0,0,0,.09)}
+  .sheet.grid-2x2 .half{box-shadow:none}
+  .sheet.grid-2x2 .half{outline:1px solid rgba(0,0,0,.09);outline-offset:-1px}
+
+  #measure{position:fixed;left:-9999px;top:0;visibility:hidden}
+  #printArea{display:none}
+
+  @media print{
+    @page{size:var(--sheet-w) var(--sheet-h);margin:0}
+    html,body{width:var(--sheet-w);height:var(--sheet-h);margin:0;padding:0;background:#fff;overflow:visible;display:block}
+    .app,#measure{display:none !important}
+    #printArea{display:block !important}
+    #printArea .sheet{page-break-after:always;break-after:page;page-break-inside:avoid}
+    #printArea .sheet:last-child{page-break-after:auto;break-after:auto}
+  }
+
+  @media (max-width:860px){
+    .workspace{flex-direction:column}
+    .panel{width:100%;border-right:none;border-bottom:1px solid #232838;max-height:50vh}
+    .field.grow{min-height:140px}
+  }
 </style>
 </head>
-
 <body>
 
-<header>
-    <h1>CAMERA PARTOUT</h1>
-    <p>L'information partout, à tout moment.</p>
-</header>
-
-<div class="container">
-
-    <!-- PUBLICATION -->
-    <div class="box">
-
-        <h2>Publier une nouvelle</h2>
-
-        <label>Titre de la nouvelle</label>
-
-        <input
-            type="text"
-            id="title"
-            placeholder="Entrez le titre..."
-        >
-
-        <label>Catégorie</label>
-
-        <select id="category">
-            <option>Haïti</option>
-            <option>International</option>
-            <option>Sport</option>
-            <option>Économie</option>
-            <option>Culture</option>
-            <option>Technologie</option>
-            <option>Autre</option>
-        </select>
-
-        <label>Texte de la nouvelle</label>
-
-        <textarea
-            id="text"
-            placeholder="Écrivez votre nouvelle ici..."
-        ></textarea>
-
-        <label>Ajouter une photo</label>
-
-        <input
-            type="file"
-            id="image"
-            accept="image/*"
-        >
-
-        <label>Ajouter une vidéo</label>
-
-        <input
-            type="file"
-            id="video"
-            accept="video/*"
-        >
-
-        <button
-            class="publish"
-            id="publishButton"
-            onclick="publishNews()"
-        >
-            PUBLIER LA NOUVELLE
-        </button>
-
-        <div
-            id="status"
-            class="status"
-        ></div>
-
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">📖</span>
+      <div>
+        <div class="brand-title">Book Maker</div>
+        <div class="brand-sub" id="brandSub">5.5″ × 8.5″ pages · imposed 4-up on 8.5″ × 11″ sheets</div>
+      </div>
     </div>
+    <div class="topbar-actions">
+      <button class="btn ghost" id="btnWord">Word</button>
+      <button class="btn primary" id="btnPdf">Download PDF</button>
+    </div>
+  </header>
 
+  <main class="workspace">
+    <aside class="panel">
 
-    <!-- ACTUALITÉS -->
-    <div class="box">
+      <div class="workflow">
+        <span class="step" id="step1"><span class="dot">1</span>Paste</span>
+        <span class="arrow">→</span>
+        <span class="step" id="step2"><span class="dot">2</span>Load</span>
+        <span class="arrow">→</span>
+        <span class="step" id="step3"><span class="dot">3</span>Edit</span>
+        <span class="arrow">→</span>
+        <span class="step" id="step4"><span class="dot">4</span>Export</span>
+      </div>
 
-        <h2>Dernières nouvelles</h2>
-
-        <div id="newsList">
-
-            <div class="empty">
-                Chargement...
-            </div>
-
+      <div class="field">
+        <label>Manuscript source</label>
+        <div class="upload-row">
+          <button class="btn small" id="btnUpload" type="button">Upload PDF</button>
+          <span class="upload-status" id="uploadStatus">No file loaded</span>
         </div>
+        <input type="file" id="fileInput" accept=".pdf,.txt,.md,application/pdf,text/plain" hidden>
+      </div>
 
-    </div>
+      <div class="ai-banner">
+        <span class="ai-icon">✨</span>
+        <div style="flex:1;min-width:180px">
+          <b>AI Chapter Arranger</b><br>
+          <span style="color:#8f83b8">Optional: adds chapter headings &amp; TOC.</span>
+        </div>
+        <button class="btn ai small" id="btnAiArrange" type="button">Auto-arrange</button>
+        <div class="ai-progress" id="aiProgress" hidden><div class="ai-progress-bar" id="aiProgressBar"></div></div>
+      </div>
 
+      <details class="cover-opts" id="aiOptions">
+        <summary>AI arrangement options</summary>
+        <div class="ai-options">
+          <div class="ai-row"><input type="checkbox" id="aiDetectChapters" checked><label for="aiDetectChapters">Detect chapter headings</label></div>
+          <div class="ai-row"><input type="checkbox" id="aiAddToc" checked><label for="aiAddToc">Add table of contents</label></div>
+          <div class="ai-row"><input type="checkbox" id="aiDropCaps" checked><label for="aiDropCaps">Drop caps on chapter openers</label></div>
+          <div class="ai-row"><input type="checkbox" id="aiSceneBreaks" checked><label for="aiSceneBreaks">Detect scene breaks (◆)</label></div>
+          <div class="ai-row"><input type="checkbox" id="aiTitlePage" checked><label for="aiTitlePage">Add title page before cover</label></div>
+          <div class="ai-row"><input type="checkbox" id="aiBreakChapters"><label for="aiBreakChapters">Start each chapter on a new page</label></div>
+        </div>
+      </details>
+
+      <div class="field">
+        <label for="inTitle">Book title</label>
+        <input id="inTitle" type="text" value="The Lighthouse Keeper">
+      </div>
+      <div class="field">
+        <label for="inSubtitle">Subtitle <span class="opt">(optional)</span></label>
+        <input id="inSubtitle" type="text" placeholder="A novella">
+      </div>
+      <div class="field">
+        <label for="inAuthor">Author</label>
+        <input id="inAuthor" type="text" value="A. Marlowe">
+      </div>
+
+      <details class="cover-opts" open>
+        <summary>Cover design</summary>
+        <div class="opt-grid">
+          <div class="field">
+            <label>Layout</label>
+            <select id="coverLayout">
+              <option value="center">Centered</option>
+              <option value="top">Top aligned</option>
+              <option value="bottom">Bottom aligned</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Frame</label>
+            <select id="coverFrame">
+              <option value="none">None</option>
+              <option value="thin">Thin line</option>
+              <option value="thick">Thick line</option>
+              <option value="double">Double line</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Font</label>
+            <select id="coverFont">
+              <option value="serif">Serif</option>
+              <option value="sans">Sans</option>
+              <option value="mono">Typewriter</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Text colour</label>
+            <div class="color-row">
+              <label class="auto-check"><input type="checkbox" id="coverTextAuto" checked> Auto</label>
+              <input type="color" id="coverTextColor" value="#ffffff" disabled>
+            </div>
+          </div>
+          <div class="field full">
+            <label>Cover background</label>
+            <div class="color-row">
+              <input type="color" id="coverBgColor" value="#1f3a5f">
+              <span class="hexlabel" id="coverBgLabel">#1f3a5f</span>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="cover-opts" open>
+        <summary>Layout &amp; imposition</summary>
+        <div class="opt-grid">
+          <div class="field">
+            <label>Body font</label>
+            <select id="bodyFontSel">
+              <option value="serif">Serif</option>
+              <option value="sans">Sans</option>
+              <option value="mono">Typewriter</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Body size</label>
+            <select id="bodySizeSel">
+              <option value="9">9 pt</option>
+              <option value="9.5">9.5 pt</option>
+              <option value="10">10 pt</option>
+              <option value="10.5">10.5 pt</option>
+              <option value="11" selected>11 pt</option>
+              <option value="11.5">11.5 pt</option>
+              <option value="12">12 pt</option>
+              <option value="12.5">12.5 pt</option>
+              <option value="13">13 pt</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Book format</label>
+            <select id="bookFormatSel">
+              <option value="5.5x8.5" selected>5.5″ × 8.5″ (Digest)</option>
+              <option value="4.25x5.5">4.25″ × 5.5″ (Pocket)</option>
+              <option value="4.2x5.5">4.2″ × 5.5″ (Pocket)</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Imposition <span class="opt">— pages per printed sheet</span></label>
+            <select id="impositionSel">
+              <option value="4up" selected>4-up · 4 pages per sheet</option>
+              <option value="8up">8-up · 8 pages per sheet (Letter, 2×2)</option>
+            </select>
+          </div>
+        </div>
+      </details>
+
+      <div class="field grow">
+        <label for="inText">Paste your words <span class="opt">— or drop a PDF here</span></label>
+        <div class="fmt-row">
+          <button class="fmt-btn" type="button" data-target="inText" data-fmt="b" title="Bold (Ctrl+B)"><b>B</b></button>
+          <button class="fmt-btn" type="button" data-target="inText" data-fmt="i" title="Italic (Ctrl+I)"><i>I</i></button>
+          <span class="fmt-hint">**bold** · *italic*</span>
+        </div>
+        <textarea id="inText" spellcheck="false"
+          placeholder="Paste your manuscript here…
+
+Leave a blank line between paragraphs.
+
+Wrap words in **double asterisks** for bold, *single* for italic."></textarea>
+      </div>
+
+      <button class="btn primary" id="btnLoadPages" type="button" style="width:100%">
+        Load Pages →
+      </button>
+
+      <div class="manual-banner" id="manualBanner" hidden>
+        <span><b>✎ Manual page edits active.</b> Editing the text above will reflow and discard them.</span>
+        <button class="btn small" id="btnReflowPanel" type="button">Reflow from text</button>
+      </div>
+
+      <div class="stats" id="stats">—</div>
+    </aside>
+
+    <section class="preview">
+      <div class="tabs">
+        <button class="tab" data-view="sheets">Print sheets</button>
+        <button class="tab" data-view="pages">Reading pages</button>
+        <button class="tab active" data-view="edit">Edit pages</button>
+        <span class="hint" id="viewHint">Edit any page · <b>B</b> / <b>I</b> for bold &amp; italic · reorder with ↑ ↓</span>
+      </div>
+      <div class="edit-toolbar" id="editToolbar">
+        <button class="btn small" id="btnReflow" type="button">Reflow from text</button>
+        <button class="btn small" id="btnAddPage" type="button">+ Text page</button>
+        <button class="btn small" id="btnAddBlank" type="button">+ Blank page</button>
+        <span class="edit-note" id="editNote"></span>
+      </div>
+      <div class="stage edit-mode" id="stage">
+        <div class="empty-state">
+          <div class="icon">📄</div>
+          <div class="title">No pages yet</div>
+          <div class="sub">Paste your manuscript in the text box on the left, then click <b>Load Pages</b> to paginate it. You'll be able to edit each page individually.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bottombar">
+    <span class="label">Cover colour</span>
+    <div class="swatches" id="swatches"></div>
+  </footer>
 </div>
 
-<footer>
-    © 2026 CAMERA PARTOUT
-</footer>
-
+<div id="measure" class="page-content"></div>
+<div id="printArea"></div>
 
 <script>
+"use strict";
 
-/* =====================================================
-   SUPABASE
-   ===================================================== */
+/* =========================================================
+   SAMPLE
+   ========================================================= */
+const SAMPLE = `Chapter One
 
-const SUPABASE_URL =
-    "https://xhzhtwihrbjfqstxqffl.supabase.co";
+The light had not failed in thirty-one years, and Elias Wren intended to keep it that way.
 
-const SUPABASE_KEY =
-    "sb_publishable_I15O020IqmK0cA5BkKWmbQ_TloEucFc";
+He climbed the spiral stair each evening at half past six, though the sun would not set for another hour yet. The ritual mattered more than the timing. One hundred and twelve steps, his left hand always on the rail, his right carrying the tin of oil that he no longer truly needed but could not bring himself to leave behind.
 
-const supabaseClient =
-    supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
+At the top, the great lens waited. It was a beautiful thing, all brass and ground glass, and when the mechanism turned it threw its beam out across the water like a long pale arm reaching for something it had lost.
 
+The sea, as always, gave nothing back.
 
-/* NOM DU BUCKET */
+There had been a village once, down in the fold of the cliff where the road gave out. Elias could remember the sound of it: dogs, and the smith's hammer, and children shouting at the tide. Now there was only the lighthouse and the gulls and the long grey water going on and on toward a horizon that never arrived.
 
-const BUCKET_NAME = "news-images";
+He did not mind the quiet. He had chosen it.
 
+Chapter Two
 
-/* =====================================================
-   AFFICHER LES NOUVELLES
-   ===================================================== */
+What he minded was the light on the ninth of October, which came in low and strange and the colour of old brass, and which he had learned over the years to dread. It was the kind of light that made the ordinary world look like a photograph of itself. It was the kind of light that made a man remember things he had decided, very deliberately, to forget.
 
-async function displayNews() {
+On the ninth of October, the sea would be flat as a table. On the ninth of October, the gulls would not cry. And on the ninth of October, if the stories were true—and Elias had never been able to prove they were not—a boat would come out of the east with no lantern and no crew, and it would pass beneath the tower, and someone aboard would call his name.
 
-    const list =
-        document.getElementById("newsList");
+He had heard it twice. Once as a boy, standing on the shingle with his father's hand heavy on his shoulder. Once as a young man, alone, on the night his brother did not come home.
 
-    list.innerHTML = `
-        <div class="empty">
-            Chargement...
+He had not answered either time. He was not sure, now, that he would be able to refuse a third.
+
+Chapter Three
+
+The stairwell smelled of salt and cold iron. He set the oil tin down on the top step and stood a while with his palm flat against the cold glass of the lens, feeling the faint tremor of the clockwork turning somewhere below, patient as a heartbeat.
+
+Outside, the water was beginning to change. He watched it happen the way one watches a fever arrive: first a stillness, then a sheen, then that terrible burnished colour spreading outward from the east as though something under the surface had been lit.
+
+The horizon went soft. And far out, where the light could not reach and the charts ended and the shipping lanes turned north toward kinder coasts, a shape separated itself from the grey.
+
+Elias Wren put his hand on the rail. One hundred and twelve steps down. He counted them anyway.
+
+Chapter Four
+
+The boat was closer than it should have been. It had no business being that close and no business being that silent, and yet there it was, riding low and steady, its hull the colour of wet slate. He could see no oars, no sail, no lantern. He could see no one at all.
+
+And then, very clearly, across water that had gone as still as glass, he heard his name.
+
+It was not a shout. It was not even loud. It was the way his mother used to say it when he was small and had wandered too far from the door—patient, and certain, and a little sad.
+
+He stood at the base of the tower with his hand still on the rail, and he did not run, and he did not turn away, and for the first time in thirty-one years he did not go back inside.
+
+The gulls did not cry.
+
+The light did not turn.
+
+And the boat waited.`;
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+const esc = (s) => String(s).replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'book';
+const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+
+function readableOn(hex) {
+  const c = hex.replace('#','');
+  const r = parseInt(c.substr(0,2),16),
+        g = parseInt(c.substr(2,2),16),
+        b = parseInt(c.substr(4,2),16);
+  return ((0.299*r + 0.587*g + 0.114*b) / 255) > 0.6 ? '#1a1a1a' : '#ffffff';
+}
+
+function sanitize(s) {
+  return String(s)
+    .replace(/[\u2018\u2019\u201A\u201B]/g, "'")
+    .replace(/[\u201C\u201D\u201E\u201F]/g, '"')
+    .replace(/[\u2013\u2014]/g, '-')
+    .replace(/\u2026/g, '...')
+    .replace(/\u00A0/g, ' ')
+    .replace(/[\u2022]/g, '*')
+    .replace(/[^\x09\x0A\x0D\x20-\x7E\u00A0-\u00FF]/g, '?');
+}
+function sanitizeBlocks(blocks) { return blocks.map(sanitize); }
+
+function parseParas(v) {
+  return String(v)
+    .replace(/\r\n?/g, '\n')
+    .split(/\n[ \t]*\n+/)
+    .map(s => s.replace(/\s*\n\s*/g, ' ').replace(/[ \t]+/g, ' ').trim())
+    .filter(Boolean);
+}
+
+/* =========================================================
+   INLINE MARKUP
+   ========================================================= */
+function parseStyled(text) {
+  const raw = String(text);
+  const runs = [];
+  let buf = '';
+  let bold = false, italic = false;
+  let i = 0;
+  const flushRun = () => { if (buf) { runs.push({ t: buf, b: bold, i: italic }); buf = ''; } };
+  while (i < raw.length) {
+    if (raw.startsWith('**', i)) { flushRun(); bold = !bold; i += 2; continue; }
+    if (raw.charAt(i) === '*')   { flushRun(); italic = !italic; i += 1; continue; }
+    buf += raw.charAt(i); i += 1;
+  }
+  flushRun();
+  const tokens = [];
+  for (const r of runs) {
+    const words = r.t.split(/\s+/).filter(Boolean);
+    for (const w of words) tokens.push({ w, b: r.b, i: r.i });
+  }
+  return tokens;
+}
+
+function groupTokens(tokens) {
+  const runs = [];
+  for (const tk of tokens) {
+    const last = runs[runs.length - 1];
+    if (last && last.b === tk.b && last.i === tk.i) last.words.push(tk.w);
+    else runs.push({ b: tk.b, i: tk.i, words: [tk.w] });
+  }
+  return runs;
+}
+
+function serializeStyled(tokens) {
+  if (!tokens || !tokens.length) return '';
+  return groupTokens(tokens).map(r => {
+    const s = r.words.join(' ');
+    if (r.b && r.i) return '***' + s + '***';
+    if (r.b) return '**' + s + '**';
+    if (r.i) return '*' + s + '*';
+    return s;
+  }).join(' ');
+}
+
+function inlineHTML(text) {
+  const tokens = parseStyled(text);
+  if (!tokens.length) return '';
+  return groupTokens(tokens).map(r => {
+    let inner = esc(r.words.join(' '));
+    if (r.b) inner = '<strong>' + inner + '</strong>';
+    if (r.i) inner = '<em>' + inner + '</em>';
+    return inner;
+  }).join(' ');
+}
+
+function wrapSelection(ta, marker) {
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const val = ta.value;
+  const sel = val.slice(s, e);
+  const mLen = marker.length;
+
+  if (!sel) {
+    ta.value = val.slice(0, s) + marker + marker + val.slice(e);
+    ta.selectionStart = ta.selectionEnd = s + mLen;
+  } else {
+    const before = val.slice(Math.max(0, s - mLen), s);
+    const after  = val.slice(e, e + mLen);
+    if (before === marker && after === marker) {
+      ta.value = val.slice(0, s - mLen) + sel + val.slice(e + mLen);
+      ta.selectionStart = s - mLen;
+      ta.selectionEnd   = s - mLen + sel.length;
+    } else {
+      ta.value = val.slice(0, s) + marker + sel + marker + val.slice(e);
+      ta.selectionStart = s + mLen;
+      ta.selectionEnd   = e + mLen;
+    }
+  }
+  ta.focus();
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+/* =========================================================
+   FONTS & FORMATS
+   ========================================================= */
+const FONT_STACKS = {
+  serif: 'Georgia,"Times New Roman",serif',
+  sans:  '"Helvetica Neue",Helvetica,Arial,sans-serif',
+  mono:  '"Courier New",Courier,monospace',
+};
+
+const FORMATS = {
+  '5.5x8.5': {
+    w: 5.5, h: 8.5,
+    sheetW: 11, sheetH: 8.5,
+    padX: 0.65, padY: 0.75,
+    marginTop: 0.75, marginBottom: 0.75, marginLeft: 0.65, marginRight: 0.65,
+    label: '5.5″ × 8.5″ pages · imposed 4-up on 8.5″ × 11″ sheets',
+  },
+  '4.25x5.5': {
+    w: 4.25, h: 5.5,
+    sheetW: 8.5, sheetH: 5.5,
+    padX: 0.5, padY: 0.55,
+    marginTop: 0.55, marginBottom: 0.55, marginLeft: 0.5, marginRight: 0.5,
+    label: '4.25″ × 5.5″ pages · imposed 4-up on 8.5″ × 5.5″ sheets',
+  },
+  '4.2x5.5': {
+    w: 4.2, h: 5.5,
+    sheetW: 8.4, sheetH: 5.5,
+    padX: 0.5, padY: 0.55,
+    marginTop: 0.55, marginBottom: 0.55, marginLeft: 0.5, marginRight: 0.5,
+    label: '4.2″ × 5.5″ pages · imposed 4-up on 8.4″ × 5.5″ sheets',
+  },
+};
+
+/* =========================================================
+   DOM
+   ========================================================= */
+const inTitle    = $('#inTitle');
+const inSubtitle = $('#inSubtitle');
+const inAuthor   = $('#inAuthor');
+const inText     = $('#inText');
+
+const coverLayoutEl = $('#coverLayout');
+const coverFrameEl  = $('#coverFrame');
+const coverFontEl   = $('#coverFont');
+const coverTextAuto = $('#coverTextAuto');
+const coverTextCol  = $('#coverTextColor');
+const coverBgColor  = $('#coverBgColor');
+const coverBgLabel  = $('#coverBgLabel');
+
+const bodyFontSel    = $('#bodyFontSel');
+const bodySizeSel    = $('#bodySizeSel');
+const bookFormatSel  = $('#bookFormatSel');
+const impositionSel  = $('#impositionSel');
+
+const fileInput    = $('#fileInput');
+const btnUpload    = $('#btnUpload');
+const uploadStatus = $('#uploadStatus');
+
+const stage        = $('#stage');
+const statsEl      = $('#stats');
+const measure      = $('#measure');
+const printArea    = $('#printArea');
+const swatchBox    = $('#swatches');
+const brandSub     = $('#brandSub');
+
+const editToolbar  = $('#editToolbar');
+const editNote     = $('#editNote');
+const manualBanner = $('#manualBanner');
+const viewHint     = $('#viewHint');
+
+const btnLoadPages = $('#btnLoadPages');
+
+const btnAiArrange   = $('#btnAiArrange');
+const aiProgress     = $('#aiProgress');
+const aiProgressBar  = $('#aiProgressBar');
+const aiDetectCh     = $('#aiDetectChapters');
+const aiAddToc       = $('#aiAddToc');
+const aiDropCaps     = $('#aiDropCaps');
+const aiSceneBreaks  = $('#aiSceneBreaks');
+const aiTitlePage    = $('#aiTitlePage');
+const aiBreakChapters= $('#aiBreakChapters');
+
+const step1 = $('#step1');
+const step2 = $('#step2');
+const step3 = $('#step3');
+const step4 = $('#step4');
+
+/* =========================================================
+   STATE
+   ========================================================= */
+const state = {
+  view: 'edit',
+  cover: '#1f3a5f',
+  coverLayout: 'center',
+  coverFrame: 'none',
+  coverFont: 'serif',
+  coverTextColor: 'auto',
+  bodyFont: 'serif',
+  bodySize: 11,
+  bookFormat: '5.5x8.5',
+  imposition: '4up',
+
+  pages: [],
+  manual: false,
+  loaded: false,
+  aiArranged: false,
+};
+
+const COVERS = [
+  '#1f3a5f','#6e1f2b','#24402f','#2b2b2b','#c8a13a',
+  '#ece3d0','#b5563a','#4a2545','#14625f','#7ba7c9',
+  '#e8c6c1','#101010'
+];
+
+function fmt() { return FORMATS[state.bookFormat] || FORMATS['5.5x8.5']; }
+
+/* =========================================================
+   IMPOSITION CONFIG
+   ========================================================= */
+function getSheetConfig() {
+  const f = fmt();
+  if (state.imposition === '8up') {
+    const sheetW = 8.5, sheetH = 11;
+    return {
+      mode: '8up',
+      sheetW, sheetH,
+      cols: 2, rows: 2,
+      pagesPerSheet: 8,
+      front: (s) => {
+        const b = s * 8;
+        return [b + 8, b + 1, b + 6, b + 3];
+      },
+      back: (s) => {
+        const b = s * 8;
+        return [b + 2, b + 7, b + 4, b + 5];
+      },
+      totalSheets: (n) => Math.ceil(n / 8),
+      paddedLength: (n) => Math.ceil(n / 8) * 8,
+    };
+  }
+  return {
+    mode: '4up',
+    sheetW: f.sheetW, sheetH: f.sheetH,
+    cols: 2, rows: 1,
+    pagesPerSheet: 4,
+    front: (s, n) => [n - 2 * s, 2 * s + 1],
+    back:  (s, n) => [2 * s + 2, n - 2 * s - 1],
+    totalSheets: (n) => Math.ceil(n / 4),
+    paddedLength: (n) => Math.ceil(n / 4) * 4,
+  };
+}
+
+/* =========================================================
+   WORKFLOW STEP INDICATOR
+   ========================================================= */
+function updateWorkflow() {
+  const hasText = inText.value.trim().length > 0;
+  const hasPages = state.pages.length > 0;
+  const isManual = state.manual;
+
+  [step1, step2, step3, step4].forEach(s => s.className = 'step');
+
+  if (!hasText) {
+    step1.classList.add('active');
+  } else if (!hasPages) {
+    step1.classList.add('done');
+    step2.classList.add('active');
+  } else if (!isManual) {
+    step1.classList.add('done');
+    step2.classList.add('done');
+    step3.classList.add('active');
+  } else {
+    step1.classList.add('done');
+    step2.classList.add('done');
+    step3.classList.add('done');
+    step4.classList.add('active');
+  }
+}
+
+/* =========================================================
+   TYPOGRAPHY VARS
+   ========================================================= */
+function applyTypography() {
+  const root = document.documentElement;
+  root.style.setProperty('--body-font', FONT_STACKS[state.bodyFont] || FONT_STACKS.serif);
+  root.style.setProperty('--body-size', state.bodySize + 'pt');
+
+  const f = fmt();
+  const cfg = getSheetConfig();
+
+  root.style.setProperty('--page-w', f.w + 'in');
+  root.style.setProperty('--page-h', f.h + 'in');
+  root.style.setProperty('--sheet-w', cfg.sheetW + 'in');
+  root.style.setProperty('--sheet-h', cfg.sheetH + 'in');
+  root.style.setProperty('--pad-x', f.padX + 'in');
+  root.style.setProperty('--pad-y', f.padY + 'in');
+
+  const mw = f.w - 2 * f.padX;
+  const mh = f.h - 2 * f.padY;
+  measure.style.width  = mw + 'in';
+  measure.style.height = mh + 'in';
+
+  if (brandSub) {
+    if (cfg.mode === '8up') {
+      brandSub.textContent = `${f.w}″ × ${f.h}″ pages · imposed 8-up on 8.5″ × 11″ sheets`;
+    } else {
+      brandSub.textContent = f.label;
+    }
+  }
+}
+
+/* =========================================================
+   MEASURE-BLOCK FACTORY
+   Renders each block exactly as it will appear on the page,
+   so scrollHeight measurements are accurate.
+   ========================================================= */
+function makeP(text) {
+  if (text.startsWith('__CHAPTER__')) {
+    const div = document.createElement('div');
+    div.className = 'chapter-head';
+    const rest = text.slice('__CHAPTER__'.length);
+    const [label, title] = rest.split('§');
+    const labelHTML = label ? `<span class="ch-label">${esc(label)}</span>` : '';
+    const titleHTML = title ? `<span class="ch-title">${esc(title)}</span>` : '';
+    div.innerHTML = labelHTML + titleHTML + '<div class="ch-rule"></div>';
+    return div;
+  }
+  const p = document.createElement('p');
+  p.className = 'para';
+  if (text.startsWith('__DROP__')) {
+    p.classList.add('drop');
+    p.innerHTML = inlineHTML(text.slice('__DROP__'.length));
+  } else {
+    p.innerHTML = inlineHTML(text);
+  }
+  return p;
+}
+
+const fits = () => measure.scrollHeight <= measure.clientHeight + 1;
+
+function maxWordsFitStyled(tokens) {
+  const p = makeP('');
+  measure.appendChild(p);
+  let lo = 1, hi = tokens.length, best = 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    p.innerHTML = inlineHTML(serializeStyled(tokens.slice(0, mid)));
+    if (fits()) { best = mid; lo = mid + 1; } else { hi = mid - 1; }
+  }
+  measure.removeChild(p);
+  return best;
+}
+
+function paginate(blocks) {
+  const pages = [];
+  let page = [];
+  measure.innerHTML = '';
+
+  const queue = blocks.map(b => ({
+    text: b,
+    tokens: parseStyled(b.replace(/^__(DROP|CHAPTER)__/, ''))
+  }));
+
+  while (queue.length) {
+    const item = queue.shift();
+    const p = makeP(item.text);
+    measure.appendChild(p);
+
+    if (fits()) { page.push(item.text); continue; }
+    measure.removeChild(p);
+
+    if (measure.children.length === 0) {
+      const toks = item.tokens;
+      if (toks.length <= 1) {
+        page.push(item.text); pages.push(page); page = [];
+        continue;
+      }
+      const n = maxWordsFitStyled(toks);
+      const prefix = item.text.startsWith('__DROP__') ? '__DROP__' : '';
+      page.push(prefix + serializeStyled(toks.slice(0, n)));
+      pages.push(page); page = [];
+      measure.innerHTML = '';
+      queue.unshift({
+        text: serializeStyled(toks.slice(n)),
+        tokens: toks.slice(n),
+      });
+    } else {
+      pages.push(page); page = [];
+      measure.innerHTML = '';
+      queue.unshift(item);
+    }
+  }
+  if (page.length) pages.push(page);
+  return pages;
+}
+
+function parasOverflow(paras) {
+  if (!paras || !paras.length) return false;
+  measure.innerHTML = '';
+  paras.forEach(t => measure.appendChild(makeP(t)));
+  const over = measure.scrollHeight > measure.clientHeight + 1;
+  measure.innerHTML = '';
+  return over;
+}
+
+/* =========================================================
+   TEXT → BLOCKS
+   ========================================================= */
+function getBlocks(text) {
+  const t = text.replace(/\r\n?/g, '\n').trim();
+  if (!t) return [];
+  const hasBlank = /\n[ \t]*\n/.test(t);
+  const raw = hasBlank ? t.split(/\n[ \t]*\n+/) : t.split(/\n/);
+  return raw
+    .map(s => s.replace(/\s*\n\s*/g, ' ').replace(/[ \t]+/g, ' ').trim())
+    .filter(Boolean);
+}
+
+/* =========================================================
+   LOAD PAGES
+   ========================================================= */
+function loadPages() {
+  const text = inText.value.trim();
+  if (!text) {
+    alert('Paste or upload some text first.');
+    return;
+  }
+
+  const blocks = getBlocks(text);
+  if (!blocks.length) {
+    alert('No readable paragraphs found in the text.');
+    return;
+  }
+
+  const title    = inTitle.value.trim() || 'Untitled';
+  const subtitle = inSubtitle.value.trim();
+  const author   = inAuthor.value.trim();
+
+  const contentPages = paginate(blocks);
+
+  const pages = [{ type: 'cover', title, subtitle, author }];
+  contentPages.forEach(paras => {
+    if (paras.length) pages.push({ type: 'content', paras });
+  });
+
+  state.pages = pages;
+  state.manual = true;
+  state.loaded = true;
+  state.aiArranged = false;
+
+  renumber();
+  renderEdit();
+  updateStats();
+  updateManualUI();
+  updateWorkflow();
+
+  stage.scrollTop = 0;
+}
+
+btnLoadPages.addEventListener('click', loadPages);
+
+/* =========================================================
+   PAGE HTML
+   ========================================================= */
+function coverHTML(pg) {
+  const bg = state.cover;
+  const fg = state.coverTextColor === 'auto' ? readableOn(bg) : state.coverTextColor;
+  const fontClass   = 'cv-' + state.coverFont;
+  const layoutClass = 'cv-' + state.coverLayout;
+  const frameClass  = 'cv-frame-' + state.coverFrame;
+
+  const parts = [];
+  parts.push(`<div class="cv-title">${esc(pg.title || '')}</div>`);
+  if (pg.subtitle) parts.push(`<div class="cv-subtitle">${esc(pg.subtitle)}</div>`);
+  parts.push(`<div class="cv-rule"></div>`);
+  if (pg.author) parts.push(`<div class="cv-author">${esc(pg.author)}</div>`);
+
+  const frame = state.coverFrame !== 'none'
+    ? `<div class="cv-frame ${frameClass}"></div>` : '';
+
+  return `<div class="page cover ${layoutClass} ${fontClass}"
+    style="background:${bg};color:${fg}">
+    ${frame}
+    <div class="cv-block">${parts.join('')}</div>
+  </div>`;
+}
+
+function titlePageHTMLRender(pg) {
+  return `<div class="page cover cv-center cv-serif"
+    style="background:#fff;color:#111">
+    <div class="cv-block">
+      <div class="cv-title" style="font-size:20pt">${esc(pg.title || '')}</div>
+      ${pg.subtitle ? `<div class="cv-subtitle" style="font-size:11pt;margin-top:6pt">${esc(pg.subtitle)}</div>` : ''}
+      <div class="cv-rule" style="margin:24pt auto;background:#111"></div>
+      ${pg.author ? `<div class="cv-author" style="font-size:10pt">${esc(pg.author)}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+function tocHTML(pg) {
+  const entries = pg.entries || [];
+  let list = '';
+  for (const e of entries) {
+    const label = [e.label, e.title].filter(Boolean).join(' · ');
+    if (!label) continue;
+    list += `<div style="display:flex;justify-content:space-between;gap:12px;margin:0 0 .5em 0;font-size:10pt">
+      <span>${esc(label)}</span>
+      <span style="opacity:.65">${e.page}</span>
+    </div>`;
+  }
+  return `<div class="page" style="padding:1in .7in">
+    <div style="font-size:14pt;font-weight:700;letter-spacing:.2em;text-transform:uppercase;text-align:center;margin-bottom:1.6em">Contents</div>
+    <div style="font-family:var(--body-font)">${list || '<div style="text-align:center;opacity:.5">—</div>'}</div>
+  </div>`;
+}
+
+function pageHTML(pg) {
+  if (!pg) return `<div class="page"></div>`;
+  if (pg.type === 'cover') return coverHTML(pg);
+  if (pg.type === 'titlepage') return titlePageHTMLRender(pg);
+  if (pg.type === 'toc') return tocHTML(pg);
+  if (pg.type === 'blank' || pg.type === 'pad') return `<div class="page"></div>`;
+
+  const paras = pg.paras || [];
+  const body = paras.map((t) => {
+    if (t.startsWith('__CHAPTER__')) {
+      const rest = t.slice('__CHAPTER__'.length);
+      const [label, title] = rest.split('§');
+      const labelHTML = label ? `<span class="ch-label">${esc(label)}</span>` : '';
+      const titleHTML = title ? `<span class="ch-title">${esc(title)}</span>` : '';
+      return `<div class="chapter-head">${labelHTML}${titleHTML}<div class="ch-rule"></div></div>`;
+    }
+    if (t.startsWith('__DROP__')) {
+      return `<p class="para drop">${inlineHTML(t.slice('__DROP__'.length))}</p>`;
+    }
+    return `<p class="para">${inlineHTML(t)}</p>`;
+  }).join('');
+
+  const folio = pg.folio ? `<div class="folio">${pg.folio}</div>` : '';
+  return `<div class="page">
+    <div class="page-content">${body}</div>
+    ${folio}
+  </div>`;
+}
+
+/* =========================================================
+   PAGE LIST UTILITIES
+   ========================================================= */
+function renumber() {
+  state.pages.forEach((pg, i) => {
+    if (pg.type === 'content') pg.folio = i + 1;
+  });
+}
+
+function paddedPages() {
+  const arr = state.pages.slice();
+  const cfg = getSheetConfig();
+  while (arr.length % cfg.pagesPerSheet !== 0) arr.push({ type: 'pad' });
+  return arr;
+}
+
+/* =========================================================
+   STATS / UI
+   ========================================================= */
+function updateStats() {
+  const n = state.pages.length;
+  if (!n) {
+    statsEl.textContent = '—';
+    return;
+  }
+  const cfg = getSheetConfig();
+  const padded = cfg.paddedLength(n);
+  const sheets = padded / cfg.pagesPerSheet;
+  const words = state.pages
+    .filter(p => p.type === 'content')
+    .reduce((sum, p) =>
+      sum + (p.paras || []).reduce((k, t) =>
+        k + parseStyled(t.replace(/^__(DROP|CHAPTER)__/, '')).length, 0), 0);
+
+  statsEl.textContent =
+    `${n} page${n === 1 ? '' : 's'} · ${sheets} sheet${sheets > 1 ? 's' : ''} · ${words.toLocaleString()} words`;
+}
+
+function updateManualUI() {
+  manualBanner.hidden = !state.manual;
+}
+
+const syncTextareaDebounced = debounce(() => {
+  if (document.activeElement === inText) return;
+  const txt = state.pages
+    .filter(p => p.type === 'content')
+    .map(p => (p.paras || []).join('\n\n'))
+    .filter(Boolean)
+    .join('\n\n');
+  inText.value = txt;
+  updateWorkflow();
+}, 450);
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function render() {
+  const isEdit = state.view === 'edit';
+  const f = fmt();
+  const cfg = getSheetConfig();
+
+  editToolbar.hidden = !isEdit || !state.pages.length;
+  viewHint.innerHTML = isEdit
+    ? 'Edit any page · <b>B</b> / <b>I</b> for bold &amp; italic · reorder with ↑ ↓'
+    : 'Print double‑sided · flip on <b>short edge</b> · fold &amp; staple';
+
+  stage.className = 'stage' + (isEdit ? ' edit-mode' : '');
+
+  if (!state.pages.length) {
+    stage.innerHTML = `<div class="empty-state">
+      <div class="icon">📄</div>
+      <div class="title">No pages yet</div>
+      <div class="sub">Paste your manuscript in the text box on the left, then click <b>Load Pages</b> to paginate it. You'll be able to edit each page individually.</div>
+    </div>`;
+    return;
+  }
+
+  if (isEdit) { renderEdit(); return; }
+
+  const w = stage.clientWidth || 760;
+  let out = '';
+
+  if (state.view === 'pages') {
+    const s = Math.min(0.72, Math.max(0.3, (w - 76) / 2 / (f.w * 96)));
+    out = state.pages.map((pg, i) =>
+      `<div class="cell">
+        <div class="caption">Page ${i + 1}${pg.type === 'cover' ? ' · cover' : pg.type === 'titlepage' ? ' · title' : pg.type === 'toc' ? ' · contents' : ''}</div>
+        <div class="frame" style="--w:${f.w}in;--h:${f.h}in;--s:${s}">${pageHTML(pg)}</div>
+      </div>`).join('');
+  } else {
+    const bookPages = paddedPages();
+    const n = bookPages.length;
+    const htmls = bookPages.map(pageHTML);
+    const s = Math.min(0.6, Math.max(0.2, (w - 76) / (cfg.sheetW * 96)));
+    const total = cfg.totalSheets(n);
+
+    for (let sh = 0; sh < total; sh++) {
+      const frontPgs = cfg.front(sh, n);
+      const backPgs  = cfg.back(sh, n);
+
+      const buildSheet = (pageList) => {
+        const cells = pageList.map(p => {
+          const inner = htmls[p - 1] || '<div class="page"></div>';
+          return `<div class="half">${inner}</div>`;
+        }).join('');
+        const cls = cfg.mode === '8up' ? 'sheet grid-2x2' : 'sheet';
+        return `<div class="${cls}">${cells}</div>`;
+      };
+
+      out += `<div class="sheet-block">
+        <div class="caption">Sheet ${sh + 1} · Front</div>
+        <div class="frame" style="--w:${cfg.sheetW}in;--h:${cfg.sheetH}in;--s:${s}">
+          ${buildSheet(frontPgs)}
         </div>
-    `;
-
-    const result =
-        await supabaseClient
-            .from("news")
-            .select("*")
-            .order("created_at", {
-                ascending: false
-            });
-
-    const data = result.data;
-    const error = result.error;
-
-
-    if (error) {
-
-        console.error(error);
-
-        list.innerHTML = `
-            <div class="empty">
-                Erreur : ${escapeHTML(error.message)}
-            </div>
-        `;
-
-        return;
+        <div class="caption">Sheet ${sh + 1} · Back</div>
+        <div class="frame" style="--w:${cfg.sheetW}in;--h:${cfg.sheetH}in;--s:${s}">
+          ${buildSheet(backPgs)}
+        </div>
+      </div>`;
     }
+  }
+  stage.innerHTML = out;
+}
 
+/* =========================================================
+   EDIT VIEW
+   ========================================================= */
+function wordCount(paras) {
+  return (paras || []).reduce((n, p) =>
+    n + parseStyled(p.replace(/^__(DROP|CHAPTER)__/, '')).length, 0);
+}
 
-    if (!data || data.length === 0) {
+function isChapterPage(pg) {
+  return pg.paras && pg.paras.some(p => p.startsWith('__CHAPTER__'));
+}
 
-        list.innerHTML = `
-            <div class="empty">
-                Aucune nouvelle publiée.
-            </div>
-        `;
+function editCard(pg, i, s) {
+  const f = fmt();
+  const isCover    = pg.type === 'cover';
+  const isTitle    = pg.type === 'titlepage';
+  const isToc      = pg.type === 'toc';
+  const isContent  = pg.type === 'content';
+  const wc  = isContent ? wordCount(pg.paras) : 0;
+  const over = isContent ? parasOverflow(pg.paras) : false;
+  const chapter = isContent && isChapterPage(pg);
 
-        return;
-    }
+  let editor = '';
+  if (isCover) {
+    editor = `<div class="eedit">
+      <label>Title</label>
+      <input data-cover="title" value="${esc(pg.title || '')}" placeholder="Book title">
+      <label>Subtitle</label>
+      <input data-cover="subtitle" value="${esc(pg.subtitle || '')}" placeholder="Optional">
+      <label>Author</label>
+      <input data-cover="author" value="${esc(pg.author || '')}" placeholder="Optional">
+      <div class="edit-note">Cover colour, frame and font live in the left panel.</div>
+    </div>`;
+  } else if (isTitle) {
+    editor = `<div class="eedit">
+      <label>Title</label>
+      <input data-cover="title" value="${esc(pg.title || '')}" placeholder="Book title">
+      <label>Subtitle</label>
+      <input data-cover="subtitle" value="${esc(pg.subtitle || '')}" placeholder="Optional">
+      <label>Author</label>
+      <input data-cover="author" value="${esc(pg.author || '')}" placeholder="Optional">
+      <div class="edit-note">Auto-generated title page.</div>
+    </div>`;
+  } else if (isToc) {
+    editor = `<div class="eedit">
+      <label>Table of contents</label>
+      <div class="edit-note">${(pg.entries || []).length} entries · auto-generated by the AI arranger.</div>
+    </div>`;
+  } else if (isContent) {
+    const previewText = (pg.paras || []).map(p => {
+      if (p.startsWith('__CHAPTER__')) {
+        const rest = p.slice('__CHAPTER__'.length);
+        const [label, title] = rest.split('§');
+        return (label ? label + '\n' : '') + (title || '');
+      }
+      return p.replace(/^__DROP__/, '');
+    }).join('\n\n');
 
+    editor = `<div class="eedit">
+      <label>Page text <span class="opt">— blank line between paragraphs</span></label>
+      <div class="fmt-row">
+        <button class="fmt-btn" type="button" data-fmt="b" title="Bold (Ctrl+B)"><b>B</b></button>
+        <button class="fmt-btn" type="button" data-fmt="i" title="Italic (Ctrl+I)"><i>I</i></button>
+        <span class="fmt-hint">wrap selection · **bold** *italic*</span>
+      </div>
+      <textarea data-i="${i}" spellcheck="false"
+        placeholder="Type this page's words…">${esc(previewText)}</textarea>
+    </div>`;
+  } else {
+    editor = `<div class="eedit">
+      <div class="edit-note">Blank page — nothing to edit here.</div>
+    </div>`;
+  }
 
-    list.innerHTML = "";
+  const kind = isCover ? ' · cover'
+             : isTitle ? ' · title'
+             : isToc ? ' · contents'
+             : chapter ? ' · chapter opener'
+             : isContent ? ' · text'
+             : ' · blank';
 
+  return `<div class="ecard${over ? ' overflow' : ''}${chapter ? ' chapter' : ''}" data-i="${i}">
+    <div class="ehead">
+      <span class="etitle">Page ${i + 1}${kind}${chapter ? '<span class="chapter-tag">✦ AI</span>' : ''}</span>
+      ${isContent ? `<span class="emeta">${wc} words</span>` : ''}
+      ${over ? `<span class="emeta warn">overflows</span>` : ''}
+      <div class="eactions">
+        <button data-act="up"   title="Move page up"   ${i === 0 ? 'disabled' : ''}>↑</button>
+        <button data-act="down" title="Move page down" ${i === state.pages.length - 1 ? 'disabled' : ''}>↓</button>
+        <button data-act="ins-text"  title="Insert text page after">+¶</button>
+        <button data-act="ins-blank" title="Insert blank page after">+▢</button>
+        <button data-act="del" class="danger" title="Delete page"
+          ${state.pages.length <= 1 ? 'disabled' : ''}>✕</button>
+      </div>
+    </div>
+    <div class="ebody">
+      <div class="epreview">
+        <div class="frame" style="--w:${f.w}in;--h:${f.h}in;--s:${s}">${pageHTML(pg)}</div>
+      </div>
+      ${editor}
+    </div>
+  </div>`;
+}
 
-    data.forEach(item => {
+function renderEdit() {
+  const w = stage.clientWidth || 900;
+  const s = w > 1000 ? 0.6 : w > 760 ? 0.5 : 0.42;
+  stage.innerHTML = state.pages.map((pg, i) => editCard(pg, i, s)).join('');
+  updateEditNote();
+}
 
-        let media = "";
+function updateEditNote() {
+  const over = state.pages.filter(p =>
+    p.type === 'content' && parasOverflow(p.paras)).length;
+  const n = state.pages.length;
+  const cfg = getSheetConfig();
+  const padded = cfg.paddedLength(n);
 
+  if (over) {
+    editNote.textContent =
+      `${over} page${over > 1 ? 's' : ''} overflow — trim the text or they'll be clipped in print.`;
+    editNote.className = 'edit-note warn';
+  } else {
+    editNote.textContent =
+      `${n} page${n === 1 ? '' : 's'} · padded to ${padded} for printing`;
+    editNote.className = 'edit-note';
+  }
+}
 
-        /* PHOTO */
+function refreshCard(i) {
+  const card = stage.querySelector(`.ecard[data-i="${i}"]`);
+  if (!card) return;
+  const pg = state.pages[i];
+  if (!pg) return;
 
-        if (item.image) {
+  const frame = card.querySelector('.epreview .frame');
+  if (frame) frame.innerHTML = pageHTML(pg);
 
-            media += `
-                <img
-                    src="${escapeAttribute(item.image)}"
-                    alt="Photo de la nouvelle"
-                >
-            `;
-        }
+  const over = pg.type === 'content' ? parasOverflow(pg.paras) : false;
+  card.classList.toggle('overflow', over);
 
+  if (pg.type === 'content') {
+    const meta = card.querySelector('.emeta');
+    if (meta) meta.textContent = `${wordCount(pg.paras)} words`;
+  }
 
-        /* VIDEO */
+  let warn = card.querySelector('.emeta.warn');
+  const head = card.querySelector('.ehead');
+  if (over && !warn) {
+    warn = document.createElement('span');
+    warn.className = 'emeta warn';
+    warn.textContent = 'overflows';
+    head.insertBefore(warn, card.querySelector('.eactions'));
+  } else if (!over && warn) {
+    warn.remove();
+  }
 
-        if (item.video) {
+  updateEditNote();
+  updateStats();
+}
 
-            media += `
-                <video
-                    controls
-                    playsinline
-                    preload="metadata"
-                >
-                    <source
-                        src="${escapeAttribute(item.video)}"
-                        type="video/mp4"
-                    >
+/* =========================================================
+   EDIT VIEW EVENTS
+   ========================================================= */
+stage.addEventListener('input', e => {
+  const card = e.target.closest('.ecard');
+  if (!card) return;
+  const i = +card.dataset.i;
 
-                    Votre navigateur ne supporte pas la vidéo.
-                </video>
-            `;
-        }
+  if (e.target.matches('textarea[data-i]')) {
+    const pg = state.pages[i];
+    if (!pg || pg.type !== 'content') return;
 
+    const specials = (pg.paras || []).filter(p => p.startsWith('__'));
+    const edited = parseParas(e.target.value);
+    pg.paras = specials.length ? [...specials, ...edited] : edited;
 
-        const date =
-            item.created_at
-            ? new Date(
-                item.created_at
-              ).toLocaleString("fr-FR")
-            : "";
+    state.manual = true;
+    updateManualUI();
+    refreshCard(i);
+    syncTextareaDebounced();
+    return;
+  }
 
-
-        const articleText =
-            item.content || item.text || "";
-
-
-        list.innerHTML += `
-
-            <article class="news-card">
-
-                ${media}
-
-                <div class="news-content">
-
-                    <span class="category">
-                        ${escapeHTML(
-                            item.category || ""
-                        )}
-                    </span>
-
-                    <h3 class="news-title">
-                        ${escapeHTML(
-                            item.title || ""
-                        )}
-                    </h3>
-
-                    <div class="date">
-                        ${escapeHTML(date)}
-                    </div>
-
-                    <p class="news-text">
-                        ${escapeHTML(articleText)}
-                    </p>
-
-                    <button
-                        class="delete"
-                        onclick="deleteNews('${item.id}')"
-                    >
-                        Supprimer
-                    </button>
-
-                </div>
-
-            </article>
-        `;
+  const field = e.target.dataset.cover;
+  if (field) {
+    const val = e.target.value;
+    state.pages.forEach(pg => {
+      if (pg.type === 'cover' || pg.type === 'titlepage') {
+        if (field === 'title')    pg.title    = val.trim() || 'Untitled';
+        if (field === 'subtitle') pg.subtitle = val.trim();
+        if (field === 'author')   pg.author   = val.trim();
+      }
     });
-}
+    if (field === 'title')    inTitle.value    = val;
+    if (field === 'subtitle') inSubtitle.value = val;
+    if (field === 'author')   inAuthor.value   = val;
 
+    state.manual = true;
+    updateManualUI();
 
-/* =====================================================
-   PUBLIER UNE NOUVELLE
-   ===================================================== */
-
-async function publishNews() {
-
-    const title =
-        document.getElementById("title")
-        .value
-        .trim();
-
-    const category =
-        document.getElementById("category")
-        .value;
-
-    const text =
-        document.getElementById("text")
-        .value
-        .trim();
-
-    const imageFile =
-        document.getElementById("image")
-        .files[0];
-
-    const videoFile =
-        document.getElementById("video")
-        .files[0];
-
-    const button =
-        document.getElementById("publishButton");
-
-    const status =
-        document.getElementById("status");
-
-
-    if (!title || !text) {
-
-        alert(
-            "Veuillez entrer un titre et le texte."
-        );
-
-        return;
-    }
-
-
-    button.disabled = true;
-
-    button.textContent =
-        "PUBLICATION...";
-
-    status.textContent =
-        "Préparation des fichiers...";
-
-
-    try {
-
-        let imageURL = null;
-        let videoURL = null;
-
-
-        /* =================================================
-           UPLOAD PHOTO
-           ================================================= */
-
-        if (imageFile) {
-
-            status.textContent =
-                "Envoi de la photo...";
-
-
-            imageURL =
-                await uploadFile(imageFile);
+    state.pages.forEach((pg, idx) => {
+      if (pg.type === 'cover' || pg.type === 'titlepage') {
+        const c = stage.querySelector(`.ecard[data-i="${idx}"]`);
+        if (c) {
+          const frame = c.querySelector('.epreview .frame');
+          if (frame) frame.innerHTML = pageHTML(pg);
         }
+      }
+    });
+  }
+});
 
+stage.addEventListener('click', e => {
+  const btn = e.target.closest('.eactions button');
+  if (!btn || btn.disabled) return;
 
-        /* =================================================
-           UPLOAD VIDEO
-           ================================================= */
+  const card = btn.closest('.ecard');
+  const i = +card.dataset.i;
+  const act = btn.dataset.act;
+  if (!state.pages[i]) return;
 
-        if (videoFile) {
+  if (act === 'up' && i > 0) {
+    [state.pages[i - 1], state.pages[i]] = [state.pages[i], state.pages[i - 1]];
+  } else if (act === 'down' && i < state.pages.length - 1) {
+    [state.pages[i + 1], state.pages[i]] = [state.pages[i], state.pages[i + 1]];
+  } else if (act === 'del') {
+    if (state.pages.length <= 1) return;
+    state.pages.splice(i, 1);
+  } else if (act === 'ins-text') {
+    state.pages.splice(i + 1, 0, { type: 'content', paras: [], folio: 0 });
+  } else if (act === 'ins-blank') {
+    state.pages.splice(i + 1, 0, { type: 'blank' });
+  } else {
+    return;
+  }
 
-            status.textContent =
-                "Envoi de la vidéo...";
+  state.manual = true;
+  updateManualUI();
+  renumber();
+  renderEdit();
+  updateStats();
+  syncTextareaDebounced();
+});
 
+/* =========================================================
+   REFLOW / ADD
+   ========================================================= */
+function reflowFromText() {
+  state.manual = false;
+  state.aiArranged = false;
+  updateManualUI();
+  updateWorkflow();
+  loadPages();
+}
 
-            videoURL =
-                await uploadFile(videoFile);
+$('#btnReflow').addEventListener('click', reflowFromText);
+$('#btnReflowPanel').addEventListener('click', reflowFromText);
+
+$('#btnAddPage').addEventListener('click', () => {
+  state.pages.push({ type: 'content', paras: [], folio: 0 });
+  state.manual = true;
+  updateManualUI();
+  renumber();
+  renderEdit();
+  updateStats();
+  syncTextareaDebounced();
+  requestAnimationFrame(() => {
+    const cards = stage.querySelectorAll('.ecard');
+    const last = cards[cards.length - 1];
+    if (last) last.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
+});
+
+$('#btnAddBlank').addEventListener('click', () => {
+  state.pages.push({ type: 'blank' });
+  state.manual = true;
+  updateManualUI();
+  renumber();
+  renderEdit();
+  updateStats();
+});
+
+/* =========================================================
+   FORMATTING BUTTONS
+   ========================================================= */
+document.addEventListener('mousedown', e => {
+  if (e.target.closest('.fmt-btn')) e.preventDefault();
+});
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.fmt-btn');
+  if (!btn) return;
+  e.preventDefault();
+
+  const card = btn.closest('.ecard');
+  let ta = null;
+  if (card) ta = card.querySelector('textarea');
+  else if (btn.dataset.target) ta = document.getElementById(btn.dataset.target);
+  if (!ta) return;
+
+  wrapSelection(ta, btn.dataset.fmt === 'b' ? '**' : '*');
+});
+
+document.addEventListener('keydown', e => {
+  if (!(e.ctrlKey || e.metaKey)) return;
+  const ta = e.target;
+  if (!ta || ta.tagName !== 'TEXTAREA') return;
+
+  const k = e.key.toLowerCase();
+  if (k !== 'b' && k !== 'i') return;
+
+  e.preventDefault();
+  wrapSelection(ta, k === 'b' ? '**' : '*');
+});
+
+/* =========================================================
+   AI CHAPTER ARRANGER
+   ========================================================= */
+const CHAPTER_PATTERNS = [
+  /^\s*chapter\s+([0-9]+|[ivxlcdm]+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred)\b[.:]?\s*(.*)$/i,
+  /^\s*part\s+([0-9]+|[ivxlcdm]+|one|two|three|four|five|six|seven|eight|nine|ten)\b[.:]?\s*(.*)$/i,
+  /^\s*(prologue|epilogue|foreword|preface|introduction|afterword|conclusion)\b[.:]?\s*(.*)$/i,
+  /^\s*([0-9]{1,3})\s*$/,
+  /^\s*#+\s+(.+)$/,
+];
+
+const SCENE_BREAK_PATTERNS = [
+  /^\s*\*\s*\*\s*\*\s*$/,
+  /^\s*#\s*#\s*#\s*$/,
+  /^\s*[-–—_]{3,}\s*$/,
+  /^\s*[◆◇❖✦✧∗⁂]\s*$/,
+  /^\s*\.\s*\.\s*\.\s*$/,
+];
+
+function detectChapter(line) {
+  const t = line.trim();
+  if (!t) return null;
+  for (const p of CHAPTER_PATTERNS) {
+    const m = t.match(p);
+    if (!m) continue;
+    if (p === CHAPTER_PATTERNS[4]) return { label: 'CHAPTER', title: m[1].trim(), raw: t };
+    const word = (m[1] || '').toString();
+    const rest = (m[2] || '').trim();
+    if (p === CHAPTER_PATTERNS[3]) {
+      if (t.length <= 4) return { label: 'CHAPTER', title: word, raw: t, bare: true };
+      continue;
+    }
+    if (p === CHAPTER_PATTERNS[2]) {
+      return { label: m[1].toUpperCase(), title: rest || '', raw: t, standalone: true };
+    }
+    if (p === CHAPTER_PATTERNS[1]) {
+      return { label: 'PART ' + word.toUpperCase(), title: rest, raw: t };
+    }
+    return { label: 'CHAPTER ' + word.toUpperCase(), title: rest, raw: t };
+  }
+  return null;
+}
+
+function isSceneBreak(line) {
+  const t = line.trim();
+  if (!t) return false;
+  return SCENE_BREAK_PATTERNS.some(p => p.test(t));
+}
+
+function plainWords(line) {
+  return line.replace(/\*\*/g, '').replace(/\*/g, '')
+    .split(/\s+/).filter(Boolean).length;
+}
+
+function looksLikeTitle(line) {
+  const t = line.trim();
+  if (!t || t.length > 60) return false;
+  if (plainWords(t) > 9) return false;
+  if (/[.!?;:]$/.test(t) && !/^["']/.test(t)) return false;
+  if (/^["']/.test(t)) return false;
+  if (/[,]/.test(t) && plainWords(t) > 5) return false;
+  return true;
+}
+
+function analyseManuscript(text) {
+  const rawLines = text.replace(/\r\n?/g, '\n').split('\n');
+  const chapters = [];
+  let current = null;
+
+  const pushChapter = (ch) => {
+    if (current) chapters.push(current);
+    current = ch;
+  };
+
+  for (let i = 0; i < rawLines.length; i++) {
+    const line = rawLines[i];
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    if (aiSceneBreaks.checked && isSceneBreak(trimmed)) {
+      if (current) current.paras.push('* * *');
+      continue;
+    }
+
+    if (aiDetectCh.checked) {
+      const ch = detectChapter(trimmed);
+      if (ch) {
+        pushChapter({ label: ch.label, title: ch.title, paras: [], raw: ch.raw });
+        continue;
+      }
+    }
+
+    if (!current) current = { label: '', title: '', paras: [], raw: '' };
+    current.paras.push(trimmed);
+  }
+  if (current) chapters.push(current);
+
+  if (aiDetectCh.checked && chapters.length <= 1 && chapters[0] && chapters[0].paras.length > 8) {
+    const paras = chapters[0].paras;
+    const rebuilt = [];
+    let cur = { label: '', title: '', paras: [] };
+    for (const p of paras) {
+      if (looksLikeTitle(p) && cur.paras.length >= 2) {
+        if (cur.paras.length) rebuilt.push(cur);
+        cur = { label: 'CHAPTER ' + (rebuilt.length + 1), title: p, paras: [] };
+      } else {
+        cur.paras.push(p);
+      }
+    }
+    if (cur.paras.length) rebuilt.push(cur);
+    if (rebuilt.length > 1) return rebuilt;
+  }
+  return chapters;
+}
+
+function buildArrangedPages(chapters) {
+  const title    = inTitle.value.trim() || 'Untitled';
+  const subtitle = inSubtitle.value.trim();
+  const author   = inAuthor.value.trim();
+
+  const pages = [];
+
+  if (aiTitlePage.checked) {
+    pages.push({ type: 'titlepage', title, subtitle, author });
+  }
+
+  if (aiAddToc.checked && chapters.length) {
+    const tocEntries = [];
+    let folio = 1 + (aiTitlePage.checked ? 1 : 0) + 1;
+    for (const ch of chapters) {
+      tocEntries.push({ label: ch.label, title: ch.title, page: folio });
+      const words = ch.paras.reduce((n, p) => n + plainWords(p), 0);
+      const bodyPages = Math.max(1, Math.ceil(words / 420));
+      folio += bodyPages + 1;
+    }
+    pages.push({ type: 'toc', entries: tocEntries, title });
+  }
+
+  pages.push({ type: 'cover', title, subtitle, author });
+
+  chapters.forEach((ch, idx) => {
+    const blocks = [];
+    if (ch.label || ch.title) {
+      blocks.push(`__CHAPTER__${ch.label}§${ch.title}`);
+    }
+    ch.paras.forEach((p, i) => {
+      if (i === 0 && aiDropCaps.checked && !/^\*/.test(p)) {
+        blocks.push(`__DROP__${p}`);
+      } else {
+        blocks.push(p);
+      }
+    });
+    pages.push({
+      type: 'chapter',
+      chapterIndex: idx,
+      chapterLabel: ch.label,
+      chapterTitle: ch.title,
+      blocks,
+    });
+  });
+
+  return pages;
+}
+
+/* ---------------------------------------------------------
+   paginateChapter — fills pages completely.
+
+   Every chapter block is pushed into one continuous stream.
+   Chapters flow together unless the user has opted into
+   "Start each chapter on a new page", in which case a page
+   break is forced just before each __CHAPTER__ block.
+   --------------------------------------------------------- */
+function paginateChapter(chapterPages, forceChapterBreaks) {
+  const out = [];
+  measure.innerHTML = '';
+
+  // Flatten every chapter's blocks into a single ordered queue.
+  const allBlocks = [];
+  for (const ch of chapterPages) {
+    if (!ch.blocks || !ch.blocks.length) continue;
+    for (const b of ch.blocks) {
+      allBlocks.push({ text: b, chapter: ch });
+    }
+  }
+
+  let pageParas = [];
+  const queue = allBlocks.slice();
+
+  const pushPage = (item) => {
+    out.push({ paras: pageParas, chapter: item ? item.chapter : null });
+    pageParas = [];
+    measure.innerHTML = '';
+  };
+
+  while (queue.length) {
+    const item = queue.shift();
+    const isChapterHead = item.text.startsWith('__CHAPTER__');
+
+    // If forcing chapter breaks, start a new page before each chapter heading.
+    if (forceChapterBreaks && isChapterHead && pageParas.length > 0) {
+      pushPage(item);
+      queue.unshift(item);
+      continue;
+    }
+
+    const p = makeP(item.text);
+    measure.appendChild(p);
+
+    if (fits()) {
+      pageParas.push(item.text);
+      continue;
+    }
+
+    measure.removeChild(p);
+
+    // Chapter heads are atomic: if there's content, push page and retry on a fresh one.
+    if (isChapterHead && measure.children.length > 0) {
+      pushPage(item);
+      queue.unshift(item);
+      continue;
+    }
+
+    // If we have content on this page, finish the page and retry the item.
+    if (measure.children.length > 0) {
+      pushPage(item);
+      queue.unshift(item);
+      continue;
+    }
+
+    // Empty page and the item still doesn't fit — must split it.
+    const tokens = parseStyled(item.text.replace(/^__DROP__|^__CHAPTER__.*§/, ''));
+    const prefix = item.text.startsWith('__DROP__') ? '__DROP__' : '';
+
+    if (tokens.length <= 1) {
+      // Single word — can't split further; put it on this page anyway.
+      pageParas.push(item.text);
+      pushPage(item);
+      continue;
+    }
+
+    const n = maxWordsFitStyled(tokens);
+    pageParas.push(prefix + serializeStyled(tokens.slice(0, n)));
+    pushPage(item);
+    queue.unshift({ text: serializeStyled(tokens.slice(n)), chapter: item.chapter });
+  }
+
+  if (pageParas.length) out.push({ paras: pageParas, chapter: null });
+  return out;
+}
+
+async function runAiArrange() {
+  if (btnAiArrange.disabled) return;
+
+  const oldLabel = btnAiArrange.textContent;
+  btnAiArrange.disabled = true;
+  btnAiArrange.textContent = 'Thinking…';
+  aiProgress.hidden = false;
+  aiProgressBar.style.width = '0%';
+
+  const tick = (pct) => { aiProgressBar.style.width = pct + '%'; };
+  const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+  try {
+    tick(10); await wait(30);
+
+    const text = inText.value.trim();
+    if (!text) { alert('Paste or upload your manuscript first.'); return; }
+
+    tick(25); await wait(30);
+
+    const chapters = analyseManuscript(text);
+    tick(50); await wait(30);
+
+    if (!chapters.length) { alert('Could not find any text to arrange.'); return; }
+
+    const arranged = buildArrangedPages(chapters);
+    tick(70); await wait(30);
+
+    const chapterOnly = arranged.filter(p => p.type === 'chapter');
+    const paginatedChapters = paginateChapter(chapterOnly, aiBreakChapters.checked);
+    tick(90); await wait(30);
+
+    const finalPages = [];
+    arranged.filter(p => p.type !== 'chapter').forEach(p => {
+      finalPages.push({
+        type: p.type === 'titlepage' ? 'titlepage'
+            : p.type === 'toc' ? 'toc'
+            : p.type === 'cover' ? 'cover'
+            : 'blank',
+        title: p.title, subtitle: p.subtitle, author: p.author, entries: p.entries,
+      });
+    });
+
+    paginatedChapters.forEach((pg) => {
+      const isChapterOpener = pg.paras.some(p => p.startsWith('__CHAPTER__'));
+      finalPages.push({
+        type: 'content',
+        paras: pg.paras,
+        folio: 0,
+        chapterOpener: isChapterOpener,
+      });
+    });
+
+    if (!finalPages.some(p => p.type === 'cover')) {
+      finalPages.unshift({
+        type: 'cover',
+        title: inTitle.value.trim() || 'Untitled',
+        subtitle: inSubtitle.value.trim(),
+        author: inAuthor.value.trim(),
+      });
+    }
+
+    state.pages = finalPages;
+    state.manual = true;
+    state.loaded = true;
+    state.aiArranged = true;
+
+    renumber();
+    renderEdit();
+    updateStats();
+    updateManualUI();
+    updateWorkflow();
+
+    $$('.tab').forEach(t => t.classList.remove('active'));
+    const editTab = $$('.tab').find(t => t.dataset.view === 'edit');
+    if (editTab) editTab.classList.add('active');
+    state.view = 'edit';
+    render();
+
+    tick(100);
+    await wait(260);
+  } catch (err) {
+    console.error(err);
+    alert('Arrangement failed: ' + err.message);
+  } finally {
+    btnAiArrange.disabled = false;
+    btnAiArrange.textContent = oldLabel;
+    aiProgress.hidden = true;
+    aiProgressBar.style.width = '0%';
+  }
+}
+
+btnAiArrange.addEventListener('click', runAiArrange);
+
+/* =========================================================
+   BROWSER PRINT
+   ========================================================= */
+function browserPrint() {
+  const cfg = getSheetConfig();
+  const bookPages = paddedPages();
+  const htmls = bookPages.map(pageHTML);
+  const n = htmls.length;
+  if (!n) return;
+  let out = '';
+  const total = cfg.totalSheets(n);
+  for (let s = 0; s < total; s++) {
+    const cls = cfg.mode === '8up' ? 'sheet grid-2x2' : 'sheet';
+    const front = cfg.front(s, n).map(p => `<div class="half">${htmls[p - 1]}</div>`).join('');
+    const back  = cfg.back(s, n).map(p => `<div class="half">${htmls[p - 1]}</div>`).join('');
+    out += `<div class="${cls}">${front}</div>`;
+    out += `<div class="${cls}">${back}</div>`;
+  }
+  printArea.innerHTML = out;
+  requestAnimationFrame(() => setTimeout(() => window.print(), 60));
+}
+
+/* =========================================================
+   PDF UPLOAD
+   ========================================================= */
+if (typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+}
+
+function extractLines(items) {
+  const raw = [];
+  for (const it of items) {
+    if (!it.str) continue;
+    raw.push({ x: it.transform[4], y: it.transform[5], w: it.width || 0, s: it.str });
+  }
+  if (!raw.length) return [];
+  raw.sort((a, b) => (b.y - a.y) || (a.x - b.x));
+
+  const groups = [];
+  let cur = null;
+  for (const r of raw) {
+    if (cur && Math.abs(cur.y - r.y) < 2.4) cur.items.push(r);
+    else { cur = { y: r.y, items: [r] }; groups.push(cur); }
+  }
+
+  return groups.map(g => {
+    g.items.sort((a, b) => a.x - b.x);
+    let text = '';
+    for (let i = 0; i < g.items.length; i++) {
+      const it = g.items[i];
+      if (i > 0) {
+        const p = g.items[i - 1];
+        const gap = it.x - (p.x + p.w);
+        if (gap > 1.5 && !/\s$/.test(text)) text += ' ';
+      }
+      text += it.s;
+    }
+    return { y: g.y, text: text.replace(/\s+/g, ' ').trim() };
+  }).filter(l => l.text);
+}
+
+function joinLines(lines) {
+  let out = '';
+  for (const l of lines) {
+    if (!out) { out = l; continue; }
+    if (/[-\u2010\u2011]$/.test(out) && /^[a-z]/.test(l)) out = out.slice(0, -1) + l;
+    else out += ' ' + l;
+  }
+  return out;
+}
+
+function linesToParas(lines) {
+  if (!lines.length) return [];
+  const gaps = [];
+  for (let i = 1; i < lines.length; i++) gaps.push(lines[i - 1].y - lines[i].y);
+  const sorted = gaps.slice().sort((a, b) => a - b);
+  const median = sorted.length ? sorted[Math.floor(sorted.length / 2)] : 12;
+  const threshold = Math.max(median * 1.55, median + 3);
+
+  const paras = [];
+  let cur = [lines[0].text];
+  for (let i = 1; i < lines.length; i++) {
+    const gap = lines[i - 1].y - lines[i].y;
+    if (gap > threshold) { paras.push(joinLines(cur)); cur = [lines[i].text]; }
+    else cur.push(lines[i].text);
+  }
+  paras.push(joinLines(cur));
+  return paras.map(p => p.replace(/\s+/g, ' ').trim()).filter(Boolean);
+}
+
+async function loadPdf(file) {
+  if (typeof pdfjsLib === 'undefined') {
+    throw new Error('PDF reader library not available (are you offline?)');
+  }
+
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(buf) }).promise;
+
+  const paras = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    uploadStatus.textContent = `Reading page ${i} / ${pdf.numPages}…`;
+    if (i % 5 === 1) await new Promise(r => setTimeout(r, 0));
+    const page = await pdf.getPage(i);
+    const tc = await page.getTextContent();
+    paras.push(...linesToParas(extractLines(tc.items)));
+  }
+
+  const text = paras.join('\n\n');
+
+  try {
+    const md = await pdf.getMetadata();
+    const info = md && md.info;
+    if (info) {
+      const mt = (info.Title || '').trim();
+      const ma = (info.Author || '').trim();
+      if (mt && (!inTitle.value.trim() || inTitle.value.trim() === 'The Lighthouse Keeper')) {
+        inTitle.value = mt;
+      }
+      if (ma && (!inAuthor.value.trim() || inAuthor.value.trim() === 'A. Marlowe')) {
+        inAuthor.value = ma;
+      }
+    }
+  } catch (_) {}
+
+  if (!text.trim()) {
+    throw new Error('No selectable text found — this PDF may be a scan.');
+  }
+
+  inText.value = text;
+  uploadStatus.textContent =
+    `${file.name} · ${pdf.numPages} page${pdf.numPages > 1 ? 's' : ''}`;
+  uploadStatus.className = 'upload-status ok';
+
+  updateWorkflow();
+  loadPages();
+}
+
+async function handleFile(file) {
+  if (!file) return;
+  const name  = file.name || 'file';
+  const lower = name.toLowerCase();
+  const isPdf = lower.endsWith('.pdf') || file.type === 'application/pdf';
+
+  const oldLabel = btnUpload.textContent;
+  btnUpload.disabled = true;
+  btnUpload.textContent = isPdf ? 'Reading…' : 'Loading…';
+  uploadStatus.className = 'upload-status';
+  uploadStatus.textContent = name;
+
+  try {
+    if (isPdf) {
+      await loadPdf(file);
+    } else {
+      const text = await file.text();
+      inText.value = text.replace(/\r\n?/g, '\n').trim();
+      uploadStatus.textContent = name;
+      uploadStatus.className = 'upload-status ok';
+      updateWorkflow();
+      loadPages();
+    }
+  } catch (err) {
+    console.error(err);
+    uploadStatus.textContent = 'Could not read file';
+    uploadStatus.className = 'upload-status err';
+    alert('Could not read “' + name + '”:\n' + (err && err.message ? err.message : err));
+  } finally {
+    btnUpload.disabled = false;
+    btnUpload.textContent = oldLabel;
+  }
+}
+
+btnUpload.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', () => {
+  const f = fileInput.files && fileInput.files[0];
+  if (f) handleFile(f);
+  fileInput.value = '';
+});
+
+['dragenter', 'dragover'].forEach(ev =>
+  inText.addEventListener(ev, e => {
+    e.preventDefault();
+    inText.classList.add('dragover');
+  }));
+['dragleave', 'dragend'].forEach(ev =>
+  inText.addEventListener(ev, () => inText.classList.remove('dragover')));
+inText.addEventListener('drop', e => {
+  e.preventDefault();
+  inText.classList.remove('dragover');
+  const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) handleFile(f);
+});
+
+/* =========================================================
+   REAL PDF
+   ========================================================= */
+function hexToRgb(hex) {
+  const c = hex.replace('#', '');
+  return PDFLib.rgb(
+    parseInt(c.substr(0, 2), 16) / 255,
+    parseInt(c.substr(2, 2), 16) / 255,
+    parseInt(c.substr(4, 2), 16) / 255
+  );
+}
+
+function fontFor(fonts, key, bold, italic) {
+  const fam = fonts[key] || fonts.serif;
+  if (bold && italic) return fam.boldItalic || fam.bold;
+  if (bold) return fam.bold;
+  if (italic) return fam.italic;
+  return fam.reg;
+}
+
+function wrapText(text, font, size, maxWidth) {
+  const words = String(text).split(/\s+/).filter(Boolean);
+  if (!words.length) return [''];
+  const spaceW = font.widthOfTextAtSize(' ', size);
+  const lines = [];
+  let line = [], lineW = 0;
+  for (const w of words) {
+    const ww = font.widthOfTextAtSize(w, size);
+    const add = line.length ? spaceW + ww : ww;
+    if (lineW + add > maxWidth && line.length) {
+      lines.push(line.join(' '));
+      line = [w]; lineW = ww;
+    } else {
+      line.push(w); lineW += add;
+    }
+  }
+  if (line.length) lines.push(line.join(' '));
+  return lines;
+}
+
+function splitSpecial(text) {
+  if (text.startsWith('__CHAPTER__')) {
+    const rest = text.slice('__CHAPTER__'.length);
+    const [label, title] = rest.split('§');
+    return { kind: 'chapter', label: label || '', title: title || '' };
+  }
+  if (text.startsWith('__DROP__')) {
+    return { kind: 'drop', text: text.slice('__DROP__'.length) };
+  }
+  return { kind: 'text', text };
+}
+
+function layoutPage(paras, fonts, baseKey, size, contentW, contentH, lineH, paraGap, indent) {
+  const spaceW = (fonts[baseKey] || fonts.serif).reg.widthOfTextAtSize(' ', size);
+  const lines = [];
+  let y = 0;
+
+  for (const block of paras) {
+    const sp = splitSpecial(block);
+
+    if (sp.kind === 'chapter') {
+      const fam = fonts[baseKey] || fonts.serif;
+      if (y > 0) y += lineH * 0.6;
+
+      if (sp.label) {
+        const fReg = fam.reg;
+        const lw = fReg.widthOfTextAtSize(sp.label, size * 0.85);
+        lines.push({
+          special: 'chapter-label', text: sp.label, font: fReg, size: size * 0.85,
+          width: lw, indent: 0, last: true, yTop: y,
+          letterSpacing: size * 0.35, center: true,
+        });
+        y += size * 0.85 * 1.6;
+      }
+
+      if (sp.title) {
+        const fBold = fam.bold;
+        const titleSize = size * 1.7;
+        const titleLines = wrapText(sp.title, fBold, titleSize, contentW);
+        titleLines.forEach((tl, ti) => {
+          const tw = fBold.widthOfTextAtSize(tl, titleSize);
+          lines.push({
+            special: 'chapter-title', text: tl, font: fBold, size: titleSize,
+            width: tw, indent: 0, last: ti === titleLines.length - 1,
+            yTop: y, center: true,
+          });
+          y += titleSize * 1.25;
+        });
+      }
+
+      y += size * 0.5;
+      lines.push({ special: 'chapter-rule', yTop: y, ruleWidth: 72, center: true });
+      y += size * 1.4;
+      continue;
+    }
+
+    const tokens = parseStyled(sp.text);
+    if (!tokens.length) continue;
+
+    let first = true;
+    let cur = [];
+    let curW = 0;
+    let dropCap = (sp.kind === 'drop');
+
+    const flushLine = (isLast) => {
+      lines.push({
+        words: cur,
+        indent: first ? indent : 0,
+        last: isLast,
+        yTop: y,
+        dropCap: dropCap && first,
+      });
+      y += lineH;
+      cur = []; curW = 0;
+      first = false;
+      dropCap = false;
+    };
+
+    for (const tk of tokens) {
+      const f  = fontFor(fonts, baseKey, tk.b, tk.i);
+      const ww = f.widthOfTextAtSize(tk.w, size);
+      const avail = (first && cur.length === 0) ? contentW - indent : contentW;
+      const add = cur.length ? spaceW + ww : ww;
+
+      if (curW + add > avail && cur.length) flushLine(false);
+
+      cur.push({ w: tk.w, b: tk.b, i: tk.i, width: ww });
+      curW += cur.length === 1 ? ww : spaceW + ww;
+    }
+    if (cur.length) flushLine(true);
+    y += paraGap;
+  }
+
+  const used = Math.max(0, y - paraGap);
+  return { lines, height: used, overflows: used > contentH + 1 };
+}
+
+function drawStyledLine(page, line, x, y, fonts, baseKey, size, color, contentW, justify) {
+  if (line.special === 'chapter-rule') {
+    const rw = line.ruleWidth || 72;
+    const pageCenter = x + contentW / 2;
+    page.drawLine({
+      start: { x: pageCenter - rw / 2, y: y + size * 0.4 },
+      end:   { x: pageCenter + rw / 2, y: y + size * 0.4 },
+      thickness: 1, color, opacity: 0.4,
+    });
+    return;
+  }
+  if (line.special === 'chapter-label' || line.special === 'chapter-title') {
+    const chars = [...line.text];
+    let tw = 0;
+    for (let i = 0; i < chars.length; i++) {
+      tw += line.font.widthOfTextAtSize(chars[i], line.size);
+      if (line.letterSpacing && i < chars.length - 1) tw += line.letterSpacing;
+    }
+    let cx = x + (contentW - tw) / 2;
+    for (let i = 0; i < chars.length; i++) {
+      page.drawText(chars[i], { x: cx, y, size: line.size, font: line.font, color });
+      cx += line.font.widthOfTextAtSize(chars[i], line.size) + (line.letterSpacing || 0);
+    }
+    return;
+  }
+
+  const spaceW = (fonts[baseKey] || fonts.serif).reg.widthOfTextAtSize(' ', size);
+  const startX = x + (line.indent || 0);
+  const avail  = contentW - (line.indent || 0);
+
+  const words = line.words;
+  if (!words || !words.length) return;
+
+  let drawWords = words;
+  let dropChar = null;
+  if (line.dropCap && words.length) {
+    const firstWord = words[0].w;
+    dropChar = firstWord.charAt(0);
+    const rest = firstWord.slice(1);
+    drawWords = words.slice();
+    if (rest) drawWords[0] = { ...drawWords[0], w: rest };
+    else drawWords = drawWords.slice(1);
+  }
+
+  const wordsW = drawWords.reduce((s, w) => s + w.width, 0);
+  const gaps   = drawWords.length - 1;
+  const extra  = (justify && gaps > 0) ? (avail - wordsW) / gaps : spaceW;
+
+  let cx = startX;
+  if (dropChar) {
+    const fDrop = (fonts[baseKey] || fonts.serif).bold;
+    const dropSize = size * 3.1;
+    page.drawText(dropChar, { x: cx, y: y - size * 0.1, size: dropSize, font: fDrop, color });
+    cx += fDrop.widthOfTextAtSize(dropChar, dropSize) * 0.72;
+  }
+
+  for (let i = 0; i < drawWords.length; i++) {
+    const w = drawWords[i];
+    const f = fontFor(fonts, baseKey, w.b, w.i);
+    page.drawText(w.w, { x: cx, y, size, font: f, color });
+    cx += w.width + (i < drawWords.length - 1 ? extra : 0);
+  }
+}
+
+function drawCoverOnSheet(page, offsetX, offsetY, meta, fonts, pageW, pageH) {
+  const bg = hexToRgb(state.cover);
+  page.drawRectangle({ x: offsetX, y: offsetY, width: pageW, height: pageH, color: bg });
+
+  const fgHex = state.coverTextColor === 'auto' ? readableOn(state.cover) : state.coverTextColor;
+  const fg = hexToRgb(fgHex);
+
+  if (state.coverFrame !== 'none') {
+    const inset = 0.35 * 72;
+    const fx = offsetX + inset, fy = offsetY + inset;
+    const fw = pageW - 2 * inset, fh = pageH - 2 * inset;
+    const thick = state.coverFrame === 'thick' ? 3 : 1;
+    page.drawRectangle({
+      x: fx, y: fy, width: fw, height: fh,
+      borderColor: fg, borderWidth: thick, borderOpacity: 0.7,
+    });
+    if (state.coverFrame === 'double') {
+      const g = 6;
+      page.drawRectangle({
+        x: fx + g, y: fy + g, width: fw - 2 * g, height: fh - 2 * g,
+        borderColor: fg, borderWidth: 1, borderOpacity: 0.7,
+      });
+    }
+  }
+
+  const fam    = fonts[state.coverFont] || fonts.serif;
+  const fTitle = fam.bold;
+  const fReg   = fam.reg;
+  const fItal  = fam.italic;
+
+  const titleSize = pageW < 5 * 72 ? 22 : 27;
+  const subSize   = pageW < 5 * 72 ? 11 : 13;
+  const authSize  = pageW < 5 * 72 ? 9.5 : 11;
+
+  const maxTextW = pageW - 1.4 * 72;
+  const items = [];
+
+  const titleLines = wrapText(meta.title, fTitle, titleSize, maxTextW);
+  const titleLH = titleSize * 1.18;
+  titleLines.forEach(l => items.push({ kind: 'text', text: l, font: fTitle, size: titleSize, lineH: titleLH }));
+
+  if (meta.subtitle) {
+    const subLines = wrapText(meta.subtitle, fItal, subSize, maxTextW);
+    subLines.forEach((l, i) => items.push({
+      kind: 'text', text: l, font: fItal, size: subSize, lineH: subSize * 1.3,
+      gapAbove: i === 0 ? 10 : 0,
+    }));
+  }
+
+  items.push({ kind: 'rule', gapAbove: 22, gapBelow: 22 });
+
+  if (meta.author) {
+    items.push({
+      kind: 'text', text: meta.author.toUpperCase(),
+      font: fReg, size: authSize, lineH: authSize * 1.2, letterSpacing: 2,
+    });
+  }
+
+  let totalH = 0;
+  for (const it of items) {
+    if (it.gapAbove) totalH += it.gapAbove;
+    totalH += it.kind === 'rule' ? 1.5 : it.lineH;
+    if (it.gapBelow) totalH += it.gapBelow;
+  }
+
+  const topMargin = 0.8 * 72;
+  let yTop;
+  if (state.coverLayout === 'top')         yTop = offsetY + pageH - topMargin;
+  else if (state.coverLayout === 'bottom') yTop = offsetY + topMargin + totalH;
+  else                                     yTop = offsetY + (pageH + totalH) / 2;
+
+  let cursor = yTop;
+  for (const it of items) {
+    if (it.gapAbove) cursor -= it.gapAbove;
+    if (it.kind === 'rule') {
+      const rw = 72;
+      page.drawLine({
+        start: { x: offsetX + pageW / 2 - rw / 2, y: cursor - 0.75 },
+        end:   { x: offsetX + pageW / 2 + rw / 2, y: cursor - 0.75 },
+        thickness: 1.5, color: fg, opacity: 0.55,
+      });
+      cursor -= 1.5;
+    } else {
+      const baseline = cursor - it.size * 0.85;
+      if (it.letterSpacing) {
+        const chars = [...it.text];
+        let tw = 0;
+        for (let i = 0; i < chars.length; i++) {
+          tw += it.font.widthOfTextAtSize(chars[i], it.size);
+          if (i < chars.length - 1) tw += it.letterSpacing;
         }
-
-
-        /* =================================================
-           ENREGISTRER LA NOUVELLE
-           ================================================= */
-
-        status.textContent =
-            "Enregistrement de la nouvelle...";
-
-
-        const result =
-            await supabaseClient
-                .from("news")
-                .insert([
-                    {
-                        title: title,
-
-                        category: category,
-
-                        content: text,
-
-                        image: imageURL,
-
-                        video: videoURL
-                    }
-                ]);
-
-
-        if (result.error) {
-
-            throw result.error;
+        let cx = offsetX + (pageW - tw) / 2;
+        for (let i = 0; i < chars.length; i++) {
+          page.drawText(chars[i], { x: cx, y: baseline, size: it.size, font: it.font, color: fg });
+          cx += it.font.widthOfTextAtSize(chars[i], it.size) + it.letterSpacing;
         }
-
-
-        /* NETTOYER */
-
-        document.getElementById("title")
-            .value = "";
-
-        document.getElementById("text")
-            .value = "";
-
-        document.getElementById("image")
-            .value = "";
-
-        document.getElementById("video")
-            .value = "";
-
-
-        status.textContent =
-            "Publication réussie !";
-
-
-        alert(
-            "Nouvelle publiée avec succès !"
-        );
-
-
-        displayNews();
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        status.textContent =
-            "Erreur de publication.";
-
-        alert(
-            "Erreur : " + error.message
-        );
-
-
-    } finally {
-
-        button.disabled = false;
-
-        button.textContent =
-            "PUBLIER LA NOUVELLE";
+      } else {
+        const tw = it.font.widthOfTextAtSize(it.text, it.size);
+        page.drawText(it.text, {
+          x: offsetX + (pageW - tw) / 2,
+          y: baseline, size: it.size, font: it.font, color: fg,
+        });
+      }
+      cursor -= it.lineH;
     }
+    if (it.gapBelow) cursor -= it.gapBelow;
+  }
 }
 
+function drawTitlePageOnSheet(page, offsetX, offsetY, meta, fonts, pageW, pageH) {
+  const { rgb } = PDFLib;
+  page.drawRectangle({ x: offsetX, y: offsetY, width: pageW, height: pageH, color: rgb(1,1,1) });
 
-/* =====================================================
-   ENVOYER UN FICHIER DANS SUPABASE STORAGE
-   ===================================================== */
+  const fam = fonts.serif;
+  const black = rgb(0,0,0);
+  const maxTextW = pageW - 1.4 * 72;
 
-async function uploadFile(file) {
+  const titleSize = pageW < 5 * 72 ? 16 : 20;
+  const subSize   = pageW < 5 * 72 ? 9.5 : 11;
+  const authSize  = pageW < 5 * 72 ? 9 : 10;
 
-    /*
-      Création d'un nom unique.
-    */
+  const titleLines = wrapText(meta.title, fam.bold, titleSize, maxTextW);
+  const subLines = meta.subtitle ? wrapText(meta.subtitle, fam.italic, subSize, maxTextW) : [];
+  const titleLH = titleSize * 1.25;
+  const subLH = subSize * 1.4;
 
-    const extension =
-        file.name
-            .split(".")
-            .pop()
-            .toLowerCase();
+  const blockH = titleLines.length * titleLH +
+    (subLines.length ? 8 + subLines.length * subLH : 0) +
+    40 + (meta.author ? 22 : 0);
 
+  let cursor = offsetY + (pageH + blockH) / 2;
 
-    const fileName =
-        Date.now()
-        + "-"
-        + Math.random()
-            .toString(36)
-            .substring(2)
-        + "."
-        + extension;
+  for (const l of titleLines) {
+    const tw = fam.bold.widthOfTextAtSize(l, titleSize);
+    page.drawText(l, {
+      x: offsetX + (pageW - tw) / 2,
+      y: cursor - titleSize * 0.85, size: titleSize, font: fam.bold, color: black,
+    });
+    cursor -= titleLH;
+  }
+  if (subLines.length) {
+    cursor -= 8;
+    for (const l of subLines) {
+      const tw = fam.italic.widthOfTextAtSize(l, subSize);
+      page.drawText(l, {
+        x: offsetX + (pageW - tw) / 2,
+        y: cursor - subSize * 0.85, size: subSize, font: fam.italic, color: black,
+      });
+      cursor -= subLH;
+    }
+  }
+  cursor -= 40;
+  page.drawLine({
+    start: { x: offsetX + pageW / 2 - 36, y: cursor + 10 },
+    end:   { x: offsetX + pageW / 2 + 36, y: cursor + 10 },
+    thickness: 1, color: black, opacity: 0.4,
+  });
+  if (meta.author) {
+    const aTxt = meta.author.toUpperCase();
+    const tw = fam.reg.widthOfTextAtSize(aTxt, authSize);
+    page.drawText(aTxt, {
+      x: offsetX + (pageW - tw) / 2,
+      y: cursor - 12, size: authSize, font: fam.reg, color: black,
+    });
+  }
+}
 
+function drawTocOnSheet(page, offsetX, offsetY, data, fonts, pageW, pageH) {
+  const { rgb } = PDFLib;
+  page.drawRectangle({ x: offsetX, y: offsetY, width: pageW, height: pageH, color: rgb(1,1,1) });
 
-    const filePath =
-        fileName;
+  const fam = fonts.serif;
+  const black = rgb(0,0,0);
+  const mL = 0.7 * 72, mT = 1 * 72, mR = 0.7 * 72;
+  const contentW = pageW - mL - mR;
+  const x = offsetX + mL;
 
+  const headText = 'CONTENTS';
+  const fHead = fam.bold;
+  const headSize = pageW < 5 * 72 ? 12 : 14;
+  const hw = fHead.widthOfTextAtSize(headText, headSize);
+  page.drawText(headText, {
+    x: offsetX + (pageW - hw) / 2,
+    y: offsetY + pageH - mT, size: headSize, font: fHead, color: black,
+  });
 
-    const result =
-        await supabaseClient
-            .storage
-            .from(BUCKET_NAME)
-            .upload(
-                filePath,
-                file,
-                {
-                    cacheControl: "3600",
-                    upsert: false
-                }
-            );
+  let y = offsetY + pageH - mT - 34;
+  const entries = data.entries || [];
+  const size = pageW < 5 * 72 ? 9 : 10;
 
+  for (const e of entries) {
+    if (y < offsetY + 0.7 * 72) break;
+    const label = [e.label, e.title].filter(Boolean).join(' · ') || '—';
+    const fReg = fam.reg;
+    const lw = fReg.widthOfTextAtSize(label, size);
+    page.drawText(label, { x, y, size, font: fReg, color: black });
 
-    if (result.error) {
+    const numStr = String(e.page || '');
+    const nw = fReg.widthOfTextAtSize(numStr, size);
+    page.drawText(numStr, { x: x + contentW - nw, y, size, font: fReg, color: black });
 
-        throw result.error;
+    const dotsStart = x + lw + 6;
+    const dotsEnd = x + contentW - nw - 6;
+    if (dotsEnd > dotsStart) {
+      const dotW = fReg.widthOfTextAtSize('.', size);
+      const gap = dotW * 1.8;
+      let dx = dotsStart;
+      const dy = y + size * 0.15;
+      while (dx < dotsEnd) {
+        page.drawText('.', { x: dx, y: dy, size, font: fReg, color: black, opacity: 0.45 });
+        dx += gap;
+      }
+    }
+    y -= size * 1.9;
+  }
+}
+
+function drawBookPage(page, offsetX, offsetY, data, fonts, meta, geom) {
+  const { rgb } = PDFLib;
+  const { pageW, pageH, mT, mL, bodyFontKey, bodySize, lineH, paraGap, indent, contentW, contentH } = geom;
+
+  page.drawRectangle({ x: offsetX, y: offsetY, width: pageW, height: pageH, color: rgb(1, 1, 1) });
+
+  if (!data || data.type === 'blank' || data.type === 'pad') return;
+
+  if (data.type === 'cover') { drawCoverOnSheet(page, offsetX, offsetY, meta, fonts, pageW, pageH); return; }
+  if (data.type === 'titlepage') { drawTitlePageOnSheet(page, offsetX, offsetY, meta, fonts, pageW, pageH); return; }
+  if (data.type === 'toc') { drawTocOnSheet(page, offsetX, offsetY, data, fonts, pageW, pageH); return; }
+
+  const contentTop = offsetY + pageH - mT;
+  const contentX   = offsetX + mL;
+
+  const paras = sanitizeBlocks(data.paras || []);
+  const layout = layoutPage(
+    paras, fonts, bodyFontKey, bodySize,
+    contentW, contentH, lineH, paraGap, indent
+  );
+
+  if (layout.overflows) overflowPages++;
+
+  for (const line of layout.lines) {
+    if (line.yTop + lineH > contentH + 1) break;
+
+    if (line.special === 'chapter-label' || line.special === 'chapter-title') {
+      const baselineY = contentTop - line.yTop - line.size * 0.85;
+      drawStyledLine(page, line, contentX, baselineY, fonts, bodyFontKey, bodySize, rgb(0,0,0), contentW, false);
+      continue;
+    }
+    if (line.special === 'chapter-rule') {
+      const baselineY = contentTop - line.yTop - bodySize * 0.85;
+      drawStyledLine(page, line, contentX, baselineY, fonts, bodyFontKey, bodySize, rgb(0,0,0), contentW, false);
+      continue;
     }
 
+    const baselineY = contentTop - line.yTop - bodySize * 0.8;
+    drawStyledLine(
+      page, line, contentX, baselineY,
+      fonts, bodyFontKey, bodySize, rgb(0,0,0),
+      contentW, !line.last
+    );
+  }
 
-    /*
-      Obtenir l'URL publique.
-    */
-
-    const publicResult =
-        supabaseClient
-            .storage
-            .from(BUCKET_NAME)
-            .getPublicUrl(filePath);
-
-
-    return publicResult.data.publicUrl;
+  if (data.folio) {
+    const txt = String(data.folio);
+    const fReg = (fonts[bodyFontKey] || fonts.serif).reg;
+    const w = fReg.widthOfTextAtSize(txt, 9);
+    page.drawText(txt, {
+      x: offsetX + (pageW - w) / 2,
+      y: offsetY + 0.4 * 72,
+      size: 9, font: fReg, color: rgb(0.33, 0.33, 0.33),
+    });
+  }
 }
 
+let overflowPages = 0;
 
-/* =====================================================
-   SUPPRIMER UNE NOUVELLE
-   ===================================================== */
+async function doPdf() {
+  const btn = $('#btnPdf');
+  if (btn.disabled) return;
 
-async function deleteNews(id) {
+  if (!state.pages.length) {
+    alert('Load pages first — paste your text and click "Load Pages".');
+    return;
+  }
 
-    if (
-        !confirm(
-            "Voulez-vous supprimer cette nouvelle ?"
-        )
-    ) {
-        return;
+  if (typeof PDFLib === 'undefined') {
+    alert('PDF library not available (offline?). Falling back to browser print.');
+    browserPrint();
+    return;
+  }
+
+  const oldLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Generating…';
+
+  try {
+    const { PDFDocument, StandardFonts } = PDFLib;
+
+    const FAMILIES = {
+      serif: {
+        reg: StandardFonts.TimesRoman, bold: StandardFonts.TimesRomanBold,
+        italic: StandardFonts.TimesRomanItalic, boldItalic: StandardFonts.TimesRomanBoldItalic,
+      },
+      sans: {
+        reg: StandardFonts.Helvetica, bold: StandardFonts.HelveticaBold,
+        italic: StandardFonts.HelveticaOblique, boldItalic: StandardFonts.HelveticaBoldOblique,
+      },
+      mono: {
+        reg: StandardFonts.Courier, bold: StandardFonts.CourierBold,
+        italic: StandardFonts.CourierOblique, boldItalic: StandardFonts.CourierBoldOblique,
+      },
+    };
+
+    const doc = await PDFDocument.create();
+
+    const fonts = {};
+    for (const [key, fam] of Object.entries(FAMILIES)) {
+      fonts[key] = {
+        reg:        await doc.embedFont(fam.reg),
+        bold:       await doc.embedFont(fam.bold),
+        italic:     await doc.embedFont(fam.italic),
+        boldItalic: await doc.embedFont(fam.boldItalic),
+      };
     }
 
+    const meta = {
+      title:    sanitize(inTitle.value.trim() || 'Untitled'),
+      subtitle: sanitize(inSubtitle.value.trim()),
+      author:   sanitize(inAuthor.value.trim()),
+    };
+    doc.setTitle(meta.title);
+    if (meta.author) doc.setAuthor(meta.author);
 
-    const result =
-        await supabaseClient
-            .from("news")
-            .delete()
-            .eq("id", id);
+    const f = fmt();
+    const cfg = getSheetConfig();
+    const pageW  = f.w * 72,  pageH  = f.h * 72;
+    const sheetW = cfg.sheetW * 72, sheetH = cfg.sheetH * 72;
+    const mT = f.marginTop * 72, mB = f.marginBottom * 72;
+    const mL = f.marginLeft * 72, mR = f.marginRight * 72;
+    const contentW = pageW - mL - mR;
+    const contentH = pageH - mT - mB;
 
+    const bodySize    = state.bodySize;
+    const bodyFontKey = state.bodyFont;
+    const lineH       = bodySize * 1.5;
+    const paraGap     = bodySize * 0.82;
+    const indent      = bodySize * 1.35;
 
-    if (result.error) {
+    const geom = { pageW, pageH, mT, mL, mR, bodyFontKey, bodySize, lineH, paraGap, indent, contentW, contentH };
 
-        alert(
-            "Erreur : " +
-            result.error.message
-        );
+    const bookPages = paddedPages();
+    const N = bookPages.length;
 
-        return;
+    overflowPages = 0;
+
+    const total = cfg.totalSheets(N);
+
+    if (cfg.mode === '8up') {
+      const cellW = sheetW / 2, cellH = sheetH / 2;
+      const positions = [
+        { x: 0,     y: cellH },
+        { x: cellW, y: cellH },
+        { x: 0,     y: 0     },
+        { x: cellW, y: 0     },
+      ];
+      for (let s = 0; s < total; s++) {
+        const fp = doc.addPage([sheetW, sheetH]);
+        const bp = doc.addPage([sheetW, sheetH]);
+        const frontPgs = cfg.front(s, N);
+        const backPgs  = cfg.back(s, N);
+        for (let i = 0; i < 4; i++) {
+          const pIdx = frontPgs[i] - 1;
+          const pos = positions[i];
+          if (bookPages[pIdx]) drawBookPage(fp, pos.x, pos.y, bookPages[pIdx], fonts, meta, geom);
+        }
+        for (let i = 0; i < 4; i++) {
+          const pIdx = backPgs[i] - 1;
+          const pos = positions[i];
+          if (bookPages[pIdx]) drawBookPage(bp, pos.x, pos.y, bookPages[pIdx], fonts, meta, geom);
+        }
+      }
+    } else {
+      for (let s = 0; s < total; s++) {
+        const frontPgs = cfg.front(s, N);
+        const backPgs  = cfg.back(s, N);
+        const fp = doc.addPage([sheetW, sheetH]);
+        const bp = doc.addPage([sheetW, sheetH]);
+        if (bookPages[frontPgs[0] - 1]) drawBookPage(fp, 0,     0, bookPages[frontPgs[0] - 1], fonts, meta, geom);
+        if (bookPages[frontPgs[1] - 1]) drawBookPage(fp, pageW, 0, bookPages[frontPgs[1] - 1], fonts, meta, geom);
+        if (bookPages[backPgs[0] - 1])  drawBookPage(bp, 0,     0, bookPages[backPgs[0] - 1],  fonts, meta, geom);
+        if (bookPages[backPgs[1] - 1])  drawBookPage(bp, pageW, 0, bookPages[backPgs[1] - 1],  fonts, meta, geom);
+      }
     }
 
+    const bytes = await doc.save();
+    const blob = new Blob([bytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = slug(meta.title) + '.pdf';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
 
-    displayNews();
+    if (overflowPages) {
+      console.warn(`${overflowPages} page(s) overflowed and were clipped in the PDF.`);
+    }
+  } catch (err) {
+    console.error(err);
+    alert('PDF generation failed: ' + err.message + '\n\nFalling back to browser print.');
+    browserPrint();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = oldLabel;
+  }
 }
 
+/* =========================================================
+   WORD
+   ========================================================= */
+function doWord() {
+  if (!state.pages.length) {
+    alert('Load pages first — paste your text and click "Load Pages".');
+    return;
+  }
 
-/* =====================================================
-   PROTECTION HTML
-   ===================================================== */
+  const title    = inTitle.value.trim() || 'Untitled';
+  const subtitle = inSubtitle.value.trim();
+  const author   = inAuthor.value.trim();
 
-function escapeHTML(value) {
+  const bodyStack  = FONT_STACKS[state.bodyFont]  || FONT_STACKS.serif;
+  const coverStack = FONT_STACKS[state.coverFont] || FONT_STACKS.serif;
 
-    return String(value)
+  let body = '';
+  paddedPages().forEach((pg, i) => {
+    if (i > 0) body += `<br clear="all" style="page-break-before:always">`;
 
-        .replace(/&/g, "&amp;")
+    if (pg.type === 'cover') {
+      const fg = state.coverTextColor === 'auto' ? readableOn(state.cover) : state.coverTextColor;
+      const frameStyle = state.coverFrame === 'none' ? '' :
+        `border:${state.coverFrame === 'thick' ? '3px' : '1px'} solid ${fg};` +
+        (state.coverFrame === 'double' ? `outline:1px solid ${fg};outline-offset:3px;` : '');
+      const align = state.coverLayout === 'top' ? 'flex-start' :
+                    state.coverLayout === 'bottom' ? 'flex-end' : 'center';
 
-        .replace(/</g, "&lt;")
+      body += `<div style="background:${state.cover};color:${fg};height:7in;
+        display:flex;flex-direction:column;justify-content:${align};
+        align-items:center;text-align:center;padding:0.8in 0.7in;
+        box-sizing:border-box;${frameStyle}">
+        <p style="font-family:${coverStack};font-size:26pt;font-weight:bold;
+          text-indent:0;margin:0;line-height:1.15">${esc(title)}</p>
+        ${subtitle ? `<p style="font-family:${coverStack};font-size:13pt;font-style:italic;
+          text-indent:0;margin:10pt 0 0 0">${esc(subtitle)}</p>` : ''}
+        <p style="text-indent:0;margin:20pt 0;font-size:11pt;color:${fg};opacity:.6">———</p>
+        ${author ? `<p style="font-family:${coverStack};font-size:11pt;letter-spacing:2pt;
+          text-indent:0;margin:0;text-transform:uppercase">${esc(author)}</p>` : ''}
+      </div>`;
+    } else if (pg.type === 'titlepage') {
+      body += `<div style="text-align:center;padding-top:3in">
+        <p style="font-size:20pt;font-weight:bold;text-indent:0;margin:0">${esc(title)}</p>
+        ${subtitle ? `<p style="font-size:11pt;font-style:italic;text-indent:0;margin:8pt 0 0 0">${esc(subtitle)}</p>` : ''}
+        <p style="text-indent:0;margin:30pt 0;opacity:.5">——————</p>
+        ${author ? `<p style="font-size:10pt;letter-spacing:2pt;text-transform:uppercase;text-indent:0;margin:0">${esc(author)}</p>` : ''}
+      </div>`;
+    } else if (pg.type === 'toc') {
+      const items = (pg.entries || []).map(e => {
+        const label = [e.label, e.title].filter(Boolean).join(' · ');
+        if (!label) return '';
+        return `<p style="text-indent:0;margin:0 0 6pt 0;font-size:10pt">
+          <span>${esc(label)}</span>
+          <span style="float:right">${e.page}</span>
+        </p>`;
+      }).join('');
+      body += `<p style="text-align:center;font-size:14pt;font-weight:bold;text-indent:0;letter-spacing:2pt;margin:0 0 24pt 0">CONTENTS</p>${items}`;
+    } else if (pg.type === 'content') {
+      body += (pg.paras || []).map((t, j) => {
+        if (t.startsWith('__CHAPTER__')) {
+          const rest = t.slice('__CHAPTER__'.length);
+          const [label, title2] = rest.split('§');
+          return `<div style="text-align:center;margin:0 0 24pt 0;page-break-before:always">
+            ${label ? `<p style="text-indent:0;letter-spacing:3pt;text-transform:uppercase;font-size:9pt;opacity:.7;margin:0 0 8pt 0">${esc(label)}</p>` : ''}
+            ${title2 ? `<p style="text-indent:0;font-weight:bold;font-size:18pt;margin:0 0 14pt 0">${esc(title2)}</p>` : ''}
+            <p style="text-indent:0;margin:0;opacity:.4">———</p>
+          </div>`;
+        }
+        const isDrop = t.startsWith('__DROP__');
+        const inner = inlineHTML(isDrop ? t.slice('__DROP__'.length) : t);
+        const cls = (j === 0 && !isDrop) ? 'first' : '';
+        return `<p class="${cls}">${inner}</p>`;
+      }).join('');
+    } else {
+      body += `<p style="text-indent:0">&nbsp;</p>`;
+    }
+  });
 
-        .replace(/>/g, "&gt;")
+  const f = fmt();
+  const pageSize = `${f.w}in ${f.h}in`;
+  const margin   = `${f.marginTop}in ${f.marginRight}in ${f.marginBottom}in ${f.marginLeft}in`;
+  const coverH   = (f.h - 1.5).toFixed(2);
 
-        .replace(/"/g, "&quot;")
+  body = body.replace(/height:7in/g, `height:${coverH}in`);
 
-        .replace(/'/g, "&#039;");
+  const doc = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+  <head>
+    <meta charset="utf-8">
+    <title>${esc(title)}</title>
+    <!--[if gte mso 9]><xml><w:WordDocument>
+      <w:View>Print</w:View><w:Zoom>100</w:Zoom>
+    </w:WordDocument></xml><![endif]-->
+    <style>
+      @page WordSection1 { size:${pageSize}; margin:${margin}; }
+      div.WordSection1 { page:WordSection1; }
+      body { font-family:${bodyStack}; font-size:${state.bodySize}pt; color:#111; }
+      p { font-family:${bodyStack}; font-size:${state.bodySize}pt;
+          line-height:1.5; margin:0 0 0.82em 0; text-align:justify;
+          text-indent:1.35em; }
+      p.first { text-indent:0; }
+      strong { font-weight:bold; }
+      em { font-style:italic; }
+    </style>
+  </head>
+  <body><div class="WordSection1">${body}</div></body></html>`;
+
+  const blob = new Blob(['\ufeff', doc], { type: 'application/msword;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = slug(title) + '.doc';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2500);
 }
 
-
-function escapeAttribute(value) {
-
-    return escapeHTML(value);
+/* =========================================================
+   COVER SWATCHES
+   ========================================================= */
+function buildSwatches() {
+  swatchBox.innerHTML = COVERS.map(c =>
+    `<button class="sw${c.toLowerCase() === state.cover.toLowerCase() ? ' active' : ''}"
+       data-color="${c}" style="background:${c}" title="${c}"
+       aria-label="Cover colour ${c}"></button>`).join('');
 }
 
+function syncCoverControls() {
+  coverBgColor.value = state.cover;
+  coverBgLabel.textContent = state.cover;
+}
 
-/* =====================================================
-   DÉMARRAGE
-   ===================================================== */
+swatchBox.addEventListener('click', e => {
+  const btn = e.target.closest('.sw');
+  if (!btn) return;
+  state.cover = btn.dataset.color;
+  buildSwatches();
+  syncCoverControls();
+  renderAll();
+});
 
-displayNews();
+coverBgColor.addEventListener('input', () => {
+  state.cover = coverBgColor.value;
+  coverBgLabel.textContent = state.cover;
+  buildSwatches();
+  renderAll();
+});
 
+/* =========================================================
+   COVER OPTION CONTROLS
+   ========================================================= */
+coverLayoutEl.addEventListener('change', () => { state.coverLayout = coverLayoutEl.value; renderAll(); });
+coverFrameEl.addEventListener('change',  () => { state.coverFrame  = coverFrameEl.value;  renderAll(); });
+coverFontEl.addEventListener('change',   () => { state.coverFont   = coverFontEl.value;   renderAll(); });
+coverTextAuto.addEventListener('change', () => {
+  if (coverTextAuto.checked) { state.coverTextColor = 'auto'; coverTextCol.disabled = true; }
+  else { state.coverTextColor = coverTextCol.value; coverTextCol.disabled = false; }
+  renderAll();
+});
+coverTextCol.addEventListener('input', () => {
+  if (!coverTextAuto.checked) { state.coverTextColor = coverTextCol.value; renderAll(); }
+});
+
+/* =========================================================
+   TYPOGRAPHY CONTROLS
+   ========================================================= */
+bodyFontSel.addEventListener('change', () => {
+  state.bodyFont = bodyFontSel.value;
+  applyTypography();
+  if (state.loaded && !state.aiArranged) {
+    reflowFromText();
+  } else {
+    renderAll();
+  }
+});
+bodySizeSel.addEventListener('change', () => {
+  state.bodySize = parseFloat(bodySizeSel.value) || 11;
+  applyTypography();
+  if (state.loaded && !state.aiArranged) {
+    reflowFromText();
+  } else {
+    renderAll();
+  }
+});
+bookFormatSel.addEventListener('change', () => {
+  state.bookFormat = bookFormatSel.value;
+  applyTypography();
+  if (state.loaded && !state.aiArranged) {
+    reflowFromText();
+  } else {
+    renderAll();
+  }
+});
+impositionSel.addEventListener('change', () => {
+  state.imposition = impositionSel.value;
+  if (state.imposition === '8up') {
+    if (state.bookFormat !== '4.25x5.5') {
+      state.bookFormat = '4.25x5.5';
+      bookFormatSel.value = '4.25x5.5';
+    }
+    bookFormatSel.disabled = true;
+  } else {
+    bookFormatSel.disabled = false;
+  }
+  applyTypography();
+  if (state.loaded && !state.aiArranged) {
+    reflowFromText();
+  } else {
+    renderAll();
+  }
+});
+
+function renderAll() {
+  applyTypography();
+  render();
+  updateStats();
+}
+
+/* =========================================================
+   VIEW TABS
+   ========================================================= */
+$$('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    $$('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    state.view = tab.dataset.view;
+    render();
+  });
+});
+
+/* =========================================================
+   WIRING
+   ========================================================= */
+inText.addEventListener('input', () => {
+  updateWorkflow();
+});
+inTitle.addEventListener('input', () => {
+  if (state.pages.length) {
+    state.pages.forEach(pg => {
+      if (pg.type === 'cover' || pg.type === 'titlepage') pg.title = inTitle.value.trim() || 'Untitled';
+    });
+    renderAll();
+  }
+});
+inSubtitle.addEventListener('input', () => {
+  if (state.pages.length) {
+    state.pages.forEach(pg => {
+      if (pg.type === 'cover' || pg.type === 'titlepage') pg.subtitle = inSubtitle.value.trim();
+    });
+    renderAll();
+  }
+});
+inAuthor.addEventListener('input', () => {
+  if (state.pages.length) {
+    state.pages.forEach(pg => {
+      if (pg.type === 'cover' || pg.type === 'titlepage') pg.author = inAuthor.value.trim();
+    });
+    renderAll();
+  }
+});
+
+$('#btnPdf').addEventListener('click', doPdf);
+$('#btnWord').addEventListener('click', doWord);
+
+window.addEventListener('resize', debounce(() => { if (state.pages.length) render(); }, 180));
+
+/* =========================================================
+   GO
+   ========================================================= */
+inText.value = SAMPLE;
+bookFormatSel.value = state.bookFormat;
+impositionSel.value = state.imposition;
+buildSwatches();
+syncCoverControls();
+applyTypography();
+updateWorkflow();
+
+loadPages();
 </script>
-
 </body>
 </html>

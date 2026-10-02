@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>News App</title>
+<title>CAMERA PARTOUT</title>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 * {
@@ -168,12 +171,13 @@ footer {
 
 <div class="container">
 
-    <!-- FORMULAIRE DE PUBLICATION -->
+    <!-- FORMULAIRE -->
     <div class="box">
 
         <h2>Publier une nouvelle</h2>
 
         <label>Titre de la nouvelle</label>
+
         <input
             type="text"
             id="title"
@@ -181,6 +185,7 @@ footer {
         >
 
         <label>Catégorie</label>
+
         <select id="category">
             <option>Haïti</option>
             <option>International</option>
@@ -192,12 +197,14 @@ footer {
         </select>
 
         <label>Texte de la nouvelle</label>
+
         <textarea
             id="text"
             placeholder="Écrivez votre nouvelle ici..."
         ></textarea>
 
         <label>Ajouter une photo</label>
+
         <input
             type="file"
             id="image"
@@ -205,6 +212,7 @@ footer {
         >
 
         <label>Ajouter une vidéo</label>
+
         <input
             type="file"
             id="video"
@@ -218,15 +226,17 @@ footer {
     </div>
 
 
-    <!-- NOUVELLES PUBLIÉES -->
+    <!-- NOUVELLES -->
     <div class="box">
 
         <h2>Dernières nouvelles</h2>
 
         <div id="newsList">
+
             <div class="empty">
-                Aucune nouvelle publiée.
+                Chargement...
             </div>
+
         </div>
 
     </div>
@@ -240,36 +250,96 @@ footer {
 
 <script>
 
-let news = JSON.parse(localStorage.getItem("cameraPartoutNews")) || [];
+/* =====================================================
+   SUPABASE
+   ===================================================== */
+
+const SUPABASE_URL =
+    "https://xhzhtwihrbjfqstxqffl.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_I15O020IqmK0cA5BkKWmbQ_TloEucFc";
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 
-// AFFICHER LES NOUVELLES
-function displayNews() {
+/* =====================================================
+   CHARGER LES NOUVELLES DEPUIS SUPABASE
+   ===================================================== */
 
-    const list = document.getElementById("newsList");
+async function displayNews() {
 
-    if (news.length === 0) {
+    const list =
+        document.getElementById("newsList");
+
+    list.innerHTML = `
+        <div class="empty">
+            Chargement...
+        </div>
+    `;
+
+    const { data, error } =
+        await supabaseClient
+            .from("news")
+            .select("*")
+            .order("created_at", {
+                ascending: false
+            });
+
+
+    if (error) {
+
+        console.error(error);
+
+        list.innerHTML = `
+            <div class="empty">
+                Erreur de connexion à Supabase.
+                <br><br>
+                ${error.message}
+            </div>
+        `;
+
+        return;
+    }
+
+
+    if (!data || data.length === 0) {
+
         list.innerHTML = `
             <div class="empty">
                 Aucune nouvelle publiée.
             </div>
         `;
+
         return;
     }
 
+
     list.innerHTML = "";
 
-    news.slice().reverse().forEach((item, index) => {
+
+    data.forEach(item => {
 
         let media = "";
 
+
         if (item.image) {
+
             media += `
-                <img src="${item.image}" alt="Image de la nouvelle">
+                <img
+                    src="${item.image}"
+                    alt="Image de la nouvelle"
+                >
             `;
         }
 
+
         if (item.video) {
+
             media += `
                 <video controls>
                     <source src="${item.video}">
@@ -277,6 +347,15 @@ function displayNews() {
                 </video>
             `;
         }
+
+
+        const date =
+            item.created_at
+                ? new Date(
+                    item.created_at
+                  ).toLocaleString("fr-FR")
+                : "";
+
 
         list.innerHTML += `
 
@@ -287,24 +366,24 @@ function displayNews() {
                 <div class="news-content">
 
                     <span class="category">
-                        ${item.category}
+                        ${escapeHTML(item.category || "")}
                     </span>
 
                     <h3 class="news-title">
-                        ${item.title}
+                        ${escapeHTML(item.title || "")}
                     </h3>
 
                     <div class="date">
-                        ${item.date}
+                        ${date}
                     </div>
 
                     <p class="news-text">
-                        ${item.text}
+                        ${escapeHTML(item.text || item.content || "")}
                     </p>
 
                     <button
                         class="delete"
-                        onclick="deleteNews(${news.length - 1 - index})">
+                        onclick="deleteNews('${item.id}')">
                         Supprimer
                     </button>
 
@@ -316,147 +395,223 @@ function displayNews() {
 }
 
 
-// PUBLIER
-function publishNews() {
+/* =====================================================
+   PUBLIER
+   ===================================================== */
 
-    const title = document.getElementById("title").value.trim();
-    const category = document.getElementById("category").value;
-    const text = document.getElementById("text").value.trim();
+async function publishNews() {
+
+    const title =
+        document.getElementById("title")
+        .value
+        .trim();
+
+    const category =
+        document.getElementById("category")
+        .value;
+
+    const text =
+        document.getElementById("text")
+        .value
+        .trim();
 
     const imageFile =
-        document.getElementById("image").files[0];
+        document.getElementById("image")
+        .files[0];
 
     const videoFile =
-        document.getElementById("video").files[0];
+        document.getElementById("video")
+        .files[0];
 
 
     if (!title || !text) {
-        alert("Veuillez entrer un titre et le texte de la nouvelle.");
+
+        alert(
+            "Veuillez entrer un titre et le texte de la nouvelle."
+        );
+
         return;
     }
 
 
-    // Lire la photo
-    if (imageFile) {
+    const button =
+        document.querySelector(".publish");
 
-        const imageReader = new FileReader();
+    button.disabled = true;
 
-        imageReader.onload = function(e) {
+    button.textContent =
+        "PUBLICATION...";
 
-            saveNews(
-                e.target.result,
-                videoFile
-            );
 
-        };
+    try {
 
-        imageReader.readAsDataURL(imageFile);
+        let imageData = null;
+        let videoData = null;
 
-    } else {
 
-        saveNews(null, videoFile);
+        /* PHOTO */
 
+        if (imageFile) {
+
+            imageData =
+                await fileToDataURL(imageFile);
+        }
+
+
+        /* VIDEO */
+
+        if (videoFile) {
+
+            videoData =
+                await fileToDataURL(videoFile);
+        }
+
+
+        /* ENREGISTRER DANS SUPABASE */
+
+        const { error } =
+            await supabaseClient
+                .from("news")
+                .insert([
+                    {
+                        title: title,
+                        category: category,
+                        text: text,
+                        image: imageData,
+                        video: videoData
+                    }
+                ]);
+
+
+        if (error) {
+
+            throw error;
+        }
+
+
+        /* NETTOYER */
+
+        document.getElementById("title")
+            .value = "";
+
+        document.getElementById("text")
+            .value = "";
+
+        document.getElementById("image")
+            .value = "";
+
+        document.getElementById("video")
+            .value = "";
+
+
+        alert(
+            "Nouvelle publiée avec succès !"
+        );
+
+
+        displayNews();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Erreur : " + error.message
+        );
+
+
+    } finally {
+
+        button.disabled = false;
+
+        button.textContent =
+            "PUBLIER LA NOUVELLE";
     }
-
 }
 
 
-// SAUVEGARDER
-function saveNews(imageData, videoFile) {
+/* =====================================================
+   CONVERTIR FICHIER EN DATA URL
+   ===================================================== */
 
-    if (videoFile) {
+function fileToDataURL(file) {
 
-        const videoReader = new FileReader();
+    return new Promise(
+        (resolve, reject) => {
 
-        videoReader.onload = function(e) {
+            const reader =
+                new FileReader();
 
-            finishSave(
-                imageData,
-                e.target.result
-            );
+            reader.onload =
+                () => resolve(
+                    reader.result
+                );
 
-        };
+            reader.onerror =
+                reject;
 
-        videoReader.readAsDataURL(videoFile);
-
-    } else {
-
-        finishSave(imageData, null);
-
-    }
-
-}
-
-
-// FINALISER LA PUBLICATION
-function finishSave(imageData, videoData) {
-
-    const title =
-        document.getElementById("title").value.trim();
-
-    const category =
-        document.getElementById("category").value;
-
-    const text =
-        document.getElementById("text").value.trim();
-
-
-    const newNews = {
-
-        title: title,
-
-        category: category,
-
-        text: text,
-
-        image: imageData,
-
-        video: videoData,
-
-        date: new Date().toLocaleString("fr-FR")
-
-    };
-
-
-    news.push(newNews);
-
-    localStorage.setItem(
-        "cameraPartoutNews",
-        JSON.stringify(news)
+            reader.readAsDataURL(file);
+        }
     );
+}
 
 
-    // Nettoyer le formulaire
-    document.getElementById("title").value = "";
-    document.getElementById("text").value = "";
-    document.getElementById("image").value = "";
-    document.getElementById("video").value = "";
+/* =====================================================
+   SUPPRIMER UNE NOUVELLE
+   ===================================================== */
+
+async function deleteNews(id) {
+
+    if (
+        !confirm(
+            "Voulez-vous supprimer cette nouvelle ?"
+        )
+    ) {
+        return;
+    }
+
+
+    const { error } =
+        await supabaseClient
+            .from("news")
+            .delete()
+            .eq("id", id);
+
+
+    if (error) {
+
+        alert(
+            "Erreur : " + error.message
+        );
+
+        return;
+    }
 
 
     displayNews();
-
-    alert("Nouvelle publiée avec succès !");
 }
 
 
-// SUPPRIMER
-function deleteNews(index) {
+/* =====================================================
+   PROTECTION DU HTML
+   ===================================================== */
 
-    if (confirm("Voulez-vous supprimer cette nouvelle ?")) {
+function escapeHTML(value) {
 
-        news.splice(index, 1);
-
-        localStorage.setItem(
-            "cameraPartoutNews",
-            JSON.stringify(news)
-        );
-
-        displayNews();
-    }
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
-// AFFICHER AU DÉMARRAGE
+/* =====================================================
+   DÉMARRAGE
+   ===================================================== */
+
 displayNews();
 
 </script>

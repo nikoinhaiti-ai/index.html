@@ -6,7 +6,6 @@
 
 <title>CAMERA PARTOUT</title>
 
-<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -22,20 +21,20 @@ body {
 }
 
 header {
-    background: #07152f;
+    background: linear-gradient(135deg, #07152f, #0757c9);
     color: white;
-    padding: 18px;
+    padding: 22px;
     text-align: center;
 }
 
 header h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: 30px;
 }
 
 header p {
-    margin: 6px 0 0;
-    opacity: .8;
+    margin: 7px 0 0;
+    opacity: .9;
 }
 
 .container {
@@ -78,24 +77,26 @@ textarea {
     resize: vertical;
 }
 
-button {
-    border: none;
-    padding: 13px 20px;
-    border-radius: 7px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
 .publish {
     width: 100%;
     margin-top: 20px;
     background: #e50914;
     color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 7px;
+    font-size: 16px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .publish:hover {
     background: #b80710;
+}
+
+.publish:disabled {
+    opacity: .6;
+    cursor: not-allowed;
 }
 
 .news-card {
@@ -109,7 +110,7 @@ button {
 .news-card img,
 .news-card video {
     width: 100%;
-    max-height: 450px;
+    max-height: 500px;
     object-fit: cover;
     display: block;
 }
@@ -135,6 +136,7 @@ button {
 .date {
     color: #777;
     font-size: 13px;
+    margin-bottom: 12px;
 }
 
 .news-text {
@@ -145,6 +147,10 @@ button {
 .delete {
     background: #333;
     color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 7px;
+    cursor: pointer;
     margin-top: 10px;
 }
 
@@ -152,6 +158,12 @@ button {
     text-align: center;
     color: #777;
     padding: 30px;
+}
+
+.status {
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
 }
 
 footer {
@@ -166,12 +178,12 @@ footer {
 
 <header>
     <h1>CAMERA PARTOUT</h1>
-    <p>Publiez vos nouvelles</p>
+    <p>L'information partout, à tout moment.</p>
 </header>
 
 <div class="container">
 
-    <!-- FORMULAIRE -->
+    <!-- PUBLICATION -->
     <div class="box">
 
         <h2>Publier une nouvelle</h2>
@@ -219,14 +231,23 @@ footer {
             accept="video/*"
         >
 
-        <button class="publish" onclick="publishNews()">
+        <button
+            class="publish"
+            id="publishButton"
+            onclick="publishNews()"
+        >
             PUBLIER LA NOUVELLE
         </button>
+
+        <div
+            id="status"
+            class="status"
+        ></div>
 
     </div>
 
 
-    <!-- NOUVELLES -->
+    <!-- ACTUALITÉS -->
     <div class="box">
 
         <h2>Dernières nouvelles</h2>
@@ -267,8 +288,13 @@ const supabaseClient =
     );
 
 
+/* NOM DU BUCKET */
+
+const BUCKET_NAME = "news-images";
+
+
 /* =====================================================
-   CHARGER LES NOUVELLES DEPUIS SUPABASE
+   AFFICHER LES NOUVELLES
    ===================================================== */
 
 async function displayNews() {
@@ -282,13 +308,16 @@ async function displayNews() {
         </div>
     `;
 
-    const { data, error } =
+    const result =
         await supabaseClient
             .from("news")
             .select("*")
             .order("created_at", {
                 ascending: false
             });
+
+    const data = result.data;
+    const error = result.error;
 
 
     if (error) {
@@ -297,9 +326,7 @@ async function displayNews() {
 
         list.innerHTML = `
             <div class="empty">
-                Erreur de connexion à Supabase.
-                <br><br>
-                ${error.message}
+                Erreur : ${escapeHTML(error.message)}
             </div>
         `;
 
@@ -327,22 +354,34 @@ async function displayNews() {
         let media = "";
 
 
+        /* PHOTO */
+
         if (item.image) {
 
             media += `
                 <img
-                    src="${item.image}"
-                    alt="Image de la nouvelle"
+                    src="${escapeAttribute(item.image)}"
+                    alt="Photo de la nouvelle"
                 >
             `;
         }
 
 
+        /* VIDEO */
+
         if (item.video) {
 
             media += `
-                <video controls>
-                    <source src="${item.video}">
+                <video
+                    controls
+                    playsinline
+                    preload="metadata"
+                >
+                    <source
+                        src="${escapeAttribute(item.video)}"
+                        type="video/mp4"
+                    >
+
                     Votre navigateur ne supporte pas la vidéo.
                 </video>
             `;
@@ -351,10 +390,14 @@ async function displayNews() {
 
         const date =
             item.created_at
-                ? new Date(
-                    item.created_at
-                  ).toLocaleString("fr-FR")
-                : "";
+            ? new Date(
+                item.created_at
+              ).toLocaleString("fr-FR")
+            : "";
+
+
+        const articleText =
+            item.content || item.text || "";
 
 
         list.innerHTML += `
@@ -366,24 +409,29 @@ async function displayNews() {
                 <div class="news-content">
 
                     <span class="category">
-                        ${escapeHTML(item.category || "")}
+                        ${escapeHTML(
+                            item.category || ""
+                        )}
                     </span>
 
                     <h3 class="news-title">
-                        ${escapeHTML(item.title || "")}
+                        ${escapeHTML(
+                            item.title || ""
+                        )}
                     </h3>
 
                     <div class="date">
-                        ${date}
+                        ${escapeHTML(date)}
                     </div>
 
                     <p class="news-text">
-                        ${escapeHTML(item.text || item.content || "")}
+                        ${escapeHTML(articleText)}
                     </p>
 
                     <button
                         class="delete"
-                        onclick="deleteNews('${item.id}')">
+                        onclick="deleteNews('${item.id}')"
+                    >
                         Supprimer
                     </button>
 
@@ -396,7 +444,7 @@ async function displayNews() {
 
 
 /* =====================================================
-   PUBLIER
+   PUBLIER UNE NOUVELLE
    ===================================================== */
 
 async function publishNews() {
@@ -423,69 +471,97 @@ async function publishNews() {
         document.getElementById("video")
         .files[0];
 
+    const button =
+        document.getElementById("publishButton");
+
+    const status =
+        document.getElementById("status");
+
 
     if (!title || !text) {
 
         alert(
-            "Veuillez entrer un titre et le texte de la nouvelle."
+            "Veuillez entrer un titre et le texte."
         );
 
         return;
     }
 
 
-    const button =
-        document.querySelector(".publish");
-
     button.disabled = true;
 
     button.textContent =
         "PUBLICATION...";
 
+    status.textContent =
+        "Préparation des fichiers...";
+
 
     try {
 
-        let imageData = null;
-        let videoData = null;
+        let imageURL = null;
+        let videoURL = null;
 
 
-        /* PHOTO */
+        /* =================================================
+           UPLOAD PHOTO
+           ================================================= */
 
         if (imageFile) {
 
-            imageData =
-                await fileToDataURL(imageFile);
+            status.textContent =
+                "Envoi de la photo...";
+
+
+            imageURL =
+                await uploadFile(imageFile);
         }
 
 
-        /* VIDEO */
+        /* =================================================
+           UPLOAD VIDEO
+           ================================================= */
 
         if (videoFile) {
 
-            videoData =
-                await fileToDataURL(videoFile);
+            status.textContent =
+                "Envoi de la vidéo...";
+
+
+            videoURL =
+                await uploadFile(videoFile);
         }
 
 
-        /* ENREGISTRER DANS SUPABASE */
+        /* =================================================
+           ENREGISTRER LA NOUVELLE
+           ================================================= */
 
-        const { error } =
+        status.textContent =
+            "Enregistrement de la nouvelle...";
+
+
+        const result =
             await supabaseClient
                 .from("news")
                 .insert([
                     {
                         title: title,
+
                         category: category,
-                        text: text,
-                        image: imageData,
-                        video: videoData
+
+                        content: text,
+
+                        image: imageURL,
+
+                        video: videoURL
                     }
                 ]);
 
 
-        if (error) {
+        if (result.error) {
 
-            throw error;
+            throw result.error;
         }
 
 
@@ -504,6 +580,10 @@ async function publishNews() {
             .value = "";
 
 
+        status.textContent =
+            "Publication réussie !";
+
+
         alert(
             "Nouvelle publiée avec succès !"
         );
@@ -515,6 +595,9 @@ async function publishNews() {
     } catch (error) {
 
         console.error(error);
+
+        status.textContent =
+            "Erreur de publication.";
 
         alert(
             "Erreur : " + error.message
@@ -532,28 +615,68 @@ async function publishNews() {
 
 
 /* =====================================================
-   CONVERTIR FICHIER EN DATA URL
+   ENVOYER UN FICHIER DANS SUPABASE STORAGE
    ===================================================== */
 
-function fileToDataURL(file) {
+async function uploadFile(file) {
 
-    return new Promise(
-        (resolve, reject) => {
+    /*
+      Création d'un nom unique.
+    */
 
-            const reader =
-                new FileReader();
+    const extension =
+        file.name
+            .split(".")
+            .pop()
+            .toLowerCase();
 
-            reader.onload =
-                () => resolve(
-                    reader.result
-                );
 
-            reader.onerror =
-                reject;
+    const fileName =
+        Date.now()
+        + "-"
+        + Math.random()
+            .toString(36)
+            .substring(2)
+        + "."
+        + extension;
 
-            reader.readAsDataURL(file);
-        }
-    );
+
+    const filePath =
+        fileName;
+
+
+    const result =
+        await supabaseClient
+            .storage
+            .from(BUCKET_NAME)
+            .upload(
+                filePath,
+                file,
+                {
+                    cacheControl: "3600",
+                    upsert: false
+                }
+            );
+
+
+    if (result.error) {
+
+        throw result.error;
+    }
+
+
+    /*
+      Obtenir l'URL publique.
+    */
+
+    const publicResult =
+        supabaseClient
+            .storage
+            .from(BUCKET_NAME)
+            .getPublicUrl(filePath);
+
+
+    return publicResult.data.publicUrl;
 }
 
 
@@ -572,17 +695,18 @@ async function deleteNews(id) {
     }
 
 
-    const { error } =
+    const result =
         await supabaseClient
             .from("news")
             .delete()
             .eq("id", id);
 
 
-    if (error) {
+    if (result.error) {
 
         alert(
-            "Erreur : " + error.message
+            "Erreur : " +
+            result.error.message
         );
 
         return;
@@ -594,17 +718,28 @@ async function deleteNews(id) {
 
 
 /* =====================================================
-   PROTECTION DU HTML
+   PROTECTION HTML
    ===================================================== */
 
 function escapeHTML(value) {
 
     return String(value)
+
         .replace(/&/g, "&amp;")
+
         .replace(/</g, "&lt;")
+
         .replace(/>/g, "&gt;")
+
         .replace(/"/g, "&quot;")
+
         .replace(/'/g, "&#039;");
+}
+
+
+function escapeAttribute(value) {
+
+    return escapeHTML(value);
 }
 
 

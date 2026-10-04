@@ -69,6 +69,266 @@
             font-size: 0.9rem;
         }
 
+        /* ========== ANALYTICS ========== */
+        .analytics-section {
+            background: #ffffff;
+            border-radius: 32px;
+            border: 1px solid #e0ebe0;
+            box-shadow: 0 6px 24px rgba(20, 80, 50, 0.06);
+            padding: 1.8rem 2rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .analytics-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0f4b28;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid #f0f5f0;
+        }
+
+        .analytics-title .icon { font-size: 1.5rem; }
+
+        .total-students-banner {
+            background: linear-gradient(135deg, #1a6b3a, #0f4b28);
+            border-radius: 24px;
+            padding: 24px 30px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: 0 8px 24px rgba(26, 107, 58, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .total-students-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -10%;
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, rgba(240, 192, 64, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .total-students-left {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .total-students-icon {
+            font-size: 2.8rem;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
+        }
+
+        .total-students-text { display: flex; flex-direction: column; }
+
+        .total-students-label {
+            font-size: 0.8rem;
+            color: #a8d0b0;
+            letter-spacing: 2px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .total-students-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        }
+
+        .total-students-sub {
+            font-size: 0.85rem;
+            color: #c8e6c8;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .total-students-breakdown {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .breakdown-item {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 16px;
+            padding: 12px 18px;
+            text-align: center;
+            min-width: 90px;
+        }
+
+        .breakdown-item .bd-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #f0c040;
+            line-height: 1;
+        }
+
+        .breakdown-item .bd-label {
+            font-size: 0.7rem;
+            color: #d8ecd8;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8fbf8, #f0f5f0);
+            border: 1px solid #d8e8d8;
+            border-radius: 20px;
+            padding: 16px 18px;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: #a8c8a8;
+            box-shadow: 0 4px 12px rgba(20, 80, 50, 0.08);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1a6b3a;
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #4a6b4a;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .top-students-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #a67c10;
+            margin-bottom: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .school-analytics {
+            background: #f8fbf8;
+            border: 1px solid #e0ebe0;
+            border-radius: 20px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+        }
+
+        .school-analytics-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0ebe0;
+        }
+
+        .school-analytics-name {
+            font-weight: 700;
+            color: #0f4b28;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .school-analytics-count {
+            background: #1a6b3a;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+        }
+
+        .class-top-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 10px;
+        }
+
+        .class-top-card {
+            background: #ffffff;
+            border: 1px solid #d8e8d8;
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .class-top-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #a67c10;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .class-top-name {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #1e2e1e;
+            word-break: break-word;
+            line-height: 1.2;
+        }
+
+        .class-top-points {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #1a6b3a;
+        }
+
+        .class-top-empty {
+            font-size: 0.8rem;
+            color: #9ab09a;
+            font-style: italic;
+        }
+
+        .no-data-analytics {
+            text-align: center;
+            padding: 1.5rem;
+            color: #9ab09a;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
         /* ---- CONTROL BAR ---- */
         .control-bar {
             display: flex;
@@ -124,9 +384,7 @@
             transition: 0.2s;
         }
 
-        .search-input::placeholder {
-            color: #9ab09a;
-        }
+        .search-input::placeholder { color: #9ab09a; }
 
         .search-input:focus {
             border-color: #1a6b3a;
@@ -146,10 +404,7 @@
             transition: 0.15s;
         }
 
-        .clear-search:hover {
-            background: #f5edcf;
-            border-color: #d4b84a;
-        }
+        .clear-search:hover { background: #f5edcf; border-color: #d4b84a; }
 
         .logo-upload-label {
             background: #f8f4e8;
@@ -164,14 +419,9 @@
             white-space: nowrap;
         }
 
-        .logo-upload-label:hover {
-            background: #f5edcf;
-            border-color: #d4b84a;
-        }
+        .logo-upload-label:hover { background: #f5edcf; border-color: #d4b84a; }
 
-        #logoUploadInput {
-            display: none;
-        }
+        #logoUploadInput { display: none; }
 
         .schools-grid {
             display: grid;
@@ -213,15 +463,9 @@
             gap: 8px;
         }
 
-        .school-name i {
-            font-style: normal;
-            font-size: 1.7rem;
-        }
+        .school-name i { font-style: normal; font-size: 1.7rem; }
 
-        .school-actions {
-            display: flex;
-            gap: 8px;
-        }
+        .school-actions { display: flex; gap: 8px; }
 
         .icon-btn {
             background: none;
@@ -235,9 +479,7 @@
             line-height: 1;
         }
 
-        .icon-btn:hover {
-            background: #f8f4e8;
-        }
+        .icon-btn:hover { background: #f8f4e8; }
 
         .paste-area {
             padding: 1rem 1.5rem 0.5rem 1.5rem;
@@ -260,9 +502,7 @@
             transition: 0.2s;
         }
 
-        .paste-area textarea::placeholder {
-            color: #9ab09a;
-        }
+        .paste-area textarea::placeholder { color: #9ab09a; }
 
         .paste-area textarea:focus {
             border-color: #1a6b3a;
@@ -320,12 +560,8 @@
             box-shadow: 0 5px 15px rgba(26, 107, 58, 0.35);
         }
 
-        .btn-small {
-            padding: 8px 14px;
-            font-size: 0.8rem;
-        }
+        .btn-small { padding: 8px 14px; font-size: 0.8rem; }
 
-        /* --- CLASS COLUMNS --- */
         .class-columns-container {
             display: flex;
             flex-direction: row;
@@ -424,7 +660,6 @@
             background: #fdecea;
         }
 
-        /* --- 50 boxes grid --- */
         .points-grid {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
@@ -456,9 +691,7 @@
             transform: scale(1.08);
         }
 
-        .point-box:active {
-            transform: scale(0.92);
-        }
+        .point-box:active { transform: scale(0.92); }
 
         .point-box.filled {
             background: #1a6b3a;
@@ -500,14 +733,8 @@
             letter-spacing: 0.3px;
         }
 
-        .cert-btn:hover {
-            background: #f5edcf;
-            border-color: #d4b84a;
-        }
-
-        .cert-btn:active {
-            transform: scale(0.97);
-        }
+        .cert-btn:hover { background: #f5edcf; border-color: #d4b84a; }
+        .cert-btn:active { transform: scale(0.97); }
 
         .empty-message {
             text-align: center;
@@ -543,7 +770,6 @@
             box-shadow: 0 0 0 3px rgba(212, 184, 74, 0.2);
         }
 
-        /* ---- FULLSCREEN OVERLAY ---- */
         .fullscreen-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -588,9 +814,7 @@
             cursor: pointer;
         }
 
-        .close-fullscreen:hover {
-            background: #0f4b28;
-        }
+        .close-fullscreen:hover { background: #0f4b28; }
 
         .fullscreen-points-grid {
             display: grid;
@@ -623,9 +847,7 @@
             transform: scale(1.05);
         }
 
-        .fullscreen-point-box:active {
-            transform: scale(0.95);
-        }
+        .fullscreen-point-box:active { transform: scale(0.95); }
 
         .fullscreen-point-box.filled {
             background: #1a6b3a;
@@ -643,7 +865,6 @@
             letter-spacing: 1px;
         }
 
-        /* Custom scrollbar */
         .student-list-column::-webkit-scrollbar,
         .class-columns-container::-webkit-scrollbar {
             width: 6px;
@@ -662,31 +883,23 @@
             border-radius: 10px;
         }
 
-        .student-list-column::-webkit-scrollbar-thumb:hover,
-        .class-columns-container::-webkit-scrollbar-thumb:hover {
-            background: #a8c8a8;
+        @media (max-width: 700px) {
+            .foundation-logo { height: 50px; }
+            .foundation-title h1 { font-size: 1rem; }
+            .foundation-header { padding: 0.8rem 1rem; }
+            .control-bar { padding: 0.8rem 1rem; }
+            .fullscreen-points-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+            .fullscreen-point-box { font-size: 1rem; }
+            .analytics-section { padding: 1.2rem 1rem; }
+            .total-students-banner { padding: 18px 20px; }
+            .total-students-value { font-size: 2.2rem; }
+            .total-students-icon { font-size: 2rem; }
         }
 
-        @media (max-width: 700px) {
-            .foundation-logo {
-                height: 50px;
-            }
-            .foundation-title h1 {
-                font-size: 1rem;
-            }
-            .foundation-header {
-                padding: 0.8rem 1rem;
-            }
-            .control-bar {
-                padding: 0.8rem 1rem;
-            }
-            .fullscreen-points-grid {
-                grid-template-columns: repeat(5, 1fr);
-                gap: 8px;
-            }
-            .fullscreen-point-box {
-                font-size: 1rem;
-            }
+        /* ========== GLOBAL PRINT RULE ========== */
+        @page {
+            size: 11in 8.5in landscape;
+            margin: 0;
         }
     </style>
 </head>
@@ -699,7 +912,32 @@
         <div class="badge">📋 Points & students</div>
     </div>
 
-    <!-- Control bar -->
+    <div class="analytics-section" id="analyticsSection">
+        <div class="analytics-title">
+            <span class="icon">📊</span>
+            <span>Analytics Overview</span>
+        </div>
+
+        <div class="total-students-banner">
+            <div class="total-students-left">
+                <span class="total-students-icon">👥</span>
+                <div class="total-students-text">
+                    <div class="total-students-label">Total Students</div>
+                    <div class="total-students-value" id="totalStudentsValue">0</div>
+                    <div class="total-students-sub" id="totalStudentsSub">across all schools</div>
+                </div>
+            </div>
+            <div class="total-students-breakdown" id="totalStudentsBreakdown"></div>
+        </div>
+
+        <div class="stats-overview" id="statsOverview"></div>
+        <div class="top-students-title">
+            <span>🏆</span>
+            <span>Top Student per Class · Each School</span>
+        </div>
+        <div id="schoolAnalyticsList"></div>
+    </div>
+
     <div class="control-bar">
         <label for="schoolSelector">🏫 School:</label>
         <select id="schoolSelector" class="school-select">
@@ -741,12 +979,7 @@
 
             const CLASSES = ['7e', '8e', '9e', 'Ns1', 'Ns2'];
 
-            const store = {
-                csc: [],
-                csa: [],
-                eureka: [],
-                bethanie: []
-            };
+            const store = { csc: [], csa: [], eureka: [], bethanie: [] };
 
             let selectedSchoolId = 'all';
             let searchQuery = '';
@@ -756,18 +989,13 @@
             function loadSavedLogo() {
                 try {
                     const saved = localStorage.getItem('fpf_logo');
-                    if (saved) {
-                        savedLogoDataUrl = saved;
-                        applyLogo();
-                    }
+                    if (saved) { savedLogoDataUrl = saved; applyLogo(); }
                 } catch(e) {}
             }
 
             function saveLogo(dataUrl) {
                 savedLogoDataUrl = dataUrl;
-                try {
-                    localStorage.setItem('fpf_logo', dataUrl);
-                } catch(e) {}
+                try { localStorage.setItem('fpf_logo', dataUrl); } catch(e) {}
                 applyLogo();
             }
 
@@ -808,6 +1036,123 @@
             function matchesSearch(student) {
                 if (!searchQuery) return true;
                 return student.name.toLowerCase().includes(searchQuery.toLowerCase());
+            }
+
+            function renderAnalytics() {
+                let grandTotal = 0;
+                SCHOOLS.forEach(school => { grandTotal += (store[school.id] || []).length; });
+
+                document.getElementById('totalStudentsValue').textContent = grandTotal;
+                document.getElementById('totalStudentsSub').textContent = 
+                    grandTotal === 1 ? 'student across all schools' : 'students across all schools';
+
+                const breakdownDiv = document.getElementById('totalStudentsBreakdown');
+                breakdownDiv.innerHTML = '';
+                SCHOOLS.forEach(school => {
+                    const count = (store[school.id] || []).length;
+                    if (count > 0) {
+                        const item = document.createElement('div');
+                        item.className = 'breakdown-item';
+                        item.innerHTML = `
+                            <div class="bd-value">${count}</div>
+                            <div class="bd-label">${school.icon} ${school.name.split(' ').slice(0,2).join(' ')}</div>
+                        `;
+                        item.title = school.name;
+                        breakdownDiv.appendChild(item);
+                    }
+                });
+
+                const statsOverview = document.getElementById('statsOverview');
+                statsOverview.innerHTML = '';
+
+                let totalPoints = 0;
+                let totalSchoolsWithStudents = 0;
+
+                SCHOOLS.forEach(school => {
+                    const students = store[school.id] || [];
+                    if (students.length > 0) totalSchoolsWithStudents++;
+                    students.forEach(s => { totalPoints += (s.score || 0); });
+                });
+
+                const stats = [
+                    { value: grandTotal, label: 'Total Students' },
+                    { value: totalPoints, label: 'Total Points' },
+                    { value: totalSchoolsWithStudents, label: 'Active Schools' },
+                    { value: SCHOOLS.length, label: 'Total Schools' },
+                    { value: CLASSES.length, label: 'Classes per School' }
+                ];
+
+                stats.forEach(stat => {
+                    const card = document.createElement('div');
+                    card.className = 'stat-card';
+                    card.innerHTML = `
+                        <div class="stat-value">${stat.value}</div>
+                        <div class="stat-label">${stat.label}</div>
+                    `;
+                    statsOverview.appendChild(card);
+                });
+
+                const listContainer = document.getElementById('schoolAnalyticsList');
+                listContainer.innerHTML = '';
+
+                let hasAnyData = false;
+
+                SCHOOLS.forEach(school => {
+                    const students = store[school.id] || [];
+                    if (students.length === 0) return;
+                    hasAnyData = true;
+
+                    const schoolBlock = document.createElement('div');
+                    schoolBlock.className = 'school-analytics';
+
+                    const header = document.createElement('div');
+                    header.className = 'school-analytics-header';
+                    header.innerHTML = `
+                        <div class="school-analytics-name">
+                            <span>${school.icon}</span>
+                            <span>${school.name}</span>
+                        </div>
+                        <div class="school-analytics-count">${students.length} student${students.length !== 1 ? 's' : ''}</div>
+                    `;
+                    schoolBlock.appendChild(header);
+
+                    const classGrid = document.createElement('div');
+                    classGrid.className = 'class-top-grid';
+
+                    CLASSES.forEach(cls => {
+                        const classStudents = students.filter(s => s.class === cls);
+                        let topStudent = null;
+                        if (classStudents.length > 0) {
+                            topStudent = classStudents.reduce((best, s) => {
+                                return (s.score || 0) > (best.score || 0) ? s : best;
+                            });
+                        }
+
+                        const card = document.createElement('div');
+                        card.className = 'class-top-card';
+
+                        if (topStudent) {
+                            card.innerHTML = `
+                                <div class="class-top-label">${cls} · ${classStudents.length} student${classStudents.length !== 1 ? 's' : ''}</div>
+                                <div class="class-top-name">🏅 ${escapeHtml(topStudent.name)}</div>
+                                <div class="class-top-points">★ ${topStudent.score || 0} pts</div>
+                            `;
+                        } else {
+                            card.innerHTML = `
+                                <div class="class-top-label">${cls}</div>
+                                <div class="class-top-empty">— no students —</div>
+                            `;
+                        }
+                        classGrid.appendChild(card);
+                    });
+
+                    schoolBlock.appendChild(classGrid);
+                    listContainer.appendChild(schoolBlock);
+                });
+
+                if (!hasAnyData) {
+                    listContainer.innerHTML = `<div class="no-data-analytics">📭 No students added yet. Paste names below to see analytics.</div>`;
+                }
             }
 
             function openFullscreen(student, schoolId) {
@@ -874,6 +1219,8 @@
             }
 
             function render() {
+                renderAnalytics();
+
                 const grid = document.getElementById('schoolsGrid');
                 grid.innerHTML = '';
 
@@ -887,9 +1234,7 @@
                     const students = store[school.id] || [];
                     const filteredStudents = students.filter(matchesSearch);
 
-                    if (selectedSchoolId === 'all' && searchQuery && filteredStudents.length === 0) {
-                        return;
-                    }
+                    if (selectedSchoolId === 'all' && searchQuery && filteredStudents.length === 0) return;
 
                     if (filteredStudents.length > 0) anyStudentRendered = true;
 
@@ -1009,10 +1354,7 @@
                     e.stopPropagation();
                     const schoolStudents = store[schoolId];
                     const idx = schoolStudents.findIndex(s => s.id === student.id);
-                    if (idx !== -1) {
-                        schoolStudents.splice(idx, 1);
-                        render();
-                    }
+                    if (idx !== -1) { schoolStudents.splice(idx, 1); render(); }
                 });
                 nameLine.appendChild(removeBtn);
                 card.appendChild(nameLine);
@@ -1062,7 +1404,7 @@
                 return card;
             }
 
-            // ---- Generate Landscape Certificate ----
+            // ==================== CERTIFICATE (FULL PAGE LANDSCAPE 11 x 8.5 in) ====================
             function generateCertificate(student) {
                 const today = new Date();
                 const dateStr = today.toLocaleDateString('en-US', {
@@ -1071,203 +1413,216 @@
                 const certId = selectedLevel + '-' + student.id.substring(0, 8).toUpperCase() + '-' + Date.now().toString().slice(-4);
 
                 const logoHTML = savedLogoDataUrl
-                    ? `<img src="${savedLogoDataUrl}" alt="LOGO" style="max-height: 90px; max-width: 180px; object-fit: contain; display:block; margin: 0 auto 8px auto;">`
-                    : `<div style="font-size: 2.5rem; margin-bottom: 8px;">🌱</div>`;
+                    ? `<img src="${savedLogoDataUrl}" alt="LOGO" style="max-height: 1in; max-width: 2.2in; object-fit: contain; display:block; margin: 0 auto 0.1in auto;">`
+                    : `<div style="font-size: 0.4in; margin-bottom: 0.1in;">🌱</div>`;
 
+                // FULL PAGE certificate - fills 11in x 8.5in exactly with no border/margin
                 const certHTML = `
                     <div style="
-                        width: 1100px;
-                        height: 850px;
-                        margin: 0 auto;
-                        background: #fdfefd;
-                        border: 3px solid #1a6b3a;
+                        width: 11in;
+                        height: 8.5in;
+                        margin: 0;
                         padding: 0;
+                        background: #fdfefd;
                         font-family: 'Georgia', 'Times New Roman', serif;
                         color: #1e2e1e;
                         position: relative;
                         box-sizing: border-box;
                         overflow: hidden;
-                        box-shadow: 0 15px 40px rgba(20, 80, 50, 0.2);
+                        page-break-after: avoid;
                     ">
+                        <!-- Outer green frame -->
                         <div style="
-                            border: 6px solid #1a6b3a;
-                            margin: 12px;
-                            padding: 0;
-                            height: calc(100% - 24px);
+                            position: absolute;
+                            top: 0; left: 0; right: 0; bottom: 0;
+                            border: 0.18in solid #1a6b3a;
+                            box-sizing: border-box;
+                        "></div>
+                        <!-- Inner gold line -->
+                        <div style="
+                            position: absolute;
+                            top: 0.24in; left: 0.24in; right: 0.24in; bottom: 0.24in;
+                            border: 0.015in solid #c8961e;
+                            box-sizing: border-box;
+                            background: #ffffff;
+                            background-image: 
+                                radial-gradient(circle at 15% 20%, rgba(26, 107, 58, 0.06) 0%, transparent 25%),
+                                radial-gradient(circle at 85% 80%, rgba(240, 192, 64, 0.1) 0%, transparent 25%);
+                        "></div>
+
+                        <!-- Content area -->
+                        <div style="
+                            position: absolute;
+                            top: 0.4in; left: 0.5in; right: 0.5in; bottom: 0.4in;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
                             box-sizing: border-box;
                         ">
-                            <div style="
-                                border: 1px solid #c8961e;
-                                margin: 4px;
-                                padding: 30px 50px;
-                                height: calc(100% - 8px);
-                                box-sizing: border-box;
-                                background: #ffffff;
-                                background-image: 
-                                    radial-gradient(circle at 15% 20%, rgba(26, 107, 58, 0.06) 0%, transparent 25%),
-                                    radial-gradient(circle at 85% 80%, rgba(240, 192, 64, 0.1) 0%, transparent 25%);
-                                position: relative;
-                                display: flex;
-                                flex-direction: column;
-                                justify-content: space-between;
-                            ">
-                                <div style="position: absolute; top: 14px; left: 14px; width: 45px; height: 45px; border-top: 3px solid #c8961e; border-left: 3px solid #c8961e;"></div>
-                                <div style="position: absolute; top: 14px; right: 14px; width: 45px; height: 45px; border-top: 3px solid #c8961e; border-right: 3px solid #c8961e;"></div>
-                                <div style="position: absolute; bottom: 14px; left: 14px; width: 45px; height: 45px; border-bottom: 3px solid #c8961e; border-left: 3px solid #c8961e;"></div>
-                                <div style="position: absolute; bottom: 14px; right: 14px; width: 45px; height: 45px; border-bottom: 3px solid #c8961e; border-right: 3px solid #c8961e;"></div>
+                            <!-- Decorative corners -->
+                            <div style="position: absolute; top: -0.08in; left: -0.08in; width: 0.55in; height: 0.55in; border-top: 0.03in solid #c8961e; border-left: 0.03in solid #c8961e;"></div>
+                            <div style="position: absolute; top: -0.08in; right: -0.08in; width: 0.55in; height: 0.55in; border-top: 0.03in solid #c8961e; border-right: 0.03in solid #c8961e;"></div>
+                            <div style="position: absolute; bottom: -0.08in; left: -0.08in; width: 0.55in; height: 0.55in; border-bottom: 0.03in solid #c8961e; border-left: 0.03in solid #c8961e;"></div>
+                            <div style="position: absolute; bottom: -0.08in; right: -0.08in; width: 0.55in; height: 0.55in; border-bottom: 0.03in solid #c8961e; border-right: 0.03in solid #c8961e;"></div>
 
-                                <div style="text-align: center;">
-                                    ${logoHTML}
-                                    <h1 style="
-                                        font-size: 1.7rem;
-                                        font-weight: 700;
-                                        color: #0f4b28;
-                                        margin: 0;
-                                        letter-spacing: 4px;
-                                        font-family: 'Georgia', serif;
-                                        text-transform: uppercase;
-                                    ">
-                                        Feed People Foundation
-                                    </h1>
+                            <!-- HEADER -->
+                            <div style="text-align: center;">
+                                ${logoHTML}
+                                <h1 style="
+                                    font-size: 0.3in;
+                                    font-weight: 700;
+                                    color: #0f4b28;
+                                    margin: 0;
+                                    letter-spacing: 0.06in;
+                                    font-family: 'Georgia', serif;
+                                    text-transform: uppercase;
+                                ">
+                                    Feed People Foundation
+                                </h1>
+                                <div style="
+                                    width: 3in;
+                                    height: 0.025in;
+                                    background: linear-gradient(to right, transparent, #c8961e, transparent);
+                                    margin: 0.1in auto;
+                                "></div>
+                                <p style="
+                                    font-size: 0.13in;
+                                    color: #4a6b4a;
+                                    margin: 0;
+                                    font-style: italic;
+                                    letter-spacing: 0.03in;
+                                ">
+                                    Gospel · Food · Education
+                                </p>
+                            </div>
+
+                            <!-- TITLE -->
+                            <div style="text-align: center; margin: 0.1in 0;">
+                                <p style="
+                                    font-size: 0.13in;
+                                    letter-spacing: 0.07in;
+                                    color: #6b8a6b;
+                                    margin: 0 0 0.08in 0;
+                                    text-transform: uppercase;
+                                ">
+                                    Certificate of Completion
+                                </p>
+                                <h2 style="
+                                    font-size: 0.42in;
+                                    font-weight: 400;
+                                    color: #1a6b3a;
+                                    margin: 0;
+                                    letter-spacing: 0.025in;
+                                ">
+                                    ${selectedLevel} English Level
+                                </h2>
+                                <div style="width: 1.5in; height: 0.015in; background: #c8961e; margin: 0.1in auto;"></div>
+                            </div>
+
+                            <!-- NAME -->
+                            <div style="text-align: center; margin: 0.08in 0;">
+                                <p style="
+                                    font-size: 0.14in;
+                                    color: #4a6b4a;
+                                    margin: 0 0 0.06in 0;
+                                    font-style: italic;
+                                    letter-spacing: 0.015in;
+                                ">
+                                    This certificate is proudly presented to
+                                </p>
+                                <p style="
+                                    font-size: 0.44in;
+                                    font-weight: 600;
+                                    color: #0f4b28;
+                                    margin: 0.12in 0 0.08in 0;
+                                    font-family: 'Georgia', serif;
+                                    letter-spacing: 0.015in;
+                                    border-bottom: 0.025in solid #c8961e;
+                                    display: inline-block;
+                                    padding: 0 0.7in 0.08in 0.7in;
+                                ">
+                                    ${escapeHtml(student.name)}
+                                </p>
+                            </div>
+
+                            <!-- DESCRIPTION -->
+                            <div style="text-align: center; max-width: 8in; margin: 0.06in auto;">
+                                <p style="
+                                    font-size: 0.14in;
+                                    color: #3a5a3a;
+                                    line-height: 1.7;
+                                    margin: 0;
+                                    font-family: 'Georgia', serif;
+                                ">
+                                    For successfully completing the ${selectedLevel} English level requirements, demonstrating 
+                                    dedication, diligence, and a commendable commitment to learning.
+                                </p>
+                            </div>
+
+                            <!-- FOOTER -->
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 0.1in; padding-top: 0.15in; border-top: 0.012in solid #d9e8d9;">
+                                <div style="text-align: left; font-family: 'Georgia', serif;">
+                                    <p style="font-size: 0.1in; color: #6b8a6b; margin: 0 0 0.04in 0; letter-spacing: 0.015in;">DATE</p>
+                                    <p style="font-size: 0.14in; color: #1e2e1e; margin: 0; font-weight: 600;">${dateStr}</p>
+                                    <p style="font-size: 0.09in; color: #8aaa8a; margin: 0.08in 0 0 0;">Certificate ID: ${certId}</p>
+                                </div>
+
+                                <!-- Empty signature bar for handwriting + Director name below -->
+                                <div style="text-align: center; min-width: 3.2in;">
                                     <div style="
-                                        width: 200px;
-                                        height: 2px;
-                                        background: linear-gradient(to right, transparent, #c8961e, transparent);
-                                        margin: 8px auto;
+                                        width: 3in;
+                                        height: 0.5in;
+                                        border-bottom: 0.02in solid #1a6b3a;
+                                        margin: 0 auto 0.08in auto;
                                     "></div>
                                     <p style="
-                                        font-size: 0.8rem;
-                                        color: #4a6b4a;
-                                        margin: 0;
-                                        font-style: italic;
-                                        letter-spacing: 2px;
-                                    ">
-                                        Gospel · Food · Education
-                                    </p>
-                                </div>
-
-                                <div style="text-align: center; margin: 10px 0;">
-                                    <p style="
-                                        font-size: 0.8rem;
-                                        letter-spacing: 5px;
-                                        color: #6b8a6b;
-                                        margin: 0 0 6px 0;
-                                        text-transform: uppercase;
-                                    ">
-                                        Certificate of Completion
-                                    </p>
-                                    <h2 style="
-                                        font-size: 2.6rem;
-                                        font-weight: 400;
-                                        color: #1a6b3a;
-                                        margin: 0;
-                                        letter-spacing: 2px;
-                                    ">
-                                        ${selectedLevel} English Level
-                                    </h2>
-                                    <div style="width: 120px; height: 1px; background: #c8961e; margin: 8px auto;"></div>
-                                </div>
-
-                                <div style="text-align: center; margin: 5px 0;">
-                                    <p style="
-                                        font-size: 0.9rem;
-                                        color: #4a6b4a;
-                                        margin: 0 0 4px 0;
-                                        font-style: italic;
-                                        letter-spacing: 1px;
-                                    ">
-                                        This certificate is proudly presented to
-                                    </p>
-                                    <p style="
-                                        font-size: 2.6rem;
-                                        font-weight: 600;
+                                        font-size: 0.14in;
                                         color: #0f4b28;
-                                        margin: 8px 0 4px 0;
-                                        font-family: 'Georgia', serif;
-                                        letter-spacing: 1px;
-                                        border-bottom: 2px solid #c8961e;
-                                        display: inline-block;
-                                        padding: 0 50px 6px 50px;
-                                    ">
-                                        ${escapeHtml(student.name)}
-                                    </p>
-                                </div>
-
-                                <div style="text-align: center; max-width: 720px; margin: 5px auto;">
-                                    <p style="
-                                        font-size: 0.9rem;
-                                        color: #3a5a3a;
-                                        line-height: 1.6;
                                         margin: 0;
+                                        letter-spacing: 0.02in;
+                                        font-weight: 700;
                                         font-family: 'Georgia', serif;
                                     ">
-                                        For successfully completing the ${selectedLevel} English level requirements, demonstrating 
-                                        dedication, diligence, and a commendable commitment to learning.
+                                        Hans-Jerry CHRISTOLIN
+                                    </p>
+                                    <p style="
+                                        font-size: 0.1in;
+                                        color: #4a6b4a;
+                                        margin: 0.03in 0 0 0;
+                                        letter-spacing: 0.025in;
+                                        font-weight: 600;
+                                    ">
+                                        DIRECTOR
                                     </p>
                                 </div>
 
-                                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; padding-top: 12px; border-top: 1px solid #d9e8d9;">
-                                    <div style="text-align: left; font-family: 'Georgia', serif;">
-                                        <p style="font-size: 0.75rem; color: #6b8a6b; margin: 0 0 3px 0; letter-spacing: 1px;">DATE</p>
-                                        <p style="font-size: 0.9rem; color: #1e2e1e; margin: 0; font-weight: 600;">${dateStr}</p>
-                                        <p style="font-size: 0.68rem; color: #8aaa8a; margin: 6px 0 0 0;">Certificate ID: ${certId}</p>
-                                    </div>
-
-                                    <div style="text-align: center; min-width: 280px;">
-                                        <div style="
-                                            width: 260px;
-                                            height: 42px;
-                                            border-bottom: 1.5px solid #1a6b3a;
-                                            margin: 0 auto 6px auto;
-                                        "></div>
-                                        <p style="
-                                            font-size: 0.9rem;
-                                            color: #0f4b28;
-                                            margin: 0;
-                                            letter-spacing: 1.5px;
-                                            font-weight: 700;
-                                            font-family: 'Georgia', serif;
-                                        ">
-                                            Hans-Jerry CHRISTOLIN
-                                        </p>
-                                        <p style="
-                                            font-size: 0.72rem;
-                                            color: #4a6b4a;
-                                            margin: 2px 0 0 0;
-                                            letter-spacing: 2px;
-                                            font-weight: 600;
-                                        ">
-                                            DIRECTOR
-                                        </p>
-                                    </div>
-
-                                    <div style="text-align: right;">
-                                        <div style="
-                                            display: inline-flex;
-                                            flex-direction: column;
-                                            align-items: center;
-                                            justify-content: center;
-                                            width: 95px;
-                                            height: 95px;
-                                            border: 3px double #c8961e;
-                                            border-radius: 50%;
-                                            font-size: 0.5rem;
-                                            color: #0f4b28;
-                                            font-weight: 700;
-                                            letter-spacing: 0.3px;
-                                            text-align: center;
-                                            padding: 8px;
-                                            font-family: 'Georgia', serif;
-                                            background: radial-gradient(circle, rgba(240, 192, 64, 0.25) 0%, rgba(240, 192, 64, 0.08) 70%);
-                                            box-shadow: 0 0 15px rgba(200, 150, 20, 0.4), inset 0 0 10px rgba(200, 150, 20, 0.2);
-                                            position: relative;
-                                        ">
-                                            <div style="font-size: 1.4rem; line-height: 1;">🌱</div>
-                                            <div style="font-size: 0.48rem; line-height: 1.2; margin-top: 2px;">FEED PEOPLE</div>
-                                            <div style="font-size: 0.48rem; line-height: 1.2;">FOUNDATION</div>
-                                            <div style="font-size: 0.42rem; line-height: 1.2; margin-top: 2px; color: #c8961e;">★ OFFICIAL ★</div>
-                                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-20deg); font-size: 0.35rem; color: rgba(26, 107, 58, 0.15); font-weight: 900; letter-spacing: 1px; pointer-events: none;">SEAL</div>
-                                        </div>
+                                <!-- Custom Seal -->
+                                <div style="text-align: right;">
+                                    <div style="
+                                        display: inline-flex;
+                                        flex-direction: column;
+                                        align-items: center;
+                                        justify-content: center;
+                                        width: 1.1in;
+                                        height: 1.1in;
+                                        border: 0.035in double #c8961e;
+                                        border-radius: 50%;
+                                        font-size: 0.055in;
+                                        color: #0f4b28;
+                                        font-weight: 700;
+                                        letter-spacing: 0.004in;
+                                        text-align: center;
+                                        padding: 0.1in;
+                                        font-family: 'Georgia', serif;
+                                        background: radial-gradient(circle, rgba(240, 192, 64, 0.25) 0%, rgba(240, 192, 64, 0.08) 70%);
+                                        box-shadow: 0 0 0.2in rgba(200, 150, 20, 0.4), inset 0 0 0.12in rgba(200, 150, 20, 0.2);
+                                        position: relative;
+                                        box-sizing: border-box;
+                                    ">
+                                        <div style="font-size: 0.2in; line-height: 1;">🌱</div>
+                                        <div style="font-size: 0.055in; line-height: 1.2; margin-top: 0.03in;">FEED PEOPLE</div>
+                                        <div style="font-size: 0.055in; line-height: 1.2;">FOUNDATION</div>
+                                        <div style="font-size: 0.048in; line-height: 1.2; margin-top: 0.03in; color: #c8961e;">★ OFFICIAL ★</div>
                                     </div>
                                 </div>
                             </div>
@@ -1275,36 +1630,66 @@
                     </div>
                 `;
 
+                // Open print window and force landscape orientation
                 const printWindow = window.open('', '_blank', 'width=1200,height=900');
                 if (printWindow) {
                     printWindow.document.write(`
                         <!DOCTYPE html>
                         <html>
                         <head>
+                            <meta charset="UTF-8">
                             <title>${selectedLevel} Certificate - ${escapeHtml(student.name)}</title>
                             <style>
-                                @page { size: 11in 8.5in landscape; margin: 0; }
-                                body { 
-                                    margin: 0; 
-                                    padding: 20px; 
-                                    background: #f0f5f0; 
-                                    display: flex; 
-                                    flex-direction: column;
-                                    align-items: center; 
-                                    justify-content: center; 
-                                    min-height: 100vh; 
+                                @page {
+                                    size: 11in 8.5in landscape;
+                                    margin: 0;
+                                }
+                                html, body {
+                                    margin: 0;
+                                    padding: 0;
+                                    width: 11in;
+                                    height: 8.5in;
+                                    background: white;
+                                    overflow: hidden;
+                                }
+                                body {
+                                    display: block;
                                     font-family: 'Georgia', serif;
                                 }
+                                .cert-page {
+                                    width: 11in;
+                                    height: 8.5in;
+                                    margin: 0;
+                                    padding: 0;
+                                    page-break-after: avoid;
+                                    page-break-inside: avoid;
+                                }
+                                .no-print {
+                                    position: fixed;
+                                    bottom: 20px;
+                                    left: 50%;
+                                    transform: translateX(-50%);
+                                    z-index: 9999;
+                                    text-align: center;
+                                }
                                 @media print {
-                                    body { padding: 0; background: white; }
                                     .no-print { display: none !important; }
+                                    html, body {
+                                        width: 11in;
+                                        height: 8.5in;
+                                        background: white;
+                                        margin: 0;
+                                        padding: 0;
+                                    }
                                 }
                             </style>
                         </head>
                         <body>
-                            ${certHTML}
-                            <div class="no-print" style="text-align: center; margin-top: 25px;">
-                                <button onclick="window.print()" style="padding: 12px 28px; font-size: 1rem; background: #1a6b3a; color: #ffffff; border: none; border-radius: 40px; cursor: pointer; font-weight: 700;">
+                            <div class="cert-page">
+                                ${certHTML}
+                            </div>
+                            <div class="no-print">
+                                <button onclick="window.print()" style="padding: 12px 28px; font-size: 1rem; background: #1a6b3a; color: #ffffff; border: none; border-radius: 40px; cursor: pointer; font-weight: 700; box-shadow: 0 4px 15px rgba(26, 107, 58, 0.4);">
                                     🖨️ Print / Save as PDF
                                 </button>
                                 <button onclick="window.close()" style="padding: 12px 28px; font-size: 1rem; background: #f8f4e8; color: #a67c10; border: 1px solid #e8d9a8; border-radius: 40px; cursor: pointer; margin-left: 12px; font-weight: 600;">

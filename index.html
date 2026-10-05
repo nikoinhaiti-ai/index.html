@@ -1036,9 +1036,1166 @@
             padding: 12px 16px;
             border: 1px solid #c8dcc8;
             border-radius: 16px;
-            font
-                        
-                                    
-                            
-                                
-                
+            font-size: 0.9rem;
+            background: #f8fbf8;
+            color: #1e2e1e;
+            outline: none;
+            font-family: 'Courier New', monospace;
+        }
+
+        .setup-card input:focus {
+            border-color: #1a6b3a;
+            box-shadow: 0 0 0 3px rgba(26, 107, 58, 0.15);
+        }
+
+        .setup-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .setup-actions .btn {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+        }
+
+        .setup-hint {
+            font-size: 0.75rem;
+            color: #7a9a7a;
+            margin-top: 0.6rem;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .setup-hint a {
+            color: #1a6b3a;
+            font-weight: 600;
+        }
+
+        .setup-error {
+            background: #fdecea;
+            color: #c0392b;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 0.82rem;
+            margin-top: 1rem;
+            border: 1px solid #f5b7b1;
+            font-weight: 600;
+        }
+
+        .setup-success {
+            background: #e8f5e8;
+            color: #1a6b3a;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 0.82rem;
+            margin-top: 1rem;
+            border: 1px solid #a8d0a8;
+            font-weight: 600;
+        }
+
+        @media (max-width: 700px) {
+            .foundation-logo { height: 50px; }
+            .foundation-title h1 { font-size: 1rem; }
+            .foundation-header { padding: 0.8rem 1rem; }
+            .control-bar { padding: 0.8rem 1rem; }
+            .fullscreen-points-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+            .fullscreen-point-box { font-size: 1rem; }
+            .analytics-section { padding: 1.2rem 1rem; }
+            .total-students-banner { padding: 18px 20px; }
+            .total-students-value { font-size: 2.2rem; }
+            .total-students-icon { font-size: 2rem; }
+        }
+
+        @page {
+            size: 11in 8.5in landscape;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="foundation-header">
+        <div class="foundation-title">
+            <img id="headerLogo" src="" alt="LOGO" class="foundation-logo" style="display:none;">
+            <h1>FEED PEOPLE FOUNDATION</h1>
+        </div>
+        <div class="header-actions">
+            <div class="save-status" id="saveStatus">
+                <span>💾</span>
+                <span id="saveStatusText">Ready</span>
+            </div>
+            <div class="badge">📋 Points & students</div>
+        </div>
+    </div>
+
+    <!-- ========== CLOUD STATUS BANNER ========== -->
+    <div class="cloud-banner" id="cloudBanner">
+        <span class="cloud-icon" id="cloudIcon">☁️</span>
+        <span class="cloud-text" id="cloudText">Connecting to cloud...</span>
+        <button class="cloud-btn" id="cloudConfigBtn">⚙️ Configure</button>
+    </div>
+
+    <div class="analytics-section" id="analyticsSection">
+        <div class="analytics-title">
+            <span class="icon">📊</span>
+            <span>Analytics Overview</span>
+        </div>
+
+        <div class="total-students-banner">
+            <div class="total-students-left">
+                <span class="total-students-icon">👥</span>
+                <div class="total-students-text">
+                    <div class="total-students-label">Total Students</div>
+                    <div class="total-students-value" id="totalStudentsValue">0</div>
+                    <div class="total-students-sub" id="totalStudentsSub">across all schools</div>
+                </div>
+            </div>
+            <div class="total-students-breakdown" id="totalStudentsBreakdown"></div>
+        </div>
+
+        <div class="stats-overview" id="statsOverview"></div>
+        <div class="top-students-title">
+            <span>🏆</span>
+            <span>Top Student per Class · Each School</span>
+        </div>
+        <div id="schoolAnalyticsList"></div>
+    </div>
+
+    <div class="control-bar">
+        <label for="schoolSelector">🏫 School:</label>
+        <select id="schoolSelector" class="school-select">
+            <option value="all">All schools</option>
+        </select>
+
+        <label for="levelSelector">📚 Level:</label>
+        <select id="levelSelector" class="level-select">
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+            <option value="C1">C1</option>
+            <option value="C2">C2</option>
+        </select>
+
+        <label for="searchInput">🔍 Search:</label>
+        <input type="text" id="searchInput" class="search-input" placeholder="Type a student name..." autocomplete="off">
+        <button class="clear-search" id="clearSearchBtn">Clear</button>
+
+        <label for="logoUploadInput" class="logo-upload-label">🖼️ Upload Logo</label>
+        <input type="file" id="logoUploadInput" accept="image/*">
+    </div>
+
+    <div class="schools-grid" id="schoolsGrid"></div>
+
+    <div class="footer-note">
+        ⚡ Paste names (one per line) — add class — click boxes to give +2 points each. Click a student name to enlarge. Right-click a box to remove 2 points.<br>
+        ☁️ <strong>Cloud sync enabled:</strong> Your data is saved permanently to Supabase and accessible from any device.
+    </div>
+
+    <script>
+        (function() {
+            const SCHOOLS = [
+                { id: 'csc', name: 'COLLÈGE SAINT-CROIX', icon: '✝️' },
+                { id: 'csa', name: 'COLLÈGE SAINTE AGNÈS', icon: '🕊️' },
+                { id: 'eureka', name: 'INSTITUT EUREKA', icon: '🔬' },
+                { id: 'bethanie', name: 'INSTITUTION CHRÉTIENNE BÉTHANIE DU LIMBÉ', icon: '⛪' }
+            ];
+
+            const CLASSES = ['7e', '8e', '9e', 'Ns1', 'Ns2'];
+
+            const SUPABASE_URL_KEY = 'fpf_supabase_url';
+            const SUPABASE_KEY_KEY = 'fpf_supabase_anon_key';
+            const LOGO_KEY = 'fpf_logo';
+
+            let store = { csc: [], csa: [], eureka: [], bethanie: [] };
+
+            let selectedSchoolId = 'all';
+            let searchQuery = '';
+            let selectedLevel = 'A1';
+            let savedLogoDataUrl = '';
+
+            // Supabase client
+            let supabase = null;
+            let supabaseConnected = false;
+            let supabaseLoading = false;
+
+            // ==================== SUPABASE SETUP ====================
+            function getSupabaseConfig() {
+                try {
+                    const url = localStorage.getItem(SUPABASE_URL_KEY);
+                    const key = localStorage.getItem(SUPABASE_KEY_KEY);
+                    if (url && key) return { url, key };
+                } catch(e) {}
+                return null;
+            }
+
+            function saveSupabaseConfig(url, key) {
+                try {
+                    localStorage.setItem(SUPABASE_URL_KEY, url);
+                    localStorage.setItem(SUPABASE_KEY_KEY, key);
+                } catch(e) {}
+            }
+
+            function initSupabase() {
+                const config = getSupabaseConfig();
+                if (!config) {
+                    updateCloudStatus('setup', 'Not configured. Click ⚙️ to set up cloud sync.');
+                    return false;
+                }
+                try {
+                    supabase = window.supabase.createClient(config.url, config.key);
+                    return true;
+                } catch(e) {
+                    console.error('Supabase init failed:', e);
+                    updateCloudStatus('error', 'Cloud config error: ' + e.message);
+                    return false;
+                }
+            }
+
+            function updateCloudStatus(state, text) {
+                const banner = document.getElementById('cloudBanner');
+                const icon = document.getElementById('cloudIcon');
+                const textEl = document.getElementById('cloudText');
+                banner.classList.remove('disconnected', 'local');
+                if (state === 'connected') {
+                    icon.textContent = '☁️';
+                    textEl.textContent = text;
+                } else if (state === 'setup' || state === 'local') {
+                    banner.classList.add('local');
+                    icon.textContent = '📴';
+                    textEl.textContent = text;
+                } else if (state === 'error' || state === 'disconnected') {
+                    banner.classList.add('disconnected');
+                    icon.textContent = '⚠️';
+                    textEl.textContent = text;
+                }
+                supabaseConnected = (state === 'connected');
+            }
+
+            function showSetupModal(errorMsg) {
+                const existing = document.querySelector('.setup-modal');
+                if (existing) existing.remove();
+
+                const modal = document.createElement('div');
+                modal.className = 'setup-modal';
+                const config = getSupabaseConfig() || { url: '', key: '' };
+
+                modal.innerHTML = `
+                    <div class="setup-card">
+                        <h2>☁️ Cloud Sync Setup</h2>
+                        <p>Enter your Supabase project credentials. Your data will be saved permanently to the cloud, accessible from any device.</p>
+
+                        <label for="supaUrl">Project URL</label>
+                        <input type="text" id="supaUrl" placeholder="https://xxxxxxxxxxxx.supabase.co" value="${escapeHtml(config.url)}">
+
+                        <label for="supaKey">Anon Public Key</label>
+                        <input type="password" id="supaKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." value="${escapeHtml(config.key)}">
+
+                        <p class="setup-hint">
+                            Find these in your Supabase project: <strong>Settings → API</strong>.
+                            Need help? <a href="https://supabase.com/docs/guides/api" target="_blank">Read the docs →</a>
+                        </p>
+
+                        ${errorMsg ? `<div class="setup-error">⚠️ ${escapeHtml(errorMsg)}</div>` : ''}
+                        <div id="setupMsg"></div>
+
+                        <div class="setup-actions">
+                            <button class="btn" id="setupSaveBtn">💾 Save & Connect</button>
+                            <button class="btn" id="setupCancelBtn" style="background: #f8f4e8; color: #a67c10; border: 1px solid #e8d9a8;">Cancel</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                document.getElementById('setupCancelBtn').addEventListener('click', () => modal.remove());
+
+                document.getElementById('setupSaveBtn').addEventListener('click', async () => {
+                    const url = document.getElementById('supaUrl').value.trim();
+                    const key = document.getElementById('supaKey').value.trim();
+                    const msg = document.getElementById('setupMsg');
+
+                    if (!url || !key) {
+                        msg.innerHTML = `<div class="setup-error">Both URL and key are required.</div>`;
+                        return;
+                    }
+
+                    if (!url.startsWith('http')) {
+                        msg.innerHTML = `<div class="setup-error">URL must start with https://</div>`;
+                        return;
+                    }
+
+                    msg.innerHTML = `<div class="setup-success">⏳ Testing connection...</div>`;
+
+                    // Test connection
+                    try {
+                        const testClient = window.supabase.createClient(url, key);
+                        const { error } = await testClient.from('students').select('id').limit(1);
+                        if (error && error.code !== 'PGRST116') {
+                            throw new Error(error.message);
+                        }
+                        saveSupabaseConfig(url, key);
+                        msg.innerHTML = `<div class="setup-success">✅ Connected! Syncing data...</div>`;
+                        supabase = testClient;
+                        setTimeout(async () => {
+                            modal.remove();
+                            await syncFromCloud();
+                        }, 800);
+                    } catch(e) {
+                        msg.innerHTML = `<div class="setup-error">❌ Connection failed: ${escapeHtml(e.message)}<br>Check your URL and key, and make sure the "students" table exists.</div>`;
+                    }
+                });
+            }
+
+            // ==================== CLOUD OPERATIONS ====================
+            async function loadFromCloud() {
+                if (!supabase) return false;
+                try {
+                    supabaseLoading = true;
+                    const { data, error } = await supabase
+                        .from('students')
+                        .select('*')
+                        .order('created_at', { ascending: true });
+
+                    if (error) throw error;
+
+                    // Reset store
+                    SCHOOLS.forEach(school => { store[school.id] = []; });
+
+                    // Group by school
+                    (data || []).forEach(row => {
+                        if (store[row.school_id]) {
+                            store[row.school_id].push({
+                                id: row.id,
+                                name: row.name,
+                                class: row.class,
+                                score: row.score || 0
+                            });
+                        }
+                    });
+
+                    supabaseLoading = false;
+                    return true;
+                } catch(e) {
+                    console.error('Cloud load failed:', e);
+                    supabaseLoading = false;
+                    return false;
+                }
+            }
+
+            async function syncFromCloud() {
+                updateCloudStatus('connected', 'Loading data from cloud...');
+                const ok = await loadFromCloud();
+                if (ok) {
+                    const total = SCHOOLS.reduce((sum, s) => sum + (store[s.id]?.length || 0), 0);
+                    updateCloudStatus('connected', `☁️ Cloud synced · ${total} student${total !== 1 ? 's' : ''}`);
+                    render();
+                } else {
+                    updateCloudStatus('error', 'Cloud load failed. Working locally.');
+                }
+            }
+
+            async function addStudentToCloud(schoolId, name, className, score) {
+                if (!supabase) return null;
+                try {
+                    const { data, error } = await supabase
+                        .from('students')
+                        .insert({ school_id: schoolId, name, class: className, score })
+                        .select()
+                        .single();
+                    if (error) throw error;
+                    return data;
+                } catch(e) {
+                    console.error('Add to cloud failed:', e);
+                    return null;
+                }
+            }
+
+            async function updateStudentScoreInCloud(studentId, score) {
+                if (!supabase) return false;
+                try {
+                    const { error } = await supabase
+                        .from('students')
+                        .update({ score, updated_at: new Date().toISOString() })
+                        .eq('id', studentId);
+                    if (error) throw error;
+                    return true;
+                } catch(e) {
+                    console.error('Update score failed:', e);
+                    return false;
+                }
+            }
+
+            async function deleteStudentFromCloud(studentId) {
+                if (!supabase) return false;
+                try {
+                    const { error } = await supabase
+                        .from('students')
+                        .delete()
+                        .eq('id', studentId);
+                    if (error) throw error;
+                    return true;
+                } catch(e) {
+                    console.error('Delete failed:', e);
+                    return false;
+                }
+            }
+
+            async function clearSchoolFromCloud(schoolId) {
+                if (!supabase) return false;
+                try {
+                    const { error } = await supabase
+                        .from('students')
+                        .delete()
+                        .eq('school_id', schoolId);
+                    if (error) throw error;
+                    return true;
+                } catch(e) {
+                    console.error('Clear school failed:', e);
+                    return false;
+                }
+            }
+
+            async function loadLogoSettings() {
+                if (!supabase) return;
+                try {
+                    const { data, error } = await supabase
+                        .from('settings')
+                        .select('value')
+                        .eq('key', 'logo')
+                        .maybeSingle();
+                    if (error && error.code !== 'PGRST116') throw error;
+                    if (data && data.value) {
+                        savedLogoDataUrl = data.value;
+                        try { localStorage.setItem(LOGO_KEY, data.value); } catch(e) {}
+                        applyLogo();
+                    }
+                } catch(e) {
+                    console.warn('Logo cloud load failed:', e);
+                }
+            }
+
+            async function saveLogoSettings(dataUrl) {
+                if (!supabase) return false;
+                try {
+                    const { error } = await supabase
+                        .from('settings')
+                        .upsert({ key: 'logo', value: dataUrl, updated_at: new Date().toISOString() });
+                    if (error) throw error;
+                    return true;
+                } catch(e) {
+                    console.error('Logo cloud save failed:', e);
+                    return false;
+                }
+            }
+
+            // ==================== SAVE STATUS ====================
+            function setSaveStatus(state, text) {
+                const statusEl = document.getElementById('saveStatus');
+                const textEl = document.getElementById('saveStatusText');
+                if (!statusEl || !textEl) return;
+                statusEl.classList.remove('saving', 'error', 'cloud');
+                if (state === 'saving') statusEl.classList.add('saving');
+                else if (state === 'error') statusEl.classList.add('error');
+                else if (state === 'cloud') statusEl.classList.add('cloud');
+                textEl.textContent = text;
+            }
+
+            // ==================== LOGO ====================
+            function loadSavedLogo() {
+                try {
+                    const saved = localStorage.getItem(LOGO_KEY);
+                    if (saved) { savedLogoDataUrl = saved; applyLogo(); }
+                } catch(e) {}
+            }
+
+            async function saveLogo(dataUrl) {
+                savedLogoDataUrl = dataUrl;
+                try { localStorage.setItem(LOGO_KEY, dataUrl); } catch(e) {}
+                applyLogo();
+                if (supabase) {
+                    const ok = await saveLogoSettings(dataUrl);
+                    if (ok) setSaveStatus('cloud', '☁️ Logo synced');
+                }
+            }
+
+            function applyLogo() {
+                const headerLogo = document.getElementById('headerLogo');
+                if (savedLogoDataUrl) {
+                    headerLogo.src = savedLogoDataUrl;
+                    headerLogo.style.display = 'block';
+                } else {
+                    headerLogo.style.display = 'none';
+                }
+            }
+
+            document.getElementById('logoUploadInput').addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    setSaveStatus('saving', 'Saving logo...');
+                    await saveLogo(ev.target.result);
+                    setSaveStatus('cloud', '☁️ Logo saved');
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // ==================== HELPERS ====================
+            function populateSchoolSelector() {
+                const sel = document.getElementById('schoolSelector');
+                sel.innerHTML = '<option value="all">All schools</option>';
+                SCHOOLS.forEach(school => {
+                    const opt = document.createElement('option');
+                    opt.value = school.id;
+                    opt.textContent = school.name;
+                    sel.appendChild(opt);
+                });
+                sel.value = selectedSchoolId;
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function matchesSearch(student) {
+                if (!searchQuery) return true;
+                return student.name.toLowerCase().includes(searchQuery.toLowerCase());
+            }
+
+            // ==================== ANALYTICS ====================
+            function renderAnalytics() {
+                let grandTotal = 0;
+                SCHOOLS.forEach(school => { grandTotal += (store[school.id] || []).length; });
+
+                document.getElementById('totalStudentsValue').textContent = grandTotal;
+                document.getElementById('totalStudentsSub').textContent = 
+                    grandTotal === 1 ? 'student across all schools' : 'students across all schools';
+
+                const breakdownDiv = document.getElementById('totalStudentsBreakdown');
+                breakdownDiv.innerHTML = '';
+                SCHOOLS.forEach(school => {
+                    const count = (store[school.id] || []).length;
+                    if (count > 0) {
+                        const item = document.createElement('div');
+                        item.className = 'breakdown-item';
+                        item.innerHTML = `
+                            <div class="bd-value">${count}</div>
+                            <div class="bd-label">${school.icon} ${school.name.split(' ').slice(0,2).join(' ')}</div>
+                        `;
+                        item.title = school.name;
+                        breakdownDiv.appendChild(item);
+                    }
+                });
+
+                const statsOverview = document.getElementById('statsOverview');
+                statsOverview.innerHTML = '';
+
+                let totalPoints = 0;
+                let totalSchoolsWithStudents = 0;
+
+                SCHOOLS.forEach(school => {
+                    const students = store[school.id] || [];
+                    if (students.length > 0) totalSchoolsWithStudents++;
+                    students.forEach(s => { totalPoints += (s.score || 0); });
+                });
+
+                const stats = [
+                    { value: grandTotal, label: 'Total Students' },
+                    { value: totalPoints, label: 'Total Points' },
+                    { value: totalSchoolsWithStudents, label: 'Active Schools' },
+                    { value: SCHOOLS.length, label: 'Total Schools' },
+                    { value: CLASSES.length, label: 'Classes per School' }
+                ];
+
+                stats.forEach(stat => {
+                    const card = document.createElement('div');
+                    card.className = 'stat-card';
+                    card.innerHTML = `
+                        <div class="stat-value">${stat.value}</div>
+                        <div class="stat-label">${stat.label}</div>
+                    `;
+                    statsOverview.appendChild(card);
+                });
+
+                const listContainer = document.getElementById('schoolAnalyticsList');
+                listContainer.innerHTML = '';
+
+                let hasAnyData = false;
+
+                SCHOOLS.forEach(school => {
+                    const students = store[school.id] || [];
+                    if (students.length === 0) return;
+                    hasAnyData = true;
+
+                    const schoolBlock = document.createElement('div');
+                    schoolBlock.className = 'school-analytics';
+
+                    const header = document.createElement('div');
+                    header.className = 'school-analytics-header';
+                    header.innerHTML = `
+                        <div class="school-analytics-name">
+                            <span>${school.icon}</span>
+                            <span>${school.name}</span>
+                        </div>
+                        <div class="school-analytics-count">${students.length} student${students.length !== 1 ? 's' : ''}</div>
+                    `;
+                    schoolBlock.appendChild(header);
+
+                    const classGrid = document.createElement('div');
+                    classGrid.className = 'class-top-grid';
+
+                    CLASSES.forEach(cls => {
+                        const classStudents = students.filter(s => s.class === cls);
+                        let topStudent = null;
+                        if (classStudents.length > 0) {
+                            topStudent = classStudents.reduce((best, s) => {
+                                return (s.score || 0) > (best.score || 0) ? s : best;
+                            });
+                        }
+
+                        const card = document.createElement('div');
+                        card.className = 'class-top-card';
+
+                        if (topStudent) {
+                            card.innerHTML = `
+                                <div class="class-top-label">${cls} · ${classStudents.length} student${classStudents.length !== 1 ? 's' : ''}</div>
+                                <div class="class-top-name">🏅 ${escapeHtml(topStudent.name)}</div>
+                                <div class="class-top-points">★ ${topStudent.score || 0} pts</div>
+                            `;
+                        } else {
+                            card.innerHTML = `
+                                <div class="class-top-label">${cls}</div>
+                                <div class="class-top-empty">— no students —</div>
+                            `;
+                        }
+                        classGrid.appendChild(card);
+                    });
+
+                    schoolBlock.appendChild(classGrid);
+                    listContainer.appendChild(schoolBlock);
+                });
+
+                if (!hasAnyData) {
+                    listContainer.innerHTML = `<div class="no-data-analytics">📭 No students added yet. Paste names below to see analytics.</div>`;
+                }
+            }
+
+            // ==================== FULLSCREEN ====================
+            function openFullscreen(student, schoolId) {
+                const existing = document.querySelector('.fullscreen-overlay');
+                if (existing) existing.remove();
+
+                const overlay = document.createElement('div');
+                overlay.className = 'fullscreen-overlay';
+
+                const header = document.createElement('div');
+                header.className = 'fullscreen-header';
+                header.innerHTML = `
+                    <h2>👤 ${escapeHtml(student.name)} — ${escapeHtml(student.class || '')}</h2>
+                    <button class="close-fullscreen">✕ Close</button>
+                `;
+                header.querySelector('.close-fullscreen').addEventListener('click', () => overlay.remove());
+                overlay.appendChild(header);
+
+                const gridWrap = document.createElement('div');
+                gridWrap.style.maxWidth = '1100px';
+                gridWrap.style.margin = '0 auto';
+                gridWrap.style.width = '100%';
+
+                const grid = document.createElement('div');
+                grid.className = 'fullscreen-points-grid';
+
+                const totalDiv = document.createElement('div');
+                totalDiv.className = 'fullscreen-total';
+
+                function renderFullGrid() {
+                    grid.innerHTML = '';
+                    const score = student.score || 0;
+                    const filled = Math.min(50, Math.floor(score / 2));
+                    for (let i = 0; i < 50; i++) {
+                        const box = document.createElement('div');
+                        box.className = 'fullscreen-point-box' + (i < filled ? ' filled' : '');
+                        box.textContent = i + 1;
+                        box.addEventListener('click', async (e) => {
+                            e.stopPropagation();
+                            if (student.score >= 100) return;
+                            student.score = (student.score || 0) + 2;
+                            renderFullGrid();
+                            render();
+                            if (supabase) {
+                                setSaveStatus('saving', 'Saving...');
+                                const ok = await updateStudentScoreInCloud(student.id, student.score);
+                                if (ok) setSaveStatus('cloud', '☁️ Saved');
+                                else setSaveStatus('error', 'Save failed');
+                            }
+                        });
+                        box.addEventListener('contextmenu', async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (student.score >= 2) student.score -= 2;
+                            else student.score = 0;
+                            renderFullGrid();
+                            render();
+                            if (supabase) {
+                                setSaveStatus('saving', 'Saving...');
+                                const ok = await updateStudentScoreInCloud(student.id, student.score);
+                                if (ok) setSaveStatus('cloud', '☁️ Saved');
+                                else setSaveStatus('error', 'Save failed');
+                            }
+                        });
+                        grid.appendChild(box);
+                    }
+                    totalDiv.textContent = `★ Total: ${student.score || 0} pts`;
+                }
+
+                gridWrap.appendChild(grid);
+                gridWrap.appendChild(totalDiv);
+                overlay.appendChild(gridWrap);
+
+                document.body.appendChild(overlay);
+                renderFullGrid();
+            }
+
+            // ==================== RENDER ====================
+            function render() {
+                renderAnalytics();
+
+                const grid = document.getElementById('schoolsGrid');
+                grid.innerHTML = '';
+
+                const schoolsToRender = selectedSchoolId === 'all'
+                    ? SCHOOLS
+                    : SCHOOLS.filter(s => s.id === selectedSchoolId);
+
+                let anyStudentRendered = false;
+
+                schoolsToRender.forEach(school => {
+                    const students = store[school.id] || [];
+                    const filteredStudents = students.filter(matchesSearch);
+
+                    if (selectedSchoolId === 'all' && searchQuery && filteredStudents.length === 0) return;
+
+                    if (filteredStudents.length > 0) anyStudentRendered = true;
+
+                    const card = document.createElement('div');
+                    card.className = 'school-card';
+
+                    const header = document.createElement('div');
+                    header.className = 'school-header';
+                    header.innerHTML = `
+                        <div class="school-name">
+                            <i>${school.icon}</i> ${school.name}
+                        </div>
+                        <div class="school-actions">
+                            <button class="icon-btn" title="Clear all students" data-action="clear-school" data-school="${school.id}">🗑️</button>
+                        </div>
+                    `;
+                    card.appendChild(header);
+
+                    const pasteArea = document.createElement('div');
+                    pasteArea.className = 'paste-area';
+
+                    const textarea = document.createElement('textarea');
+                    textarea.placeholder = 'Paste student names (one per line)...';
+                    textarea.id = `paste-${school.id}`;
+                    pasteArea.appendChild(textarea);
+
+                    const classRow = document.createElement('div');
+                    classRow.className = 'class-row';
+
+                    const classSelect = document.createElement('select');
+                    classSelect.id = `class-${school.id}`;
+                    CLASSES.forEach(cls => {
+                        const opt = document.createElement('option');
+                        opt.value = cls;
+                        opt.textContent = cls;
+                        classSelect.appendChild(opt);
+                    });
+                    classRow.appendChild(classSelect);
+
+                    const addBtn = document.createElement('button');
+                    addBtn.className = 'btn btn-small';
+                    addBtn.innerHTML = '➕ Add';
+                    addBtn.dataset.action = 'add-students';
+                    addBtn.dataset.school = school.id;
+                    classRow.appendChild(addBtn);
+
+                    pasteArea.appendChild(classRow);
+                    card.appendChild(pasteArea);
+
+                    const columnsContainer = document.createElement('div');
+                    columnsContainer.className = 'class-columns-container';
+
+                    CLASSES.forEach(cls => {
+                        const colDiv = document.createElement('div');
+                        colDiv.className = 'class-column';
+
+                        const colHeader = document.createElement('div');
+                        colHeader.className = 'class-column-header';
+                        colHeader.textContent = cls;
+                        colDiv.appendChild(colHeader);
+
+                        const listDiv = document.createElement('div');
+                        listDiv.className = 'student-list-column';
+
+                        const classStudents = filteredStudents.filter(s => s.class === cls);
+                        if (classStudents.length === 0) {
+                            listDiv.innerHTML = `<div class="empty-message">—</div>`;
+                        } else {
+                            classStudents.forEach(student => {
+                                const cardItem = createStudentCard(student, school.id);
+                                listDiv.appendChild(cardItem);
+                            });
+                        }
+
+                        colDiv.appendChild(listDiv);
+                        columnsContainer.appendChild(colDiv);
+                    });
+
+                    card.appendChild(columnsContainer);
+                    grid.appendChild(card);
+                });
+
+                if (!anyStudentRendered && searchQuery) {
+                    const noRes = document.createElement('div');
+                    noRes.className = 'no-results';
+                    noRes.innerHTML = `🔍 No students found matching "<strong>${escapeHtml(searchQuery)}</strong>".`;
+                    grid.appendChild(noRes);
+                }
+            }
+
+            function createStudentCard(student, schoolId) {
+                const card = document.createElement('div');
+                card.className = 'student-card-item';
+
+                if (searchQuery && student.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+                    card.classList.add('match-highlight');
+                }
+
+                const nameLine = document.createElement('div');
+                nameLine.className = 'student-name-line';
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'student-name-text';
+                nameSpan.textContent = student.name;
+                nameSpan.title = 'Click to enlarge';
+                nameSpan.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openFullscreen(student, schoolId);
+                });
+                nameLine.appendChild(nameSpan);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-student';
+                removeBtn.innerHTML = '✕';
+                removeBtn.title = 'Remove student';
+                removeBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    if (!confirm(`Remove "${student.name}"? This will be deleted from cloud.`)) return;
+
+                    if (supabase) {
+                        setSaveStatus('saving', 'Deleting...');
+                        const ok = await deleteStudentFromCloud(student.id);
+                        if (!ok) {
+                            setSaveStatus('error', 'Delete failed');
+                            alert('Could not delete from cloud. Please try again.');
+                            return;
+                        }
+                    }
+
+                    const schoolStudents = store[schoolId];
+                    const idx = schoolStudents.findIndex(s => s.id === student.id);
+                    if (idx !== -1) { 
+                        schoolStudents.splice(idx, 1); 
+                        render(); 
+                        setSaveStatus('cloud', '☁️ Deleted');
+                    }
+                });
+                nameLine.appendChild(removeBtn);
+                card.appendChild(nameLine);
+
+                if (student.score === undefined) student.score = 0;
+                const score = student.score || 0;
+                const filledBoxes = Math.min(50, Math.floor(score / 2));
+
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'points-grid';
+
+                for (let i = 0; i < 50; i++) {
+                    const box = document.createElement('div');
+                    box.className = 'point-box' + (i < filledBoxes ? ' filled' : '');
+                    box.textContent = i + 1;
+                    box.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        if (student.score >= 100) return;
+                        student.score = (student.score || 0) + 2;
+                        render();
+                        if (supabase) {
+                            setSaveStatus('saving', 'Saving...');
+                            const ok = await updateStudentScoreInCloud(student.id, student.score);
+                            if (ok) setSaveStatus('cloud', '☁️ Saved');
+                            else setSaveStatus('error', 'Save failed');
+                        }
+                    });
+                    box.addEventListener('contextmenu', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (student.score >= 2) student.score -= 2;
+                        else student.score = 0;
+                        render();
+                        if (supabase) {
+                            setSaveStatus('saving', 'Saving...');
+                            const ok = await updateStudentScoreInCloud(student.id, student.score);
+                            if (ok) setSaveStatus('cloud', '☁️ Saved');
+                            else setSaveStatus('error', 'Save failed');
+                        }
+                    });
+                    gridDiv.appendChild(box);
+                }
+                card.appendChild(gridDiv);
+
+                const totalBadge = document.createElement('div');
+                totalBadge.className = 'total-badge';
+                totalBadge.textContent = `★ ${score} pts`;
+                card.appendChild(totalBadge);
+
+                const certBtn = document.createElement('button');
+                certBtn.className = 'cert-btn';
+                certBtn.innerHTML = '📜 ' + selectedLevel + ' Certificate';
+                certBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    generateCertificate(student);
+                });
+                card.appendChild(certBtn);
+
+                return card;
+            }
+
+            // ==================== CERTIFICATE ====================
+            function generateCertificate(student) {
+                const today = new Date();
+                const dateStr = today.toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                });
+                const certId = selectedLevel + '-' + student.id.substring(0, 8).toUpperCase() + '-' + Date.now().toString().slice(-4);
+
+                const logoHTML = savedLogoDataUrl
+                    ? `<img src="${savedLogoDataUrl}" alt="LOGO" style="max-height: 1in; max-width: 2.2in; object-fit: contain; display:block; margin: 0 auto 0.1in auto;">`
+                    : `<div style="font-size: 0.4in; margin-bottom: 0.1in;">🌱</div>`;
+
+                const certHTML = `
+                    <div style="
+                        width: 11in; height: 8.5in; margin: 0; padding: 0;
+                        background: #fdfefd;
+                        font-family: 'Georgia', 'Times New Roman', serif;
+                        color: #1e2e1e; position: relative;
+                        box-sizing: border-box; overflow: hidden;
+                    ">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 0.18in solid #1a6b3a; box-sizing: border-box;"></div>
+                        <div style="position: absolute; top: 0.24in; left: 0.24in; right: 0.24in; bottom: 0.24in; border: 0.015in solid #c8961e; box-sizing: border-box; background: #ffffff;"></div>
+                        <div style="position: absolute; top: 0.4in; left: 0.5in; right: 0.5in; bottom: 0.4in; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box;">
+                            <div style="text-align: center;">
+                                ${logoHTML}
+                                <h1 style="font-size: 0.3in; font-weight: 700; color: #0f4b28; margin: 0; letter-spacing: 0.06in; font-family: 'Georgia', serif; text-transform: uppercase;">Feed People Foundation</h1>
+                                <div style="width: 3in; height: 0.025in; background: linear-gradient(to right, transparent, #c8961e, transparent); margin: 0.1in auto;"></div>
+                                <p style="font-size: 0.13in; color: #4a6b4a; margin: 0; font-style: italic; letter-spacing: 0.03in;">Gospel · Food · Education</p>
+                            </div>
+                            <div style="text-align: center; margin: 0.1in 0;">
+                                <p style="font-size: 0.13in; letter-spacing: 0.07in; color: #6b8a6b; margin: 0 0 0.08in 0; text-transform: uppercase;">Certificate of Completion</p>
+                                <h2 style="font-size: 0.42in; font-weight: 400; color: #1a6b3a; margin: 0; letter-spacing: 0.025in;">${selectedLevel} English Level</h2>
+                                <div style="width: 1.5in; height: 0.015in; background: #c8961e; margin: 0.1in auto;"></div>
+                            </div>
+                            <div style="text-align: center; margin: 0.08in 0;">
+                                <p style="font-size: 0.14in; color: #4a6b4a; margin: 0 0 0.06in 0; font-style: italic;">This certificate is proudly presented to</p>
+                                <p style="font-size: 0.44in; font-weight: 600; color: #0f4b28; margin: 0.12in 0 0.08in 0; font-family: 'Georgia', serif; border-bottom: 0.025in solid #c8961e; display: inline-block; padding: 0 0.7in 0.08in 0.7in;">${escapeHtml(student.name)}</p>
+                            </div>
+                            <div style="text-align: center; max-width: 8in; margin: 0.06in auto;">
+                                <p style="font-size: 0.14in; color: #3a5a3a; line-height: 1.7; margin: 0;">For successfully completing the ${selectedLevel} English level requirements, demonstrating dedication, diligence, and a commendable commitment to learning.</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 0.1in; padding-top: 0.15in; border-top: 0.012in solid #d9e8d9;">
+                                <div style="text-align: left;">
+                                    <p style="font-size: 0.1in; color: #6b8a6b; margin: 0 0 0.04in 0;">DATE</p>
+                                    <p style="font-size: 0.14in; color: #1e2e1e; margin: 0; font-weight: 600;">${dateStr}</p>
+                                    <p style="font-size: 0.09in; color: #8aaa8a; margin: 0.08in 0 0 0;">ID: ${certId}</p>
+                                </div>
+                                <div style="text-align: center; min-width: 3.2in;">
+                                    <div style="width: 3in; height: 0.5in; border-bottom: 0.02in solid #1a6b3a; margin: 0 auto 0.08in auto;"></div>
+                                    <p style="font-size: 0.14in; color: #0f4b28; margin: 0; font-weight: 700;">Hans-Jerry CHRISTOLIN</p>
+                                    <p style="font-size: 0.1in; color: #4a6b4a; margin: 0.03in 0 0 0;">DIRECTOR</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 1.1in; height: 1.1in; border: 0.035in double #c8961e; border-radius: 50%; font-size: 0.055in; color: #0f4b28; font-weight: 700; text-align: center; padding: 0.1in; background: radial-gradient(circle, rgba(240, 192, 64, 0.25) 0%, rgba(240, 192, 64, 0.08) 70%); box-sizing: border-box;">
+                                        <div style="font-size: 0.2in; line-height: 1;">🌱</div>
+                                        <div style="font-size: 0.055in; margin-top: 0.03in;">FEED PEOPLE</div>
+                                        <div style="font-size: 0.055in;">FOUNDATION</div>
+                                        <div style="font-size: 0.048in; margin-top: 0.03in; color: #c8961e;">★ OFFICIAL ★</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const printWindow = window.open('', '_blank', 'width=1200,height=900');
+                if (printWindow) {
+                    printWindow.document.write(`
+                        <!DOCTYPE html><html><head>
+                            <title>${selectedLevel} Certificate - ${escapeHtml(student.name)}</title>
+                            <style>
+                                @page { size: 11in 8.5in landscape; margin: 0; }
+                                html, body { margin: 0; padding: 0; width: 11in; height: 8.5in; background: white; overflow: hidden; }
+                                .cert-page { width: 11in; height: 8.5in; margin: 0; padding: 0; }
+                                .no-print { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; text-align: center; }
+                                @media print { .no-print { display: none !important; } }
+                            </style>
+                        </head><body>
+                            <div class="cert-page">${certHTML}</div>
+                            <div class="no-print">
+                                <button onclick="window.print()" style="padding: 12px 28px; font-size: 1rem; background: #1a6b3a; color: #fff; border: none; border-radius: 40px; cursor: pointer; font-weight: 700;">🖨️ Print / Save as PDF</button>
+                                <button onclick="window.close()" style="padding: 12px 28px; font-size: 1rem; background: #f8f4e8; color: #a67c10; border: 1px solid #e8d9a8; border-radius: 40px; cursor: pointer; margin-left: 12px; font-weight: 600;">Close</button>
+                            </div>
+                        </body></html>
+                    `);
+                    printWindow.document.close();
+                } else {
+                    alert('Please allow pop-ups to download the certificate.');
+                }
+            }
+
+            // ==================== ADD / CLEAR ====================
+            async function addStudentsFromPaste(schoolId) {
+                const textarea = document.getElementById(`paste-${schoolId}`);
+                const classSelect = document.getElementById(`class-${schoolId}`);
+                if (!textarea || !classSelect) return;
+
+                const rawText = textarea.value.trim();
+                if (!rawText) {
+                    alert('Please paste at least one student name.');
+                    return;
+                }
+                const className = classSelect.value;
+                const lines = rawText.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
+
+                if (lines.length === 0) return;
+
+                setSaveStatus('saving', `Adding ${lines.length} student${lines.length !== 1 ? 's' : ''}...`);
+
+                let successCount = 0;
+                let failCount = 0;
+
+                for (const name of lines) {
+                    let newStudent = null;
+
+                    if (supabase) {
+                        // Try cloud first
+                        newStudent = await addStudentToCloud(schoolId, name, className, 0);
+                    }
+
+                    if (newStudent) {
+                        store[schoolId].push({
+                            id: newStudent.id,
+                            name: newStudent.name,
+                            class: newStudent.class,
+                            score: newStudent.score || 0
+                        });
+                        successCount++;
+                    } else if (!supabase) {
+                        // Local only
+                        store[schoolId].push({
+                            id: 'local_' + Date.now() + Math.random().toString(36).substring(2, 9),
+                            name, class: className, score: 0
+                        });
+                        successCount++;
+                    } else {
+                        failCount++;
+                    }
+                }
+
+                textarea.value = '';
+                render();
+
+                if (failCount === 0) {
+                    setSaveStatus('cloud', `☁️ Added ${successCount} student${successCount !== 1 ? 's' : ''}`);
+                } else {
+                    setSaveStatus('error', `${successCount} added, ${failCount} failed`);
+                }
+            }
+
+            async function clearSchool(schoolId) {
+                if (!confirm('Remove ALL students from this school? This will also delete them from the cloud. Cannot be undone.')) return;
+                if (!confirm('Are you REALLY sure? This action is permanent.')) return;
+
+                if (supabase) {
+                    setSaveStatus('saving', 'Clearing cloud...');
+                    const ok = await clearSchoolFromCloud(schoolId);
+                    if (!ok) {
+                        setSaveStatus('error', 'Cloud delete failed');
+                        return;
+                    }
+                }
+
+                store[schoolId] = [];
+                render();
+                setSaveStatus('cloud', '☁️ School cleared');
+            }
+
+            // ==================== EVENTS ====================
+            document.getElementById('schoolsGrid').addEventListener('click', (e) => {
+                const target = e.target.closest('button');
+                if (!target) return;
+                const action = target.dataset.action;
+                const schoolId = target.dataset.school;
+                if (action === 'add-students' && schoolId) addStudentsFromPaste(schoolId);
+                if (action === 'clear-school' && schoolId) clearSchool(schoolId);
+            });
+
+            document.getElementById('schoolSelector').addEventListener('change', (e) => {
+                selectedSchoolId = e.target.value;
+                render();
+            });
+
+            document.getElementById('levelSelector').addEventListener('change', (e) => {
+                selectedLevel = e.target.value;
+                render();
+            });
+
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                searchQuery = e.target.value.trim();
+                render();
+            });
+
+            document.getElementById('clearSearchBtn').addEventListener('click', () => {
+                document.getElementById('searchInput').value = '';
+                searchQuery = '';
+                render();
+            });
+
+            document.getElementById('cloudConfigBtn').addEventListener('click', () => {
+                showSetupModal();
+            });
+
+            // ==================== INIT ====================
+            async function init() {
+                populateSchoolSelector();
+                loadSavedLogo();
+                render();
+
+                if (initSupabase()) {
+                    updateCloudStatus('connected', 'Connecting to cloud...');
+                    await syncFromCloud();
+                    await loadLogoSettings();
+                } else {
+                    updateCloudStatus('setup', 'Cloud not configured. Click ⚙️ to set up.');
+                }
+            }
+
+            init();
+
+        })();
+    </script>
+</body>
+</html>

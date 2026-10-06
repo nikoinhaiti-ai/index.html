@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FEED PEOPLE FOUNDATION · School Points</title>
-    <!-- Supabase JS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -109,7 +108,6 @@
             font-size: 0.9rem;
         }
 
-        /* ========== CLOUD STATUS ========== */
         .cloud-banner {
             display: flex;
             flex-wrap: wrap;
@@ -133,9 +131,7 @@
             border-color: #f0d9a8;
         }
 
-        .cloud-icon {
-            font-size: 1.4rem;
-        }
+        .cloud-icon { font-size: 1.4rem; }
 
         .cloud-text {
             font-size: 0.85rem;
@@ -543,6 +539,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .school-name {
@@ -556,7 +554,7 @@
 
         .school-name i { font-style: normal; font-size: 1.7rem; }
 
-        .school-actions { display: flex; gap: 8px; }
+        .school-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
         .icon-btn {
             background: none;
@@ -688,6 +686,37 @@
             padding-bottom: 6px;
             border-bottom: 2px solid #e8d9a8;
             letter-spacing: 1px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .class-column-header .class-print-all-btn {
+            font-size: 0.62rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #1a6b3a, #0f4b28);
+            color: #fff;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .class-column-header .class-print-all-btn:hover {
+            background: #0a3a1e;
+            transform: scale(0.96);
+        }
+
+        .class-column-header .class-print-all-btn:disabled {
+            background: #a8c8a8;
+            cursor: not-allowed;
         }
 
         .student-list-column {
@@ -725,22 +754,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
         }
 
-        .student-name-line .student-name-text {
+        .student-name-text {
             flex: 1;
             padding: 2px 4px;
             border-radius: 8px;
             transition: 0.15s;
+            cursor: pointer;
         }
 
-        .student-name-line .student-name-text:hover {
+        .student-name-text:hover {
             background: #f8f4e8;
             color: #a67c10;
         }
 
-        .student-name-line .remove-student {
+        .remove-student {
             font-size: 0.9rem;
             opacity: 0.6;
             background: transparent;
@@ -752,7 +781,7 @@
             transition: 0.15s;
         }
 
-        .student-name-line .remove-student:hover {
+        .remove-student:hover {
             opacity: 1;
             background: #fdecea;
         }
@@ -981,7 +1010,6 @@
             border-radius: 10px;
         }
 
-        /* ========== SUPABASE SETUP MODAL ========== */
         .setup-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -1129,7 +1157,6 @@
         </div>
     </div>
 
-    <!-- ========== CLOUD STATUS BANNER ========== -->
     <div class="cloud-banner" id="cloudBanner">
         <span class="cloud-icon" id="cloudIcon">☁️</span>
         <span class="cloud-text" id="cloudText">Connecting to cloud...</span>
@@ -1189,8 +1216,9 @@
     <div class="schools-grid" id="schoolsGrid"></div>
 
     <div class="footer-note">
-        ⚡ Paste names (one per line) — add class — click boxes to give +2 points each. Click a student name to enlarge. Right-click a box to remove 2 points.<br>
-        ☁️ <strong>Cloud sync enabled:</strong> Your data is saved permanently to Supabase and accessible from any device.
+        ⚡ Paste names (one per line) — add class — click boxes to give +2 points each. Click a student name to enlarge. Right-click a box to remove 2 points. Double-click a name to edit.<br>
+        🖨️ <strong>Print All Certificates per Class:</strong> Use the button in each class column header to print all students together.<br>
+        ☁️ <strong>Cloud sync enabled:</strong> Your data is saved permanently to Supabase.
     </div>
 
     <script>
@@ -1215,10 +1243,7 @@
             let selectedLevel = 'A1';
             let savedLogoDataUrl = '';
 
-            // Supabase client
             let supabase = null;
-            let supabaseConnected = false;
-            let supabaseLoading = false;
 
             // ==================== SUPABASE SETUP ====================
             function getSupabaseConfig() {
@@ -1270,7 +1295,6 @@
                     icon.textContent = '⚠️';
                     textEl.textContent = text;
                 }
-                supabaseConnected = (state === 'connected');
             }
 
             function showSetupModal(errorMsg) {
@@ -1327,7 +1351,6 @@
 
                     msg.innerHTML = `<div class="setup-success">⏳ Testing connection...</div>`;
 
-                    // Test connection
                     try {
                         const testClient = window.supabase.createClient(url, key);
                         const { error } = await testClient.from('students').select('id').limit(1);
@@ -1351,7 +1374,6 @@
             async function loadFromCloud() {
                 if (!supabase) return false;
                 try {
-                    supabaseLoading = true;
                     const { data, error } = await supabase
                         .from('students')
                         .select('*')
@@ -1359,10 +1381,8 @@
 
                     if (error) throw error;
 
-                    // Reset store
                     SCHOOLS.forEach(school => { store[school.id] = []; });
 
-                    // Group by school
                     (data || []).forEach(row => {
                         if (store[row.school_id]) {
                             store[row.school_id].push({
@@ -1373,12 +1393,9 @@
                             });
                         }
                     });
-
-                    supabaseLoading = false;
                     return true;
                 } catch(e) {
                     console.error('Cloud load failed:', e);
-                    supabaseLoading = false;
                     return false;
                 }
             }
@@ -1422,6 +1439,21 @@
                     return true;
                 } catch(e) {
                     console.error('Update score failed:', e);
+                    return false;
+                }
+            }
+
+            async function updateStudentNameInCloud(studentId, newName) {
+                if (!supabase) return false;
+                try {
+                    const { error } = await supabase
+                        .from('students')
+                        .update({ name: newName, updated_at: new Date().toISOString() })
+                        .eq('id', studentId);
+                    if (error) throw error;
+                    return true;
+                } catch(e) {
+                    console.error('Update name failed:', e);
                     return false;
                 }
             }
@@ -1470,9 +1502,7 @@
                         try { localStorage.setItem(LOGO_KEY, data.value); } catch(e) {}
                         applyLogo();
                     }
-                } catch(e) {
-                    console.warn('Logo cloud load failed:', e);
-                }
+                } catch(e) {}
             }
 
             async function saveLogoSettings(dataUrl) {
@@ -1484,7 +1514,6 @@
                     if (error) throw error;
                     return true;
                 } catch(e) {
-                    console.error('Logo cloud save failed:', e);
                     return false;
                 }
             }
@@ -1564,6 +1593,13 @@
             function matchesSearch(student) {
                 if (!searchQuery) return true;
                 return student.name.toLowerCase().includes(searchQuery.toLowerCase());
+            }
+
+            // Sort students alphabetically by name
+            function sortStudentsAlphabetically(students) {
+                return [...students].sort((a, b) => 
+                    a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' })
+                );
             }
 
             // ==================== ANALYTICS ====================
@@ -1760,6 +1796,65 @@
                 renderFullGrid();
             }
 
+            // ==================== EDIT NAME MODAL ====================
+            function openEditNameModal(student, schoolId) {
+                const existing = document.querySelector('.edit-modal');
+                if (existing) existing.remove();
+
+                const modal = document.createElement('div');
+                modal.className = 'edit-modal';
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                    background: rgba(15, 45, 30, 0.7); backdrop-filter: blur(4px);
+                    z-index: 10001; display: flex; align-items: center; justify-content: center;
+                    padding: 1.5rem;
+                `;
+                modal.innerHTML = `
+                    <div style="background: #fff; border-radius: 24px; max-width: 420px; width: 100%; padding: 1.8rem 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.3); border: 1px solid #e0ebe0;">
+                        <h3 style="font-size: 1.1rem; color: #0f4b28; margin-bottom: 1rem;">✏️ Edit Student Name</h3>
+                        <input type="text" id="editNameInput" value="${escapeHtml(student.name)}" maxlength="100" autocomplete="off"
+                            style="width: 100%; padding: 12px 16px; border: 1px solid #c8dcc8; border-radius: 14px; font-size: 1rem; background: #f8fbf8; color: #1e2e1e; outline: none; font-weight: 500;">
+                        <div style="display: flex; gap: 10px; margin-top: 1.2rem;">
+                            <button class="btn" id="editSaveBtn" style="flex: 1; padding: 10px 16px; font-size: 0.85rem;">💾 Save</button>
+                            <button class="btn" id="editCancelBtn" style="flex: 1; padding: 10px 16px; font-size: 0.85rem; background: #f8f4e8; color: #a67c10; border: 1px solid #e8d9a8; box-shadow: none;">Cancel</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                const input = document.getElementById('editNameInput');
+                input.focus();
+                input.select();
+
+                const closeModal = () => modal.remove();
+                document.getElementById('editCancelBtn').addEventListener('click', closeModal);
+
+                document.getElementById('editSaveBtn').addEventListener('click', async () => {
+                    const newName = input.value.trim();
+                    if (!newName) { alert('Name cannot be empty.'); return; }
+                    if (newName === student.name) { closeModal(); return; }
+
+                    setSaveStatus('saving', 'Updating name...');
+                    if (supabase) {
+                        const ok = await updateStudentNameInCloud(student.id, newName);
+                        if (!ok) {
+                            setSaveStatus('error', 'Cloud update failed');
+                            alert('Could not update name in cloud. Please try again.');
+                            return;
+                        }
+                    }
+                    student.name = newName;
+                    render();
+                    setSaveStatus('cloud', '☁️ Name updated');
+                    closeModal();
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('editSaveBtn').click(); }
+                    else if (e.key === 'Escape') { closeModal(); }
+                });
+            }
+
             // ==================== RENDER ====================
             function render() {
                 renderAnalytics();
@@ -1836,13 +1931,34 @@
 
                         const colHeader = document.createElement('div');
                         colHeader.className = 'class-column-header';
-                        colHeader.textContent = cls;
+                        
+                        // Sort class students alphabetically
+                        const classStudents = sortStudentsAlphabetically(
+                            filteredStudents.filter(s => s.class === cls)
+                        );
+                        
+                        const headerLabel = document.createElement('div');
+                        headerLabel.textContent = cls;
+                        colHeader.appendChild(headerLabel);
+
+                        // Print All Certificates button for this class
+                        if (classStudents.length > 0) {
+                            const printAllBtn = document.createElement('button');
+                            printAllBtn.className = 'class-print-all-btn';
+                            printAllBtn.innerHTML = `🖨️ Print All (${classStudents.length})`;
+                            printAllBtn.title = `Print all ${classStudents.length} certificate(s) for class ${cls}`;
+                            printAllBtn.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                printAllCertificatesForClass(school, cls, classStudents);
+                            });
+                            colHeader.appendChild(printAllBtn);
+                        }
+
                         colDiv.appendChild(colHeader);
 
                         const listDiv = document.createElement('div');
                         listDiv.className = 'student-list-column';
 
-                        const classStudents = filteredStudents.filter(s => s.class === cls);
                         if (classStudents.length === 0) {
                             listDiv.innerHTML = `<div class="empty-message">—</div>`;
                         } else {
@@ -1882,11 +1998,19 @@
                 const nameSpan = document.createElement('span');
                 nameSpan.className = 'student-name-text';
                 nameSpan.textContent = student.name;
-                nameSpan.title = 'Click to enlarge';
+                nameSpan.title = 'Click to enlarge · Double-click to edit name';
+                
                 nameSpan.addEventListener('click', (e) => {
                     e.stopPropagation();
                     openFullscreen(student, schoolId);
                 });
+                
+                nameSpan.addEventListener('dblclick', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    openEditNameModal(student, schoolId);
+                });
+                
                 nameLine.appendChild(nameSpan);
 
                 const removeBtn = document.createElement('button');
@@ -1975,8 +2099,8 @@
                 return card;
             }
 
-            // ==================== CERTIFICATE ====================
-            function generateCertificate(student) {
+            // ==================== CERTIFICATE HTML BUILDER ====================
+            function buildCertificateHTML(student) {
                 const today = new Date();
                 const dateStr = today.toLocaleDateString('en-US', {
                     year: 'numeric', month: 'long', day: 'numeric'
@@ -1987,7 +2111,7 @@
                     ? `<img src="${savedLogoDataUrl}" alt="LOGO" style="max-height: 1in; max-width: 2.2in; object-fit: contain; display:block; margin: 0 auto 0.1in auto;">`
                     : `<div style="font-size: 0.4in; margin-bottom: 0.1in;">🌱</div>`;
 
-                const certHTML = `
+                return `
                     <div style="
                         width: 11in; height: 8.5in; margin: 0; padding: 0;
                         background: #fdfefd;
@@ -2039,6 +2163,11 @@
                         </div>
                     </div>
                 `;
+            }
+
+            // ==================== SINGLE CERTIFICATE ====================
+            function generateCertificate(student) {
+                const certHTML = buildCertificateHTML(student);
 
                 const printWindow = window.open('', '_blank', 'width=1200,height=900');
                 if (printWindow) {
@@ -2048,7 +2177,7 @@
                             <style>
                                 @page { size: 11in 8.5in landscape; margin: 0; }
                                 html, body { margin: 0; padding: 0; width: 11in; height: 8.5in; background: white; overflow: hidden; }
-                                .cert-page { width: 11in; height: 8.5in; margin: 0; padding: 0; }
+                                .cert-page { width: 11in; height: 8.5in; margin: 0; padding: 0; page-break-after: always; }
                                 .no-print { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; text-align: center; }
                                 @media print { .no-print { display: none !important; } }
                             </style>
@@ -2064,6 +2193,100 @@
                 } else {
                     alert('Please allow pop-ups to download the certificate.');
                 }
+            }
+
+            // ==================== PRINT ALL CERTIFICATES FOR ONE CLASS ====================
+            function printAllCertificatesForClass(school, className, students) {
+                if (!students || students.length === 0) {
+                    alert('No students in this class.');
+                    return;
+                }
+
+                // Sort alphabetically before printing
+                const sortedStudents = sortStudentsAlphabetically(students);
+
+                // Build all certificate pages combined
+                let allPagesHTML = '';
+                sortedStudents.forEach((student, idx) => {
+                    const certHTML = buildCertificateHTML(student);
+                    allPagesHTML += `<div class="cert-page">${certHTML}</div>`;
+                });
+
+                const printWindow = window.open('', '_blank', 'width=1200,height=900');
+                if (!printWindow) {
+                    alert('Please allow pop-ups to print certificates.');
+                    return;
+                }
+
+                printWindow.document.write(`
+                    <!DOCTYPE html><html><head>
+                        <meta charset="UTF-8">
+                        <title>${className} Certificates — ${escapeHtml(school.name)}</title>
+                        <style>
+                            @page { size: 11in 8.5in landscape; margin: 0; }
+                            html, body { 
+                                margin: 0; padding: 0; 
+                                background: #e8e8e8;
+                                font-family: 'Segoe UI', sans-serif;
+                            }
+                            .cert-page { 
+                                width: 11in; height: 8.5in; 
+                                margin: 0; padding: 0; 
+                                page-break-after: always;
+                                break-after: page;
+                                background: #fdfefd;
+                                overflow: hidden;
+                                position: relative;
+                                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                            }
+                            .cert-page:last-child { 
+                                page-break-after: auto;
+                                break-after: auto;
+                            }
+                            .no-print { 
+                                position: fixed; top: 15px; right: 15px; z-index: 9999;
+                                background: #fff; padding: 12px 16px; border-radius: 40px;
+                                box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+                                display: flex; gap: 10px; align-items: center;
+                            }
+                            .no-print button {
+                                padding: 10px 22px; font-size: 0.95rem;
+                                border: none; border-radius: 40px; cursor: pointer;
+                                font-weight: 700;
+                            }
+                            .btn-print { background: #1a6b3a; color: #fff; }
+                            .btn-print:hover { background: #0f4b28; }
+                            .btn-close { background: #f8f4e8; color: #a67c10; border: 1px solid #e8d9a8; }
+                            .info-banner {
+                                position: fixed; top: 15px; left: 15px; z-index: 9999;
+                                background: #1a6b3a; color: #fff;
+                                padding: 10px 18px; border-radius: 40px;
+                                font-size: 0.85rem; font-weight: 600;
+                                box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+                            }
+                            @media print {
+                                html, body { background: #fff; }
+                                .no-print, .info-banner { display: none !important; }
+                                .cert-page { 
+                                    box-shadow: none;
+                                    margin: 0;
+                                    page-break-after: always;
+                                    break-after: page;
+                                }
+                            }
+                        </style>
+                    </head><body>
+                        <div class="info-banner">
+                            📄 ${sortedStudents.length} certificate${sortedStudents.length !== 1 ? 's' : ''} · ${escapeHtml(className)} · ${escapeHtml(school.name)}
+                        </div>
+                        <div class="no-print">
+                            <button class="btn-print" onclick="window.print()">🖨️ Print All (${sortedStudents.length})</button>
+                            <button class="btn-close" onclick="window.close()">✕ Close</button>
+                        </div>
+                        ${allPagesHTML}
+                    </body></html>
+                `);
+                printWindow.document.close();
             }
 
             // ==================== ADD / CLEAR ====================
@@ -2091,7 +2314,6 @@
                     let newStudent = null;
 
                     if (supabase) {
-                        // Try cloud first
                         newStudent = await addStudentToCloud(schoolId, name, className, 0);
                     }
 
@@ -2104,7 +2326,6 @@
                         });
                         successCount++;
                     } else if (!supabase) {
-                        // Local only
                         store[schoolId].push({
                             id: 'local_' + Date.now() + Math.random().toString(36).substring(2, 9),
                             name, class: className, score: 0

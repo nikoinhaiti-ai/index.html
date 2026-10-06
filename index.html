@@ -25,6 +25,235 @@
             min-height: 100vh;
         }
 
+        /* ===== AUTH SCREEN ===== */
+        .auth-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #0f4b28 0%, #1a6b3a 50%, #0a3a1e 100%);
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .auth-screen::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(240, 192, 64, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(240, 192, 64, 0.12) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .auth-box {
+            background: #ffffff;
+            border-radius: 32px;
+            max-width: 420px;
+            width: 100%;
+            padding: 2.5rem 2.5rem 2rem 2.5rem;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+            animation: authFadeIn 0.5s ease;
+            text-align: center;
+        }
+
+        @keyframes authFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-logo-wrap {
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-logo {
+            max-height: 80px;
+            max-width: 140px;
+            object-fit: contain;
+            margin: 0 auto 0.5rem auto;
+            display: block;
+            border-radius: 10px;
+        }
+
+        .auth-logo-fallback {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-org {
+            font-size: 0.72rem;
+            letter-spacing: 3px;
+            color: #a67c10;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .auth-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #0f4b28;
+            margin-bottom: 0.3rem;
+        }
+
+        .auth-subtitle {
+            font-size: 0.8rem;
+            color: #7a9a7a;
+            margin-bottom: 1.8rem;
+        }
+
+        .auth-field {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .auth-field label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #0f4b28;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .auth-input-wrap {
+            position: relative;
+        }
+
+        .auth-input-wrap .field-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .auth-input-wrap input {
+            width: 100%;
+            padding: 14px 44px 14px 46px;
+            border: 1.5px solid #c8dcc8;
+            border-radius: 14px;
+            font-size: 1rem;
+            background: #f8fbf8;
+            color: #1e2e1e;
+            outline: none;
+            transition: 0.2s;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .auth-input-wrap input:focus {
+            border-color: #1a6b3a;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(26, 107, 58, 0.12);
+        }
+
+        .auth-input-wrap .toggle-pwd {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            opacity: 0.6;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: 0.15s;
+        }
+
+        .auth-input-wrap .toggle-pwd:hover {
+            opacity: 1;
+            background: #f0f5f0;
+        }
+
+        .auth-error {
+            background: #fdecea;
+            color: #c0392b;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.82rem;
+            margin-bottom: 1rem;
+            border: 1px solid #f5b7b1;
+            font-weight: 600;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .auth-error.show { display: flex; }
+
+        .auth-error.shake {
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .auth-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #1a6b3a, #0f4b28);
+            color: #ffffff;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 6px 18px rgba(26, 107, 58, 0.35);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 0.5rem;
+        }
+
+        .auth-btn:hover {
+            background: #0a3a1e;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 22px rgba(26, 107, 58, 0.45);
+        }
+
+        .auth-btn:active { transform: translateY(0); }
+
+        .auth-btn:disabled {
+            background: #a8c8a8;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .auth-footer {
+            margin-top: 1.6rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid #f0f5f0;
+            text-align: center;
+            font-size: 0.72rem;
+            color: #9ab09a;
+            letter-spacing: 0.3px;
+            line-height: 1.6;
+        }
+
+        /* ===== APP CONTAINER ===== */
+        .app-container { display: none; }
+        .app-container.visible { display: block; }
+
+        /* ===== HEADER ===== */
         .foundation-header {
             display: flex;
             flex-wrap: wrap;
@@ -83,21 +312,49 @@
             transition: 0.3s;
         }
 
-        .save-status.saving {
-            background: #fef3e0;
-            color: #a67c10;
-            border-color: #f0d9a8;
-        }
+        .save-status.saving { background: #fef3e0; color: #a67c10; border-color: #f0d9a8; }
+        .save-status.error { background: #fdecea; color: #c0392b; border-color: #f5b7b1; }
+        .save-status.cloud { background: linear-gradient(135deg, #e8f5e8, #d4ecd4); border-color: #a8d0a8; }
 
-        .save-status.error {
-            background: #fdecea;
-            color: #c0392b;
-            border-color: #f5b7b1;
-        }
-
-        .save-status.cloud {
+        .admin-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             background: linear-gradient(135deg, #e8f5e8, #d4ecd4);
-            border-color: #a8d0a8;
+            padding: 0.4rem 0.5rem 0.4rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #a8d0a8;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #0f4b28;
+        }
+
+        .admin-chip .avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a6b3a, #0f4b28);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+
+        .lock-btn {
+            background: #ffffff;
+            border: 1.5px solid #e8b8b8;
+            color: #c0392b;
+            border-radius: 30px;
+            padding: 0.35rem 0.9rem;
+            font-weight: 700;
+            font-size: 0.72rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .lock-btn:hover {
+            background: #fdecea;
+            border-color: #f5b7b1;
         }
 
         .badge {
@@ -110,6 +367,7 @@
             font-size: 0.9rem;
         }
 
+        /* ===== CLOUD BANNER ===== */
         .cloud-banner {
             display: flex;
             flex-wrap: wrap;
@@ -123,15 +381,8 @@
             box-shadow: 0 3px 12px rgba(20, 80, 50, 0.08);
         }
 
-        .cloud-banner.disconnected {
-            background: linear-gradient(135deg, #fdecea, #fadbd8);
-            border-color: #f5b7b1;
-        }
-
-        .cloud-banner.local {
-            background: linear-gradient(135deg, #fef3e0, #fdebd0);
-            border-color: #f0d9a8;
-        }
+        .cloud-banner.disconnected { background: linear-gradient(135deg, #fdecea, #fadbd8); border-color: #f5b7b1; }
+        .cloud-banner.local { background: linear-gradient(135deg, #fef3e0, #fdebd0); border-color: #f0d9a8; }
 
         .cloud-icon { font-size: 1.4rem; }
 
@@ -160,6 +411,24 @@
 
         .cloud-btn:hover { background: #f0f8f0; }
 
+        /* ===== LOCKED STATE ===== */
+        body.locked .admin-only { display: none !important; }
+        body.locked .paste-area textarea,
+        body.locked .class-row select,
+        body.locked .point-box,
+        body.locked .remove-student,
+        body.locked .cert-btn,
+        body.locked .class-download-all-btn,
+        body.locked .icon-btn,
+        body.locked .logo-upload-label {
+            pointer-events: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        body.locked .student-name-text { cursor: default; }
+        body.locked .student-name-text:hover { background: transparent; color: #1e2e1e; }
+
+        /* ===== ANALYTICS ===== */
         .analytics-section {
             background: #ffffff;
             border-radius: 32px;
@@ -419,6 +688,7 @@
             font-size: 0.9rem;
         }
 
+        /* ===== CONTROL BAR ===== */
         .control-bar {
             display: flex;
             flex-wrap: wrap;
@@ -512,6 +782,7 @@
 
         #logoUploadInput { display: none; }
 
+        /* ===== SCHOOLS GRID ===== */
         .schools-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -711,15 +982,8 @@
             gap: 4px;
         }
 
-        .class-column-header .class-download-all-btn:hover {
-            background: #0a3a1e;
-            transform: scale(0.96);
-        }
-
-        .class-column-header .class-download-all-btn:disabled {
-            background: #a8c8a8;
-            cursor: not-allowed;
-        }
+        .class-column-header .class-download-all-btn:hover { background: #0a3a1e; transform: scale(0.96); }
+        .class-column-header .class-download-all-btn:disabled { background: #a8c8a8; cursor: not-allowed; }
 
         .student-list-column {
             display: flex;
@@ -783,10 +1047,7 @@
             transition: 0.15s;
         }
 
-        .remove-student:hover {
-            opacity: 1;
-            background: #fdecea;
-        }
+        .remove-student:hover { opacity: 1; background: #fdecea; }
 
         .points-grid {
             display: grid;
@@ -899,141 +1160,83 @@
             box-shadow: 0 0 0 3px rgba(212, 184, 74, 0.2);
         }
 
-        .fullscreen-overlay {
+        /* ===== MODALS ===== */
+        .edit-modal, .admin-modal, .setup-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: #ffffff;
-            background-image: 
-                radial-gradient(circle at 10% 0%, rgba(26, 107, 58, 0.04) 0%, transparent 35%),
-                radial-gradient(circle at 90% 100%, rgba(200, 150, 20, 0.05) 0%, transparent 35%);
-            z-index: 9999;
-            overflow-y: auto;
-            padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .fullscreen-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            background: #ffffff;
-            padding: 1rem 2rem;
-            border-radius: 60px;
-            border: 1px solid #e0ebe0;
-            box-shadow: 0 4px 18px rgba(20, 80, 50, 0.06);
-            gap: 14px;
-        }
-
-        .fullscreen-header h2 {
-            color: #0f4b28;
-            font-size: 1.6rem;
-            letter-spacing: 1px;
-        }
-
-        .close-fullscreen {
-            background: #1a6b3a;
-            border: none;
-            color: #ffffff;
-            border-radius: 30px;
-            padding: 10px 20px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        .close-fullscreen:hover { background: #0f4b28; }
-
-        .fullscreen-points-grid {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 12px;
-            max-width: 1100px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .fullscreen-point-box {
-            background: #f0f5f0;
-            border: 2px solid #c8dcc8;
-            border-radius: 14px;
-            aspect-ratio: 1 / 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #4a6b4a;
-            cursor: pointer;
-            transition: 0.15s;
-            user-select: none;
-        }
-
-        .fullscreen-point-box:hover {
-            background: #e0efe0;
-            border-color: #a8c8a8;
-            transform: scale(1.05);
-        }
-
-        .fullscreen-point-box:active { transform: scale(0.95); }
-
-        .fullscreen-point-box.filled {
-            background: #1a6b3a;
-            border-color: #0f4b28;
-            color: #ffffff;
-            box-shadow: 0 0 15px rgba(26, 107, 58, 0.4);
-        }
-
-        .fullscreen-total {
-            text-align: center;
-            font-size: 1.5rem;
-            color: #a67c10;
-            font-weight: 700;
-            margin-top: 1.5rem;
-            letter-spacing: 1px;
-        }
-
-        .student-list-column::-webkit-scrollbar,
-        .class-columns-container::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        .student-list-column::-webkit-scrollbar-track,
-        .class-columns-container::-webkit-scrollbar-track {
-            background: #f0f5f0;
-            border-radius: 10px;
-        }
-
-        .student-list-column::-webkit-scrollbar-thumb,
-        .class-columns-container::-webkit-scrollbar-thumb {
-            background: #c8dcc8;
-            border-radius: 10px;
-        }
-
-        /* ===== EDIT NAME MODAL ===== */
-        .edit-modal {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 45, 30, 0.7);
-            backdrop-filter: blur(4px);
-            z-index: 10001;
+            background: rgba(15, 45, 30, 0.8);
+            backdrop-filter: blur(6px);
+            z-index: 10002;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1.5rem;
         }
 
-        .edit-card {
+        .edit-card, .admin-card, .setup-card {
             background: #ffffff;
-            border-radius: 24px;
-            max-width: 420px;
+            border-radius: 28px;
+            max-width: 440px;
             width: 100%;
-            padding: 1.8rem 2rem;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            padding: 2rem 2.2rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
             border: 1px solid #e0ebe0;
+            text-align: center;
         }
+
+        .admin-card h2 {
+            font-size: 1.3rem;
+            color: #0f4b28;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-card .admin-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-card p {
+            font-size: 0.85rem;
+            color: #4a6b4a;
+            margin-bottom: 1.2rem;
+        }
+
+        .admin-card input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #c8dcc8;
+            border-radius: 14px;
+            font-size: 1rem;
+            background: #f8fbf8;
+            color: #1e2e1e;
+            outline: none;
+            text-align: center;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .admin-card input:focus {
+            border-color: #1a6b3a;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(26, 107, 58, 0.12);
+        }
+
+        .admin-card .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.2rem;
+        }
+
+        .admin-card .modal-actions .btn { flex: 1; }
+
+        .admin-card .modal-actions .btn-cancel {
+            background: #f8f4e8;
+            color: #a67c10;
+            border: 1px solid #e8d9a8;
+            box-shadow: none;
+        }
+
+        .admin-card .modal-actions .btn-cancel:hover { background: #f5edcf; }
 
         .edit-card h3 {
             font-size: 1.1rem;
@@ -1041,6 +1244,7 @@
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
         }
 
@@ -1067,11 +1271,7 @@
             margin-top: 1.2rem;
         }
 
-        .edit-actions .btn {
-            flex: 1;
-            padding: 10px 16px;
-            font-size: 0.85rem;
-        }
+        .edit-actions .btn { flex: 1; padding: 10px 16px; font-size: 0.85rem; }
 
         .edit-actions .btn-cancel {
             background: #f8f4e8;
@@ -1080,219 +1280,156 @@
             box-shadow: none;
         }
 
-        .edit-actions .btn-cancel:hover {
-            background: #f5edcf;
-        }
-
-        .setup-modal {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 45, 30, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-        }
-
-        .setup-card {
-            background: #ffffff;
-            border-radius: 32px;
-            max-width: 560px;
-            width: 100%;
-            padding: 2rem 2.2rem;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
-            border: 1px solid #e0ebe0;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .setup-card h2 {
-            font-size: 1.4rem;
-            color: #0f4b28;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .setup-card p {
-            font-size: 0.9rem;
-            color: #4a6b4a;
-            margin-bottom: 1.2rem;
-            line-height: 1.5;
-        }
-
-        .setup-card label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #0f4b28;
-            margin-bottom: 0.4rem;
-            margin-top: 1rem;
-        }
-
-        .setup-card input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #c8dcc8;
-            border-radius: 16px;
-            font-size: 0.9rem;
-            background: #f8fbf8;
-            color: #1e2e1e;
-            outline: none;
-            font-family: 'Courier New', monospace;
-        }
-
-        .setup-card input:focus {
-            border-color: #1a6b3a;
-            box-shadow: 0 0 0 3px rgba(26, 107, 58, 0.15);
-        }
-
-        .setup-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 1.5rem;
-        }
-
-        .setup-actions .btn {
-            flex: 1;
-            padding: 12px 20px;
-            font-size: 0.9rem;
-        }
-
-        .setup-hint {
-            font-size: 0.75rem;
-            color: #7a9a7a;
-            margin-top: 0.6rem;
-            font-style: italic;
-            line-height: 1.5;
-        }
-
-        .setup-hint a {
-            color: #1a6b3a;
-            font-weight: 600;
-        }
-
-        .setup-error {
-            background: #fdecea;
-            color: #c0392b;
-            padding: 10px 14px;
-            border-radius: 14px;
-            font-size: 0.82rem;
-            margin-top: 1rem;
-            border: 1px solid #f5b7b1;
-            font-weight: 600;
-        }
-
-        .setup-success {
-            background: #e8f5e8;
-            color: #1a6b3a;
-            padding: 10px 14px;
-            border-radius: 14px;
-            font-size: 0.82rem;
-            margin-top: 1rem;
-            border: 1px solid #a8d0a8;
-            font-weight: 600;
-        }
-
         @media (max-width: 700px) {
             .foundation-logo { height: 50px; }
             .foundation-title h1 { font-size: 1rem; }
             .foundation-header { padding: 0.8rem 1rem; }
             .control-bar { padding: 0.8rem 1rem; }
-            .fullscreen-points-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
-            .fullscreen-point-box { font-size: 1rem; }
             .analytics-section { padding: 1.2rem 1rem; }
             .total-students-banner { padding: 18px 20px; }
             .total-students-value { font-size: 2.2rem; }
             .total-students-icon { font-size: 2rem; }
+            .auth-box { padding: 2rem 1.5rem; }
         }
     </style>
 </head>
-<body>
-    <div class="foundation-header">
-        <div class="foundation-title">
-            <img id="headerLogo" src="" alt="LOGO" class="foundation-logo" style="display:none;">
-            <h1>FEED PEOPLE FOUNDATION</h1>
-        </div>
-        <div class="header-actions">
-            <div class="save-status" id="saveStatus">
-                <span>💾</span>
-                <span id="saveStatusText">Ready</span>
+<body class="locked">
+
+    <!-- ===== AUTH SCREEN (PASSWORD ONLY) ===== -->
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-box">
+            <div class="auth-logo-wrap">
+                <img id="authLogo" src="" alt="LOGO" class="auth-logo" style="display:none;">
+                <div id="authLogoFallback" class="auth-logo-fallback">🌱</div>
             </div>
-            <div class="badge">📋 Points & students</div>
-        </div>
-    </div>
+            <div class="auth-org">Feed People Foundation</div>
+            <div class="auth-title">🔒 Admin Access</div>
+            <div class="auth-subtitle">Enter the admin password to unlock editing</div>
 
-    <div class="cloud-banner" id="cloudBanner">
-        <span class="cloud-icon" id="cloudIcon">☁️</span>
-        <span class="cloud-text" id="cloudText">Connecting to cloud...</span>
-        <button class="cloud-btn" id="cloudConfigBtn">⚙️ Configure</button>
-    </div>
+            <div class="auth-error" id="authError">
+                <span>⚠️</span>
+                <span id="authErrorText">Incorrect password. Please try again.</span>
+            </div>
 
-    <div class="analytics-section" id="analyticsSection">
-        <div class="analytics-title">
-            <span class="icon">📊</span>
-            <span>Analytics Overview</span>
-        </div>
-
-        <div class="total-students-banner">
-            <div class="total-students-left">
-                <span class="total-students-icon">👥</span>
-                <div class="total-students-text">
-                    <div class="total-students-label">Total Students</div>
-                    <div class="total-students-value" id="totalStudentsValue">0</div>
-                    <div class="total-students-sub" id="totalStudentsSub">across all schools</div>
+            <div class="auth-field">
+                <label for="adminPwd">Password</label>
+                <div class="auth-input-wrap">
+                    <span class="field-icon">🔑</span>
+                    <input type="password" id="adminPwd" placeholder="Enter admin password" autocomplete="current-password">
+                    <button type="button" class="toggle-pwd" id="togglePwdBtn" title="Show/hide password">👁️</button>
                 </div>
             </div>
-            <div class="total-students-breakdown" id="totalStudentsBreakdown"></div>
-        </div>
 
-        <div class="stats-overview" id="statsOverview"></div>
-        <div class="top-students-title">
-            <span>🏆</span>
-            <span>Top Student per Class · Each School</span>
+            <button class="auth-btn" id="loginBtn">
+                <span>🔓</span>
+                <span>Unlock Admin Mode</span>
+            </button>
+
+            <div class="auth-footer">
+                <strong>Feed People Foundation</strong> · Gospel · Food · Education<br>
+                Authorized administrators only
+            </div>
         </div>
-        <div id="schoolAnalyticsList"></div>
     </div>
 
-    <div class="control-bar">
-        <label for="schoolSelector">🏫 School:</label>
-        <select id="schoolSelector" class="school-select">
-            <option value="all">All schools</option>
-        </select>
+    <!-- ===== MAIN APP ===== -->
+    <div class="app-container" id="appContainer">
+        <div class="foundation-header">
+            <div class="foundation-title">
+                <img id="headerLogo" src="" alt="LOGO" class="foundation-logo" style="display:none;">
+                <h1>FEED PEOPLE FOUNDATION</h1>
+            </div>
+            <div class="header-actions">
+                <div class="admin-chip" id="adminChip">
+                    <span>🔓</span>
+                    <span>Admin</span>
+                    <div class="avatar">✓</div>
+                </div>
+                <button class="lock-btn" id="lockBtn" title="Lock admin mode">🔒 Lock</button>
+                <div class="save-status" id="saveStatus">
+                    <span>💾</span>
+                    <span id="saveStatusText">Ready</span>
+                </div>
+                <div class="badge">📋 Points & students</div>
+            </div>
+        </div>
 
-        <label for="levelSelector">📚 Level:</label>
-        <select id="levelSelector" class="level-select">
-            <option value="A1">A1</option>
-            <option value="A2">A2</option>
-            <option value="B1">B1</option>
-            <option value="B2">B2</option>
-            <option value="C1">C1</option>
-            <option value="C2">C2</option>
-        </select>
+        <div class="cloud-banner" id="cloudBanner">
+            <span class="cloud-icon" id="cloudIcon">☁️</span>
+            <span class="cloud-text" id="cloudText">Connecting to cloud...</span>
+            <button class="cloud-btn" id="cloudConfigBtn">⚙️ Configure</button>
+        </div>
 
-        <label for="searchInput">🔍 Search:</label>
-        <input type="text" id="searchInput" class="search-input" placeholder="Type a student name..." autocomplete="off">
-        <button class="clear-search" id="clearSearchBtn">Clear</button>
+        <div class="analytics-section" id="analyticsSection">
+            <div class="analytics-title">
+                <span class="icon">📊</span>
+                <span>Analytics Overview</span>
+            </div>
 
-        <label for="logoUploadInput" class="logo-upload-label">🖼️ Upload Logo</label>
-        <input type="file" id="logoUploadInput" accept="image/*">
-    </div>
+            <div class="total-students-banner">
+                <div class="total-students-left">
+                    <span class="total-students-icon">👥</span>
+                    <div class="total-students-text">
+                        <div class="total-students-label">Total Students</div>
+                        <div class="total-students-value" id="totalStudentsValue">0</div>
+                        <div class="total-students-sub" id="totalStudentsSub">across all schools</div>
+                    </div>
+                </div>
+                <div class="total-students-breakdown" id="totalStudentsBreakdown"></div>
+            </div>
 
-    <div class="schools-grid" id="schoolsGrid"></div>
+            <div class="stats-overview" id="statsOverview"></div>
+            <div class="top-students-title">
+                <span>🏆</span>
+                <span>Top Student per Class · Each School</span>
+            </div>
+            <div id="schoolAnalyticsList"></div>
+        </div>
 
-    <div class="footer-note">
-        ⚡ Paste names (one per line) — add class — click boxes to give +2 points each.<br>
-        ✏️ <strong>Double-click a student name to edit it</strong> · Click a name to enlarge · Right-click a box to remove 2 points.<br>
-        📥 <strong>Download All PDF per Class:</strong> Use the button in each class column header to download all certificates as one PDF.<br>
-        ☁️ <strong>Cloud sync enabled:</strong> Your data is saved permanently to Supabase.
+        <div class="control-bar">
+            <label for="schoolSelector">🏫 School:</label>
+            <select id="schoolSelector" class="school-select">
+                <option value="all">All schools</option>
+            </select>
+
+            <label for="levelSelector">📚 Level:</label>
+            <select id="levelSelector" class="level-select">
+                <option value="A1">A1</option>
+                <option value="A2">A2</option>
+                <option value="B1">B1</option>
+                <option value="B2">B2</option>
+                <option value="C1">C1</option>
+                <option value="C2">C2</option>
+            </select>
+
+            <label for="searchInput">🔍 Search:</label>
+            <input type="text" id="searchInput" class="search-input" placeholder="Type a student name..." autocomplete="off">
+            <button class="clear-search" id="clearSearchBtn">Clear</button>
+
+            <label for="logoUploadInput" class="logo-upload-label admin-only">🖼️ Upload Logo</label>
+            <input type="file" id="logoUploadInput" accept="image/*">
+        </div>
+
+        <div class="schools-grid" id="schoolsGrid"></div>
+
+        <div class="footer-note">
+            🔒 <strong>Admin locked.</strong> Unlock to edit.<br>
+            ⚡ Paste names (one per line) — add class — click boxes to give +2 points.<br>
+            ✏️ Double-click a name to edit · 📥 Download All per Class · 🖨️ Print individual certificates.<br>
+            ☁️ Data saved to Supabase.
+        </div>
     </div>
 
     <script>
         (function() {
+            // ============================================================
+            // ADMIN PASSWORD — CHANGE THIS TO YOUR OWN SECRET
+            // ============================================================
+            const ADMIN_PASSWORD = 'fpf2024';
+            // ============================================================
+
+            const SESSION_KEY = 'fpf_admin_unlocked';
+
             const SCHOOLS = [
                 { id: 'csc', name: 'COLLÈGE SAINT-CROIX', icon: '✝️' },
                 { id: 'csa', name: 'COLLÈGE SAINTE AGNÈS', icon: '🕊️' },
@@ -1314,6 +1451,121 @@
             let savedLogoDataUrl = '';
 
             let supabase = null;
+
+            // ==================== AUTH ====================
+            function isUnlocked() {
+                try {
+                    return sessionStorage.getItem(SESSION_KEY) === 'true';
+                } catch(e) {
+                    return false;
+                }
+            }
+
+            function setUnlocked(val) {
+                try {
+                    if (val) sessionStorage.setItem(SESSION_KEY, 'true');
+                    else sessionStorage.removeItem(SESSION_KEY);
+                } catch(e) {}
+                applyLockState();
+            }
+
+            function applyLockState() {
+                const unlocked = isUnlocked();
+                const body = document.body;
+                const authScreen = document.getElementById('authScreen');
+                const appContainer = document.getElementById('appContainer');
+
+                if (unlocked) {
+                    body.classList.remove('locked');
+                    authScreen.style.display = 'none';
+                    appContainer.classList.add('visible');
+                } else {
+                    body.classList.add('locked');
+                    authScreen.style.display = 'flex';
+                    appContainer.classList.remove('visible');
+                }
+            }
+
+            function setupAuthUI() {
+                const pwdInput = document.getElementById('adminPwd');
+                const loginBtn = document.getElementById('loginBtn');
+                const authError = document.getElementById('authError');
+                const authErrorText = document.getElementById('authErrorText');
+                const togglePwdBtn = document.getElementById('togglePwdBtn');
+
+                // Pre-fill logo in auth screen
+                updateAuthLogo();
+
+                function tryLogin() {
+                    const pwd = pwdInput.value;
+                    if (!pwd) {
+                        showError('Please enter a password.');
+                        return;
+                    }
+                    loginBtn.disabled = true;
+                    loginBtn.innerHTML = '<span>⏳</span><span>Checking...</span>';
+
+                    setTimeout(() => {
+                        if (pwd === ADMIN_PASSWORD) {
+                            authError.classList.remove('show');
+                            setUnlocked(true);
+                            pwdInput.value = '';
+                            loginBtn.disabled = false;
+                            loginBtn.innerHTML = '<span>🔓</span><span>Unlock Admin Mode</span>';
+                        } else {
+                            showError('Incorrect password. Please try again.');
+                            loginBtn.disabled = false;
+                            loginBtn.innerHTML = '<span>🔓</span><span>Unlock Admin Mode</span>';
+                            pwdInput.value = '';
+                            pwdInput.focus();
+                        }
+                    }, 350);
+                }
+
+                function showError(msg) {
+                    authErrorText.textContent = msg;
+                    authError.classList.add('show');
+                    authError.classList.remove('shake');
+                    void authError.offsetWidth;
+                    authError.classList.add('shake');
+                }
+
+                loginBtn.addEventListener('click', tryLogin);
+
+                pwdInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        tryLogin();
+                    }
+                });
+
+                togglePwdBtn.addEventListener('click', () => {
+                    const isPwd = pwdInput.type === 'password';
+                    pwdInput.type = isPwd ? 'text' : 'password';
+                    togglePwdBtn.textContent = isPwd ? '🙈' : '👁️';
+                });
+
+                // Lock button
+                document.getElementById('lockBtn').addEventListener('click', () => {
+                    if (!confirm('Lock admin mode? You will need the password to edit again.')) return;
+                    setUnlocked(false);
+                    document.getElementById('adminPwd').value = '';
+                    document.getElementById('adminPwd').focus();
+                });
+            }
+
+            function updateAuthLogo() {
+                const authLogo = document.getElementById('authLogo');
+                const fallback = document.getElementById('authLogoFallback');
+                if (savedLogoDataUrl) {
+                    authLogo.src = savedLogoDataUrl;
+                    authLogo.style.display = 'block';
+                    fallback.style.display = 'none';
+                } else {
+                    authLogo.style.display = 'none';
+                    fallback.style.display = 'block';
+                }
+            }
 
             // ==================== SUPABASE SETUP ====================
             function getSupabaseConfig() {
@@ -1376,27 +1628,23 @@
                 const config = getSupabaseConfig() || { url: '', key: '' };
 
                 modal.innerHTML = `
-                    <div class="setup-card">
-                        <h2>☁️ Cloud Sync Setup</h2>
-                        <p>Enter your Supabase project credentials. Your data will be saved permanently to the cloud, accessible from any device.</p>
+                    <div class="setup-card" style="text-align:left;">
+                        <h2 style="font-size:1.3rem;color:#0f4b28;margin-bottom:0.5rem;display:flex;align-items:center;justify-content:center;gap:10px;">☁️ Cloud Sync Setup</h2>
+                        <p style="font-size:0.85rem;color:#4a6b4a;margin-bottom:1rem;line-height:1.5;text-align:center;">Enter your Supabase project credentials. Your data will be saved permanently to the cloud.</p>
 
-                        <label for="supaUrl">Project URL</label>
-                        <input type="text" id="supaUrl" placeholder="https://xxxxxxxxxxxx.supabase.co" value="${escapeHtml(config.url)}">
+                        <label style="display:block;font-size:0.82rem;font-weight:700;color:#0f4b28;margin-bottom:0.4rem;margin-top:0.8rem;text-transform:uppercase;">Project URL</label>
+                        <input type="text" id="supaUrl" placeholder="https://xxxxxxxxxxxx.supabase.co" value="${escapeHtml(config.url)}" style="width:100%;padding:12px 14px;border:1px solid #c8dcc8;border-radius:14px;font-size:0.9rem;background:#f8fbf8;color:#1e2e1e;outline:none;font-family:monospace;">
 
-                        <label for="supaKey">Anon Public Key</label>
-                        <input type="password" id="supaKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." value="${escapeHtml(config.key)}">
+                        <label style="display:block;font-size:0.82rem;font-weight:700;color:#0f4b28;margin-bottom:0.4rem;margin-top:0.8rem;text-transform:uppercase;">Anon Public Key</label>
+                        <input type="password" id="supaKey" placeholder="eyJhbGci..." value="${escapeHtml(config.key)}" style="width:100%;padding:12px 14px;border:1px solid #c8dcc8;border-radius:14px;font-size:0.9rem;background:#f8fbf8;color:#1e2e1e;outline:none;font-family:monospace;">
 
-                        <p class="setup-hint">
-                            Find these in your Supabase project: <strong>Settings → API</strong>.
-                            Need help? <a href="https://supabase.com/docs/guides/api" target="_blank">Read the docs →</a>
-                        </p>
-
-                        ${errorMsg ? `<div class="setup-error">⚠️ ${escapeHtml(errorMsg)}</div>` : ''}
+                        <p style="font-size:0.75rem;color:#7a9a7a;margin-top:0.6rem;font-style:italic;line-height:1.5;">Find these in your Supabase project: <strong>Settings → API</strong>.</p>
+                        ${errorMsg ? `<div style="background:#fdecea;color:#c0392b;padding:10px 14px;border-radius:12px;font-size:0.82rem;margin-top:1rem;border:1px solid #f5b7b1;font-weight:600;">⚠️ ${escapeHtml(errorMsg)}</div>` : ''}
                         <div id="setupMsg"></div>
 
-                        <div class="setup-actions">
-                            <button class="btn" id="setupSaveBtn">💾 Save & Connect</button>
-                            <button class="btn" id="setupCancelBtn" style="background: #f8f4e8; color: #a67c10; border: 1px solid #e8d9a8;">Cancel</button>
+                        <div style="display:flex;gap:10px;margin-top:1.5rem;">
+                            <button class="btn" id="setupSaveBtn" style="flex:1;padding:12px 20px;">💾 Save & Connect</button>
+                            <button class="btn" id="setupCancelBtn" style="flex:1;padding:12px 20px;background:#f8f4e8;color:#a67c10;border:1px solid #e8d9a8;box-shadow:none;">Cancel</button>
                         </div>
                     </div>
                 `;
@@ -1410,32 +1658,29 @@
                     const msg = document.getElementById('setupMsg');
 
                     if (!url || !key) {
-                        msg.innerHTML = `<div class="setup-error">Both URL and key are required.</div>`;
+                        msg.innerHTML = `<div style="background:#fdecea;color:#c0392b;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">Both URL and key are required.</div>`;
                         return;
                     }
-
                     if (!url.startsWith('http')) {
-                        msg.innerHTML = `<div class="setup-error">URL must start with https://</div>`;
+                        msg.innerHTML = `<div style="background:#fdecea;color:#c0392b;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">URL must start with https://</div>`;
                         return;
                     }
 
-                    msg.innerHTML = `<div class="setup-success">⏳ Testing connection...</div>`;
+                    msg.innerHTML = `<div style="background:#e8f5e8;color:#1a6b3a;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">⏳ Testing connection...</div>`;
 
                     try {
                         const testClient = window.supabase.createClient(url, key);
                         const { error } = await testClient.from('students').select('id').limit(1);
-                        if (error && error.code !== 'PGRST116') {
-                            throw new Error(error.message);
-                        }
+                        if (error && error.code !== 'PGRST116') throw new Error(error.message);
                         saveSupabaseConfig(url, key);
-                        msg.innerHTML = `<div class="setup-success">✅ Connected! Syncing data...</div>`;
+                        msg.innerHTML = `<div style="background:#e8f5e8;color:#1a6b3a;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">✅ Connected! Syncing data...</div>`;
                         supabase = testClient;
                         setTimeout(async () => {
                             modal.remove();
                             await syncFromCloud();
                         }, 800);
                     } catch(e) {
-                        msg.innerHTML = `<div class="setup-error">❌ Connection failed: ${escapeHtml(e.message)}<br>Check your URL and key, and make sure the "students" table exists.</div>`;
+                        msg.innerHTML = `<div style="background:#fdecea;color:#c0392b;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">❌ Connection failed: ${escapeHtml(e.message)}</div>`;
                     }
                 });
             }
@@ -1448,18 +1693,12 @@
                         .from('students')
                         .select('*')
                         .order('created_at', { ascending: true });
-
                     if (error) throw error;
-
                     SCHOOLS.forEach(school => { store[school.id] = []; });
-
                     (data || []).forEach(row => {
                         if (store[row.school_id]) {
                             store[row.school_id].push({
-                                id: row.id,
-                                name: row.name,
-                                class: row.class,
-                                score: row.score || 0
+                                id: row.id, name: row.name, class: row.class, score: row.score || 0
                             });
                         }
                     });
@@ -1488,14 +1727,10 @@
                     const { data, error } = await supabase
                         .from('students')
                         .insert({ school_id: schoolId, name, class: className, score })
-                        .select()
-                        .single();
+                        .select().single();
                     if (error) throw error;
                     return data;
-                } catch(e) {
-                    console.error('Add to cloud failed:', e);
-                    return null;
-                }
+                } catch(e) { return null; }
             }
 
             async function updateStudentScoreInCloud(studentId, score) {
@@ -1507,10 +1742,7 @@
                         .eq('id', studentId);
                     if (error) throw error;
                     return true;
-                } catch(e) {
-                    console.error('Update score failed:', e);
-                    return false;
-                }
+                } catch(e) { return false; }
             }
 
             async function updateStudentNameInCloud(studentId, newName) {
@@ -1522,50 +1754,31 @@
                         .eq('id', studentId);
                     if (error) throw error;
                     return true;
-                } catch(e) {
-                    console.error('Update name failed:', e);
-                    return false;
-                }
+                } catch(e) { return false; }
             }
 
             async function deleteStudentFromCloud(studentId) {
                 if (!supabase) return false;
                 try {
-                    const { error } = await supabase
-                        .from('students')
-                        .delete()
-                        .eq('id', studentId);
+                    const { error } = await supabase.from('students').delete().eq('id', studentId);
                     if (error) throw error;
                     return true;
-                } catch(e) {
-                    console.error('Delete failed:', e);
-                    return false;
-                }
+                } catch(e) { return false; }
             }
 
             async function clearSchoolFromCloud(schoolId) {
                 if (!supabase) return false;
                 try {
-                    const { error } = await supabase
-                        .from('students')
-                        .delete()
-                        .eq('school_id', schoolId);
+                    const { error } = await supabase.from('students').delete().eq('school_id', schoolId);
                     if (error) throw error;
                     return true;
-                } catch(e) {
-                    console.error('Clear school failed:', e);
-                    return false;
-                }
+                } catch(e) { return false; }
             }
 
             async function loadLogoSettings() {
                 if (!supabase) return;
                 try {
-                    const { data, error } = await supabase
-                        .from('settings')
-                        .select('value')
-                        .eq('key', 'logo')
-                        .maybeSingle();
+                    const { data, error } = await supabase.from('settings').select('value').eq('key', 'logo').maybeSingle();
                     if (error && error.code !== 'PGRST116') throw error;
                     if (data && data.value) {
                         savedLogoDataUrl = data.value;
@@ -1578,14 +1791,10 @@
             async function saveLogoSettings(dataUrl) {
                 if (!supabase) return false;
                 try {
-                    const { error } = await supabase
-                        .from('settings')
-                        .upsert({ key: 'logo', value: dataUrl, updated_at: new Date().toISOString() });
+                    const { error } = await supabase.from('settings').upsert({ key: 'logo', value: dataUrl, updated_at: new Date().toISOString() });
                     if (error) throw error;
                     return true;
-                } catch(e) {
-                    return false;
-                }
+                } catch(e) { return false; }
             }
 
             // ==================== SAVE STATUS ====================
@@ -1606,12 +1815,14 @@
                     const saved = localStorage.getItem(LOGO_KEY);
                     if (saved) { savedLogoDataUrl = saved; applyLogo(); }
                 } catch(e) {}
+                updateAuthLogo();
             }
 
             async function saveLogo(dataUrl) {
                 savedLogoDataUrl = dataUrl;
                 try { localStorage.setItem(LOGO_KEY, dataUrl); } catch(e) {}
                 applyLogo();
+                updateAuthLogo();
                 if (supabase) {
                     const ok = await saveLogoSettings(dataUrl);
                     if (ok) setSaveStatus('cloud', '☁️ Logo synced');
@@ -1629,6 +1840,7 @@
             }
 
             document.getElementById('logoUploadInput').addEventListener('change', async (e) => {
+                if (document.body.classList.contains('locked')) return;
                 const file = e.target.files[0];
                 if (!file) return;
                 const reader = new FileReader();
@@ -1666,9 +1878,7 @@
             }
 
             function sortStudentsAlphabetically(students) {
-                return [...students].sort((a, b) => 
-                    a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' })
-                );
+                return [...students].sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
             }
 
             // ==================== ANALYTICS ====================
@@ -1719,10 +1929,7 @@
                 stats.forEach(stat => {
                     const card = document.createElement('div');
                     card.className = 'stat-card';
-                    card.innerHTML = `
-                        <div class="stat-value">${stat.value}</div>
-                        <div class="stat-label">${stat.label}</div>
-                    `;
+                    card.innerHTML = `<div class="stat-value">${stat.value}</div><div class="stat-label">${stat.label}</div>`;
                     statsOverview.appendChild(card);
                 });
 
@@ -1757,9 +1964,7 @@
                         const classStudents = students.filter(s => s.class === cls);
                         let topStudent = null;
                         if (classStudents.length > 0) {
-                            topStudent = classStudents.reduce((best, s) => {
-                                return (s.score || 0) > (best.score || 0) ? s : best;
-                            });
+                            topStudent = classStudents.reduce((best, s) => (s.score || 0) > (best.score || 0) ? s : best);
                         }
 
                         const card = document.createElement('div');
@@ -1785,7 +1990,7 @@
                 });
 
                 if (!hasAnyData) {
-                    listContainer.innerHTML = `<div class="no-data-analytics">📭 No students added yet. Paste names below to see analytics.</div>`;
+                    listContainer.innerHTML = `<div class="no-data-analytics">📭 No students added yet.</div>`;
                 }
             }
 
@@ -1796,62 +2001,84 @@
 
                 const overlay = document.createElement('div');
                 overlay.className = 'fullscreen-overlay';
+                overlay.style.cssText = `
+                    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                    background: #fff; z-index: 9999; overflow-y: auto;
+                    padding: 2rem 1.5rem; display: flex; flex-direction: column;
+                `;
 
                 const header = document.createElement('div');
-                header.className = 'fullscreen-header';
-                header.innerHTML = `
-                    <h2>👤 ${escapeHtml(student.name)} — ${escapeHtml(student.class || '')}</h2>
-                    <button class="close-fullscreen">✕ Close</button>
+                header.style.cssText = `
+                    display: flex; justify-content: space-between; align-items: center;
+                    margin-bottom: 1.5rem; background: #fff; padding: 1rem 2rem;
+                    border-radius: 60px; border: 1px solid #e0ebe0;
+                    box-shadow: 0 4px 18px rgba(20,80,50,0.06); gap: 14px;
                 `;
-                header.querySelector('.close-fullscreen').addEventListener('click', () => overlay.remove());
+                header.innerHTML = `
+                    <h2 style="color:#0f4b28;font-size:1.6rem;">👤 ${escapeHtml(student.name)} — ${escapeHtml(student.class || '')}</h2>
+                    <button style="background:#1a6b3a;border:none;color:#fff;border-radius:30px;padding:10px 20px;font-weight:700;cursor:pointer;">✕ Close</button>
+                `;
+                header.querySelector('button').addEventListener('click', () => overlay.remove());
                 overlay.appendChild(header);
 
                 const gridWrap = document.createElement('div');
-                gridWrap.style.maxWidth = '1100px';
-                gridWrap.style.margin = '0 auto';
-                gridWrap.style.width = '100%';
+                gridWrap.style.cssText = 'max-width:1100px;margin:0 auto;width:100%;';
 
                 const grid = document.createElement('div');
-                grid.className = 'fullscreen-points-grid';
+                grid.style.cssText = 'display:grid;grid-template-columns:repeat(10,1fr);gap:12px;';
 
                 const totalDiv = document.createElement('div');
-                totalDiv.className = 'fullscreen-total';
+                totalDiv.style.cssText = 'text-align:center;font-size:1.5rem;color:#a67c10;font-weight:700;margin-top:1.5rem;';
 
                 function renderFullGrid() {
                     grid.innerHTML = '';
                     const score = student.score || 0;
                     const filled = Math.min(50, Math.floor(score / 2));
+                    const unlocked = isUnlocked();
                     for (let i = 0; i < 50; i++) {
                         const box = document.createElement('div');
-                        box.className = 'fullscreen-point-box' + (i < filled ? ' filled' : '');
+                        box.style.cssText = `
+                            background:${i < filled ? '#1a6b3a' : '#f0f5f0'};
+                            border:2px solid ${i < filled ? '#0f4b28' : '#c8dcc8'};
+                            border-radius:14px; aspect-ratio:1/1;
+                            display:flex; align-items:center; justify-content:center;
+                            font-size:1.4rem; font-weight:700;
+                            color:${i < filled ? '#fff' : '#4a6b4a'};
+                            cursor:${unlocked ? 'pointer' : 'not-allowed'};
+                            user-select:none;
+                            ${i < filled ? 'box-shadow:0 0 15px rgba(26,107,58,0.4);' : ''}
+                            ${!unlocked ? 'opacity:0.6;' : ''}
+                        `;
                         box.textContent = i + 1;
-                        box.addEventListener('click', async (e) => {
-                            e.stopPropagation();
-                            if (student.score >= 100) return;
-                            student.score = (student.score || 0) + 2;
-                            renderFullGrid();
-                            render();
-                            if (supabase) {
-                                setSaveStatus('saving', 'Saving...');
-                                const ok = await updateStudentScoreInCloud(student.id, student.score);
-                                if (ok) setSaveStatus('cloud', '☁️ Saved');
-                                else setSaveStatus('error', 'Save failed');
-                            }
-                        });
-                        box.addEventListener('contextmenu', async (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (student.score >= 2) student.score -= 2;
-                            else student.score = 0;
-                            renderFullGrid();
-                            render();
-                            if (supabase) {
-                                setSaveStatus('saving', 'Saving...');
-                                const ok = await updateStudentScoreInCloud(student.id, student.score);
-                                if (ok) setSaveStatus('cloud', '☁️ Saved');
-                                else setSaveStatus('error', 'Save failed');
-                            }
-                        });
+                        if (unlocked) {
+                            box.addEventListener('click', async (e) => {
+                                e.stopPropagation();
+                                if (student.score >= 100) return;
+                                student.score = (student.score || 0) + 2;
+                                renderFullGrid();
+                                render();
+                                if (supabase) {
+                                    setSaveStatus('saving', 'Saving...');
+                                    const ok = await updateStudentScoreInCloud(student.id, student.score);
+                                    if (ok) setSaveStatus('cloud', '☁️ Saved');
+                                    else setSaveStatus('error', 'Save failed');
+                                }
+                            });
+                            box.addEventListener('contextmenu', async (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (student.score >= 2) student.score -= 2;
+                                else student.score = 0;
+                                renderFullGrid();
+                                render();
+                                if (supabase) {
+                                    setSaveStatus('saving', 'Saving...');
+                                    const ok = await updateStudentScoreInCloud(student.id, student.score);
+                                    if (ok) setSaveStatus('cloud', '☁️ Saved');
+                                    else setSaveStatus('error', 'Save failed');
+                                }
+                            });
+                        }
                         grid.appendChild(box);
                     }
                     totalDiv.textContent = `★ Total: ${student.score || 0} pts`;
@@ -1860,13 +2087,16 @@
                 gridWrap.appendChild(grid);
                 gridWrap.appendChild(totalDiv);
                 overlay.appendChild(gridWrap);
-
                 document.body.appendChild(overlay);
                 renderFullGrid();
             }
 
             // ==================== EDIT NAME MODAL ====================
             function openEditNameModal(student, schoolId) {
+                if (!isUnlocked()) {
+                    alert('🔒 Admin locked. Please unlock to edit.');
+                    return;
+                }
                 const existing = document.querySelector('.edit-modal');
                 if (existing) existing.remove();
 
@@ -1901,7 +2131,7 @@
                         const ok = await updateStudentNameInCloud(student.id, newName);
                         if (!ok) {
                             setSaveStatus('error', 'Cloud update failed');
-                            alert('Could not update name in cloud. Please try again.');
+                            alert('Could not update name in cloud.');
                             return;
                         }
                     }
@@ -1948,7 +2178,7 @@
                             <i>${school.icon}</i> ${school.name}
                         </div>
                         <div class="school-actions">
-                            <button class="icon-btn" title="Clear all students" data-action="clear-school" data-school="${school.id}">🗑️</button>
+                            <button class="icon-btn admin-only" title="Clear all students" data-action="clear-school" data-school="${school.id}">🗑️</button>
                         </div>
                     `;
                     card.appendChild(header);
@@ -1975,7 +2205,7 @@
                     classRow.appendChild(classSelect);
 
                     const addBtn = document.createElement('button');
-                    addBtn.className = 'btn btn-small';
+                    addBtn.className = 'btn btn-small admin-only';
                     addBtn.innerHTML = '➕ Add';
                     addBtn.dataset.action = 'add-students';
                     addBtn.dataset.school = school.id;
@@ -1993,11 +2223,11 @@
 
                         const colHeader = document.createElement('div');
                         colHeader.className = 'class-column-header';
-                        
+
                         const classStudents = sortStudentsAlphabetically(
                             filteredStudents.filter(s => s.class === cls)
                         );
-                        
+
                         const headerLabel = document.createElement('div');
                         headerLabel.textContent = cls;
                         colHeader.appendChild(headerLabel);
@@ -2009,6 +2239,7 @@
                             downloadAllBtn.title = `Download all ${classStudents.length} certificate(s) as one PDF for class ${cls}`;
                             downloadAllBtn.addEventListener('click', (e) => {
                                 e.stopPropagation();
+                                if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
                                 downloadAllCertificatesForClass(school, cls, classStudents, downloadAllBtn);
                             });
                             colHeader.appendChild(downloadAllBtn);
@@ -2058,8 +2289,8 @@
                 const nameSpan = document.createElement('span');
                 nameSpan.className = 'student-name-text';
                 nameSpan.textContent = student.name;
-                nameSpan.title = 'Double-click to edit name · Click to enlarge';
-                
+                nameSpan.title = 'Click to enlarge · Double-click to edit';
+
                 let clickTimer = null;
                 nameSpan.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -2069,17 +2300,14 @@
                         openFullscreen(student, schoolId);
                     }, 220);
                 });
-                
+
                 nameSpan.addEventListener('dblclick', (e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    if (clickTimer) {
-                        clearTimeout(clickTimer);
-                        clickTimer = null;
-                    }
+                    if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
                     openEditNameModal(student, schoolId);
                 });
-                
+
                 nameLine.appendChild(nameSpan);
 
                 const removeBtn = document.createElement('button');
@@ -2088,23 +2316,20 @@
                 removeBtn.title = 'Remove student';
                 removeBtn.addEventListener('click', async (e) => {
                     e.stopPropagation();
+                    if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
                     if (!confirm(`Remove "${student.name}"? This will be deleted from cloud.`)) return;
 
                     if (supabase) {
                         setSaveStatus('saving', 'Deleting...');
                         const ok = await deleteStudentFromCloud(student.id);
-                        if (!ok) {
-                            setSaveStatus('error', 'Delete failed');
-                            alert('Could not delete from cloud. Please try again.');
-                            return;
-                        }
+                        if (!ok) { setSaveStatus('error', 'Delete failed'); alert('Could not delete from cloud.'); return; }
                     }
 
                     const schoolStudents = store[schoolId];
                     const idx = schoolStudents.findIndex(s => s.id === student.id);
-                    if (idx !== -1) { 
-                        schoolStudents.splice(idx, 1); 
-                        render(); 
+                    if (idx !== -1) {
+                        schoolStudents.splice(idx, 1);
+                        render();
                         setSaveStatus('cloud', '☁️ Deleted');
                     }
                 });
@@ -2124,6 +2349,7 @@
                     box.textContent = i + 1;
                     box.addEventListener('click', async (e) => {
                         e.stopPropagation();
+                        if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
                         if (student.score >= 100) return;
                         student.score = (student.score || 0) + 2;
                         render();
@@ -2137,6 +2363,7 @@
                     box.addEventListener('contextmenu', async (e) => {
                         e.preventDefault();
                         e.stopPropagation();
+                        if (!isUnlocked()) return;
                         if (student.score >= 2) student.score -= 2;
                         else student.score = 0;
                         render();
@@ -2161,6 +2388,7 @@
                 certBtn.innerHTML = '📜 ' + selectedLevel + ' Certificate';
                 certBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
                     generateCertificate(student);
                 });
                 card.appendChild(certBtn);
@@ -2168,16 +2396,14 @@
                 return card;
             }
 
-            // ==================== CERTIFICATE HTML BUILDER ====================
+            // ==================== CERTIFICATE HTML ====================
             function buildCertificateHTML(student) {
                 const today = new Date();
-                const dateStr = today.toLocaleDateString('en-US', {
-                    year: 'numeric', month: 'long', day: 'numeric'
-                });
+                const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                 const certId = selectedLevel + '-' + student.id.substring(0, 8).toUpperCase() + '-' + Date.now().toString().slice(-4);
 
                 const logoHTML = savedLogoDataUrl
-                    ? `<img src="${savedLogoDataUrl}" alt="LOGO" style="max-height: 1in; max-width: 2.2in; object-fit: contain; display:block; margin: 0 auto 0.1in auto;">`
+                    ? `<img src="${savedLogoDataUrl}" alt="LOGO" crossorigin="anonymous" style="max-height: 1in; max-width: 2.2in; object-fit: contain; display:block; margin: 0 auto 0.1in auto;">`
                     : `<div style="font-size: 0.4in; margin-bottom: 0.1in;">🌱</div>`;
 
                 return `
@@ -2234,10 +2460,9 @@
                 `;
             }
 
-            // ==================== SINGLE CERTIFICATE (opens print window) ====================
+            // ==================== SINGLE CERTIFICATE ====================
             function generateCertificate(student) {
                 const certHTML = buildCertificateHTML(student);
-
                 const printWindow = window.open('', '_blank', 'width=1200,height=900');
                 if (printWindow) {
                     printWindow.document.write(`
@@ -2246,7 +2471,6 @@
                             <style>
                                 @page { size: 11in 8.5in landscape; margin: 0; }
                                 html, body { margin: 0; padding: 0; width: 11in; height: 8.5in; background: white; overflow: hidden; }
-                                .cert-page { width: 11in; height: 8.5in; margin: 0; padding: 0; }
                                 .no-print { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; text-align: center; }
                                 @media print { .no-print { display: none !important; } }
                             </style>
@@ -2260,92 +2484,54 @@
                     `);
                     printWindow.document.close();
                 } else {
-                    alert('Please allow pop-ups to download the certificate.');
+                    alert('Please allow pop-ups.');
                 }
             }
 
-            // ==================== DOWNLOAD ALL CERTIFICATES (PDF) FOR A CLASS ====================
+            // ==================== DOWNLOAD ALL (PDF) ====================
             async function downloadAllCertificatesForClass(school, className, students, btnEl) {
-                if (!students || students.length === 0) {
-                    alert('No students in this class.');
-                    return;
-                }
+                if (!students || students.length === 0) { alert('No students in this class.'); return; }
 
                 const { jsPDF } = window.jspdf;
                 const sortedStudents = sortStudentsAlphabetically(students);
 
-                // UI feedback
                 const originalText = btnEl ? btnEl.innerHTML : '';
-                if (btnEl) {
-                    btnEl.disabled = true;
-                    btnEl.innerHTML = `⏳ Generating 0/${sortedStudents.length}...`;
-                }
+                if (btnEl) { btnEl.disabled = true; btnEl.innerHTML = `⏳ 0/${sortedStudents.length}...`; }
                 setSaveStatus('saving', `Generating ${sortedStudents.length} PDF page(s)...`);
 
-                // Create hidden container to render certificates
                 const container = document.createElement('div');
-                container.style.cssText = `
-                    position: fixed;
-                    left: -10000px;
-                    top: 0;
-                    width: 11in;
-                    background: #fff;
-                    z-index: -1;
-                `;
+                container.style.cssText = 'position:fixed;left:-10000px;top:0;width:11in;background:#fff;z-index:-1;';
                 document.body.appendChild(container);
 
-                // Create PDF in landscape (11 x 8.5 inches)
-                const pdf = new jsPDF({
-                    orientation: 'landscape',
-                    unit: 'in',
-                    format: [11, 8.5],
-                    compress: true
-                });
+                const pdf = new jsPDF({ orientation: 'landscape', unit: 'in', format: [11, 8.5], compress: true });
 
                 try {
                     for (let i = 0; i < sortedStudents.length; i++) {
                         const student = sortedStudents[i];
+                        if (btnEl) btnEl.innerHTML = `⏳ ${i + 1}/${sortedStudents.length}...`;
 
-                        if (btnEl) {
-                            btnEl.innerHTML = `⏳ Generating ${i + 1}/${sortedStudents.length}...`;
-                        }
-
-                        // Build certificate HTML in a wrapper
                         const wrapper = document.createElement('div');
-                        wrapper.style.cssText = `width: 11in; height: 8.5in; background: #fdfefd; position: relative; overflow: hidden;`;
+                        wrapper.style.cssText = 'width:11in;height:8.5in;background:#fdfefd;position:relative;overflow:hidden;';
                         wrapper.innerHTML = buildCertificateHTML(student);
                         container.appendChild(wrapper);
 
-                        // Wait for images (logo) to load
-                        await new Promise(resolve => setTimeout(resolve, 60));
+                        await new Promise(resolve => setTimeout(resolve, 80));
 
-                        // Render to canvas
                         const canvas = await html2canvas(wrapper, {
-                            scale: 2,
-                            useCORS: true,
-                            allowTaint: true,
-                            backgroundColor: '#fdfefd',
-                            width: wrapper.offsetWidth,
-                            height: wrapper.offsetHeight,
-                            windowWidth: wrapper.offsetWidth,
-                            windowHeight: wrapper.offsetHeight
+                            scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#fdfefd',
+                            width: wrapper.offsetWidth, height: wrapper.offsetHeight
                         });
 
                         const imgData = canvas.toDataURL('image/jpeg', 0.95);
-
                         if (i > 0) pdf.addPage([11, 8.5], 'landscape');
                         pdf.addImage(imgData, 'JPEG', 0, 0, 11, 8.5, undefined, 'FAST');
-
                         container.removeChild(wrapper);
                     }
 
-                    // Sanitize filename
                     const safeSchool = school.name.replace(/[^a-z0-9]+/gi, '_').substring(0, 30);
                     const safeClass = className.replace(/[^a-z0-9]+/gi, '_');
                     const filename = `Certificates_${safeClass}_${safeSchool}_${selectedLevel}.pdf`;
-
                     pdf.save(filename);
-
                     setSaveStatus('cloud', `📥 Downloaded ${sortedStudents.length} certificate(s)`);
                 } catch(err) {
                     console.error('PDF generation failed:', err);
@@ -2353,83 +2539,53 @@
                     setSaveStatus('error', 'PDF generation failed');
                 } finally {
                     document.body.removeChild(container);
-                    if (btnEl) {
-                        btnEl.disabled = false;
-                        btnEl.innerHTML = originalText;
-                    }
+                    if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = originalText; }
                 }
             }
 
             // ==================== ADD / CLEAR ====================
             async function addStudentsFromPaste(schoolId) {
+                if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
                 const textarea = document.getElementById(`paste-${schoolId}`);
                 const classSelect = document.getElementById(`class-${schoolId}`);
                 if (!textarea || !classSelect) return;
 
                 const rawText = textarea.value.trim();
-                if (!rawText) {
-                    alert('Please paste at least one student name.');
-                    return;
-                }
+                if (!rawText) { alert('Please paste at least one student name.'); return; }
                 const className = classSelect.value;
                 const lines = rawText.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
-
                 if (lines.length === 0) return;
 
                 setSaveStatus('saving', `Adding ${lines.length} student${lines.length !== 1 ? 's' : ''}...`);
 
-                let successCount = 0;
-                let failCount = 0;
-
+                let successCount = 0, failCount = 0;
                 for (const name of lines) {
                     let newStudent = null;
-
-                    if (supabase) {
-                        newStudent = await addStudentToCloud(schoolId, name, className, 0);
-                    }
-
+                    if (supabase) newStudent = await addStudentToCloud(schoolId, name, className, 0);
                     if (newStudent) {
-                        store[schoolId].push({
-                            id: newStudent.id,
-                            name: newStudent.name,
-                            class: newStudent.class,
-                            score: newStudent.score || 0
-                        });
+                        store[schoolId].push({ id: newStudent.id, name: newStudent.name, class: newStudent.class, score: newStudent.score || 0 });
                         successCount++;
                     } else if (!supabase) {
-                        store[schoolId].push({
-                            id: 'local_' + Date.now() + Math.random().toString(36).substring(2, 9),
-                            name, class: className, score: 0
-                        });
+                        store[schoolId].push({ id: 'local_' + Date.now() + Math.random().toString(36).substring(2, 9), name, class: className, score: 0 });
                         successCount++;
-                    } else {
-                        failCount++;
-                    }
+                    } else { failCount++; }
                 }
-
                 textarea.value = '';
                 render();
-
-                if (failCount === 0) {
-                    setSaveStatus('cloud', `☁️ Added ${successCount} student${successCount !== 1 ? 's' : ''}`);
-                } else {
-                    setSaveStatus('error', `${successCount} added, ${failCount} failed`);
-                }
+                if (failCount === 0) setSaveStatus('cloud', `☁️ Added ${successCount} student${successCount !== 1 ? 's' : ''}`);
+                else setSaveStatus('error', `${successCount} added, ${failCount} failed`);
             }
 
             async function clearSchool(schoolId) {
+                if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
                 if (!confirm('Remove ALL students from this school? This will also delete them from the cloud. Cannot be undone.')) return;
                 if (!confirm('Are you REALLY sure? This action is permanent.')) return;
 
                 if (supabase) {
                     setSaveStatus('saving', 'Clearing cloud...');
                     const ok = await clearSchoolFromCloud(schoolId);
-                    if (!ok) {
-                        setSaveStatus('error', 'Cloud delete failed');
-                        return;
-                    }
+                    if (!ok) { setSaveStatus('error', 'Cloud delete failed'); return; }
                 }
-
                 store[schoolId] = [];
                 render();
                 setSaveStatus('cloud', '☁️ School cleared');
@@ -2467,14 +2623,22 @@
             });
 
             document.getElementById('cloudConfigBtn').addEventListener('click', () => {
+                if (!isUnlocked()) { alert('🔒 Admin locked. Please unlock first.'); return; }
                 showSetupModal();
             });
 
             // ==================== INIT ====================
             async function init() {
+                setupAuthUI();
+                applyLockState();
                 populateSchoolSelector();
                 loadSavedLogo();
                 render();
+
+                // Auto-focus password
+                if (!isUnlocked()) {
+                    setTimeout(() => document.getElementById('adminPwd')?.focus(), 300);
+                }
 
                 if (initSupabase()) {
                     updateCloudStatus('connected', 'Connecting to cloud...');
@@ -2486,7 +2650,6 @@
             }
 
             init();
-
         })();
     </script>
 </body>

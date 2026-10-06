@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FEED PEOPLE FOUNDATION · School Points</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -692,7 +694,7 @@
             gap: 6px;
         }
 
-        .class-column-header .class-print-all-btn {
+        .class-column-header .class-download-all-btn {
             font-size: 0.62rem;
             padding: 5px 10px;
             border-radius: 20px;
@@ -709,12 +711,12 @@
             gap: 4px;
         }
 
-        .class-column-header .class-print-all-btn:hover {
+        .class-column-header .class-download-all-btn:hover {
             background: #0a3a1e;
             transform: scale(0.96);
         }
 
-        .class-column-header .class-print-all-btn:disabled {
+        .class-column-header .class-download-all-btn:disabled {
             background: #a8c8a8;
             cursor: not-allowed;
         }
@@ -1010,6 +1012,78 @@
             border-radius: 10px;
         }
 
+        /* ===== EDIT NAME MODAL ===== */
+        .edit-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 45, 30, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .edit-card {
+            background: #ffffff;
+            border-radius: 24px;
+            max-width: 420px;
+            width: 100%;
+            padding: 1.8rem 2rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid #e0ebe0;
+        }
+
+        .edit-card h3 {
+            font-size: 1.1rem;
+            color: #0f4b28;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .edit-card input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #c8dcc8;
+            border-radius: 14px;
+            font-size: 1rem;
+            background: #f8fbf8;
+            color: #1e2e1e;
+            outline: none;
+            font-weight: 500;
+        }
+
+        .edit-card input:focus {
+            border-color: #1a6b3a;
+            box-shadow: 0 0 0 3px rgba(26, 107, 58, 0.15);
+        }
+
+        .edit-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.2rem;
+        }
+
+        .edit-actions .btn {
+            flex: 1;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+        }
+
+        .edit-actions .btn-cancel {
+            background: #f8f4e8;
+            color: #a67c10;
+            border: 1px solid #e8d9a8;
+            box-shadow: none;
+        }
+
+        .edit-actions .btn-cancel:hover {
+            background: #f5edcf;
+        }
+
         .setup-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -1135,11 +1209,6 @@
             .total-students-value { font-size: 2.2rem; }
             .total-students-icon { font-size: 2rem; }
         }
-
-        @page {
-            size: 11in 8.5in landscape;
-            margin: 0;
-        }
     </style>
 </head>
 <body>
@@ -1216,8 +1285,9 @@
     <div class="schools-grid" id="schoolsGrid"></div>
 
     <div class="footer-note">
-        ⚡ Paste names (one per line) — add class — click boxes to give +2 points each. Click a student name to enlarge. Right-click a box to remove 2 points. Double-click a name to edit.<br>
-        🖨️ <strong>Print All Certificates per Class:</strong> Use the button in each class column header to print all students together.<br>
+        ⚡ Paste names (one per line) — add class — click boxes to give +2 points each.<br>
+        ✏️ <strong>Double-click a student name to edit it</strong> · Click a name to enlarge · Right-click a box to remove 2 points.<br>
+        📥 <strong>Download All PDF per Class:</strong> Use the button in each class column header to download all certificates as one PDF.<br>
         ☁️ <strong>Cloud sync enabled:</strong> Your data is saved permanently to Supabase.
     </div>
 
@@ -1595,7 +1665,6 @@
                 return student.name.toLowerCase().includes(searchQuery.toLowerCase());
             }
 
-            // Sort students alphabetically by name
             function sortStudentsAlphabetically(students) {
                 return [...students].sort((a, b) => 
                     a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' })
@@ -1803,20 +1872,13 @@
 
                 const modal = document.createElement('div');
                 modal.className = 'edit-modal';
-                modal.style.cssText = `
-                    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-                    background: rgba(15, 45, 30, 0.7); backdrop-filter: blur(4px);
-                    z-index: 10001; display: flex; align-items: center; justify-content: center;
-                    padding: 1.5rem;
-                `;
                 modal.innerHTML = `
-                    <div style="background: #fff; border-radius: 24px; max-width: 420px; width: 100%; padding: 1.8rem 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.3); border: 1px solid #e0ebe0;">
-                        <h3 style="font-size: 1.1rem; color: #0f4b28; margin-bottom: 1rem;">✏️ Edit Student Name</h3>
-                        <input type="text" id="editNameInput" value="${escapeHtml(student.name)}" maxlength="100" autocomplete="off"
-                            style="width: 100%; padding: 12px 16px; border: 1px solid #c8dcc8; border-radius: 14px; font-size: 1rem; background: #f8fbf8; color: #1e2e1e; outline: none; font-weight: 500;">
-                        <div style="display: flex; gap: 10px; margin-top: 1.2rem;">
-                            <button class="btn" id="editSaveBtn" style="flex: 1; padding: 10px 16px; font-size: 0.85rem;">💾 Save</button>
-                            <button class="btn" id="editCancelBtn" style="flex: 1; padding: 10px 16px; font-size: 0.85rem; background: #f8f4e8; color: #a67c10; border: 1px solid #e8d9a8; box-shadow: none;">Cancel</button>
+                    <div class="edit-card">
+                        <h3>✏️ Edit Student Name</h3>
+                        <input type="text" id="editNameInput" value="${escapeHtml(student.name)}" maxlength="100" autocomplete="off">
+                        <div class="edit-actions">
+                            <button class="btn" id="editSaveBtn">💾 Save</button>
+                            <button class="btn btn-cancel" id="editCancelBtn">Cancel</button>
                         </div>
                     </div>
                 `;
@@ -1932,7 +1994,6 @@
                         const colHeader = document.createElement('div');
                         colHeader.className = 'class-column-header';
                         
-                        // Sort class students alphabetically
                         const classStudents = sortStudentsAlphabetically(
                             filteredStudents.filter(s => s.class === cls)
                         );
@@ -1941,17 +2002,16 @@
                         headerLabel.textContent = cls;
                         colHeader.appendChild(headerLabel);
 
-                        // Print All Certificates button for this class
                         if (classStudents.length > 0) {
-                            const printAllBtn = document.createElement('button');
-                            printAllBtn.className = 'class-print-all-btn';
-                            printAllBtn.innerHTML = `🖨️ Print All (${classStudents.length})`;
-                            printAllBtn.title = `Print all ${classStudents.length} certificate(s) for class ${cls}`;
-                            printAllBtn.addEventListener('click', (e) => {
+                            const downloadAllBtn = document.createElement('button');
+                            downloadAllBtn.className = 'class-download-all-btn';
+                            downloadAllBtn.innerHTML = `📥 Download All (${classStudents.length})`;
+                            downloadAllBtn.title = `Download all ${classStudents.length} certificate(s) as one PDF for class ${cls}`;
+                            downloadAllBtn.addEventListener('click', (e) => {
                                 e.stopPropagation();
-                                printAllCertificatesForClass(school, cls, classStudents);
+                                downloadAllCertificatesForClass(school, cls, classStudents, downloadAllBtn);
                             });
-                            colHeader.appendChild(printAllBtn);
+                            colHeader.appendChild(downloadAllBtn);
                         }
 
                         colDiv.appendChild(colHeader);
@@ -1998,16 +2058,25 @@
                 const nameSpan = document.createElement('span');
                 nameSpan.className = 'student-name-text';
                 nameSpan.textContent = student.name;
-                nameSpan.title = 'Click to enlarge · Double-click to edit name';
+                nameSpan.title = 'Double-click to edit name · Click to enlarge';
                 
+                let clickTimer = null;
                 nameSpan.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    openFullscreen(student, schoolId);
+                    if (clickTimer) return;
+                    clickTimer = setTimeout(() => {
+                        clickTimer = null;
+                        openFullscreen(student, schoolId);
+                    }, 220);
                 });
                 
                 nameSpan.addEventListener('dblclick', (e) => {
                     e.stopPropagation();
                     e.preventDefault();
+                    if (clickTimer) {
+                        clearTimeout(clickTimer);
+                        clickTimer = null;
+                    }
                     openEditNameModal(student, schoolId);
                 });
                 
@@ -2112,7 +2181,7 @@
                     : `<div style="font-size: 0.4in; margin-bottom: 0.1in;">🌱</div>`;
 
                 return `
-                    <div style="
+                    <div class="cert-page-render" style="
                         width: 11in; height: 8.5in; margin: 0; padding: 0;
                         background: #fdfefd;
                         font-family: 'Georgia', 'Times New Roman', serif;
@@ -2165,7 +2234,7 @@
                 `;
             }
 
-            // ==================== SINGLE CERTIFICATE ====================
+            // ==================== SINGLE CERTIFICATE (opens print window) ====================
             function generateCertificate(student) {
                 const certHTML = buildCertificateHTML(student);
 
@@ -2177,12 +2246,12 @@
                             <style>
                                 @page { size: 11in 8.5in landscape; margin: 0; }
                                 html, body { margin: 0; padding: 0; width: 11in; height: 8.5in; background: white; overflow: hidden; }
-                                .cert-page { width: 11in; height: 8.5in; margin: 0; padding: 0; page-break-after: always; }
+                                .cert-page { width: 11in; height: 8.5in; margin: 0; padding: 0; }
                                 .no-print { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; text-align: center; }
                                 @media print { .no-print { display: none !important; } }
                             </style>
                         </head><body>
-                            <div class="cert-page">${certHTML}</div>
+                            ${certHTML}
                             <div class="no-print">
                                 <button onclick="window.print()" style="padding: 12px 28px; font-size: 1rem; background: #1a6b3a; color: #fff; border: none; border-radius: 40px; cursor: pointer; font-weight: 700;">🖨️ Print / Save as PDF</button>
                                 <button onclick="window.close()" style="padding: 12px 28px; font-size: 1rem; background: #f8f4e8; color: #a67c10; border: 1px solid #e8d9a8; border-radius: 40px; cursor: pointer; margin-left: 12px; font-weight: 600;">Close</button>
@@ -2195,98 +2264,100 @@
                 }
             }
 
-            // ==================== PRINT ALL CERTIFICATES FOR ONE CLASS ====================
-            function printAllCertificatesForClass(school, className, students) {
+            // ==================== DOWNLOAD ALL CERTIFICATES (PDF) FOR A CLASS ====================
+            async function downloadAllCertificatesForClass(school, className, students, btnEl) {
                 if (!students || students.length === 0) {
                     alert('No students in this class.');
                     return;
                 }
 
-                // Sort alphabetically before printing
+                const { jsPDF } = window.jspdf;
                 const sortedStudents = sortStudentsAlphabetically(students);
 
-                // Build all certificate pages combined
-                let allPagesHTML = '';
-                sortedStudents.forEach((student, idx) => {
-                    const certHTML = buildCertificateHTML(student);
-                    allPagesHTML += `<div class="cert-page">${certHTML}</div>`;
+                // UI feedback
+                const originalText = btnEl ? btnEl.innerHTML : '';
+                if (btnEl) {
+                    btnEl.disabled = true;
+                    btnEl.innerHTML = `⏳ Generating 0/${sortedStudents.length}...`;
+                }
+                setSaveStatus('saving', `Generating ${sortedStudents.length} PDF page(s)...`);
+
+                // Create hidden container to render certificates
+                const container = document.createElement('div');
+                container.style.cssText = `
+                    position: fixed;
+                    left: -10000px;
+                    top: 0;
+                    width: 11in;
+                    background: #fff;
+                    z-index: -1;
+                `;
+                document.body.appendChild(container);
+
+                // Create PDF in landscape (11 x 8.5 inches)
+                const pdf = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'in',
+                    format: [11, 8.5],
+                    compress: true
                 });
 
-                const printWindow = window.open('', '_blank', 'width=1200,height=900');
-                if (!printWindow) {
-                    alert('Please allow pop-ups to print certificates.');
-                    return;
-                }
+                try {
+                    for (let i = 0; i < sortedStudents.length; i++) {
+                        const student = sortedStudents[i];
 
-                printWindow.document.write(`
-                    <!DOCTYPE html><html><head>
-                        <meta charset="UTF-8">
-                        <title>${className} Certificates — ${escapeHtml(school.name)}</title>
-                        <style>
-                            @page { size: 11in 8.5in landscape; margin: 0; }
-                            html, body { 
-                                margin: 0; padding: 0; 
-                                background: #e8e8e8;
-                                font-family: 'Segoe UI', sans-serif;
-                            }
-                            .cert-page { 
-                                width: 11in; height: 8.5in; 
-                                margin: 0; padding: 0; 
-                                page-break-after: always;
-                                break-after: page;
-                                background: #fdfefd;
-                                overflow: hidden;
-                                position: relative;
-                                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-                            }
-                            .cert-page:last-child { 
-                                page-break-after: auto;
-                                break-after: auto;
-                            }
-                            .no-print { 
-                                position: fixed; top: 15px; right: 15px; z-index: 9999;
-                                background: #fff; padding: 12px 16px; border-radius: 40px;
-                                box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-                                display: flex; gap: 10px; align-items: center;
-                            }
-                            .no-print button {
-                                padding: 10px 22px; font-size: 0.95rem;
-                                border: none; border-radius: 40px; cursor: pointer;
-                                font-weight: 700;
-                            }
-                            .btn-print { background: #1a6b3a; color: #fff; }
-                            .btn-print:hover { background: #0f4b28; }
-                            .btn-close { background: #f8f4e8; color: #a67c10; border: 1px solid #e8d9a8; }
-                            .info-banner {
-                                position: fixed; top: 15px; left: 15px; z-index: 9999;
-                                background: #1a6b3a; color: #fff;
-                                padding: 10px 18px; border-radius: 40px;
-                                font-size: 0.85rem; font-weight: 600;
-                                box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-                            }
-                            @media print {
-                                html, body { background: #fff; }
-                                .no-print, .info-banner { display: none !important; }
-                                .cert-page { 
-                                    box-shadow: none;
-                                    margin: 0;
-                                    page-break-after: always;
-                                    break-after: page;
-                                }
-                            }
-                        </style>
-                    </head><body>
-                        <div class="info-banner">
-                            📄 ${sortedStudents.length} certificate${sortedStudents.length !== 1 ? 's' : ''} · ${escapeHtml(className)} · ${escapeHtml(school.name)}
-                        </div>
-                        <div class="no-print">
-                            <button class="btn-print" onclick="window.print()">🖨️ Print All (${sortedStudents.length})</button>
-                            <button class="btn-close" onclick="window.close()">✕ Close</button>
-                        </div>
-                        ${allPagesHTML}
-                    </body></html>
-                `);
-                printWindow.document.close();
+                        if (btnEl) {
+                            btnEl.innerHTML = `⏳ Generating ${i + 1}/${sortedStudents.length}...`;
+                        }
+
+                        // Build certificate HTML in a wrapper
+                        const wrapper = document.createElement('div');
+                        wrapper.style.cssText = `width: 11in; height: 8.5in; background: #fdfefd; position: relative; overflow: hidden;`;
+                        wrapper.innerHTML = buildCertificateHTML(student);
+                        container.appendChild(wrapper);
+
+                        // Wait for images (logo) to load
+                        await new Promise(resolve => setTimeout(resolve, 60));
+
+                        // Render to canvas
+                        const canvas = await html2canvas(wrapper, {
+                            scale: 2,
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#fdfefd',
+                            width: wrapper.offsetWidth,
+                            height: wrapper.offsetHeight,
+                            windowWidth: wrapper.offsetWidth,
+                            windowHeight: wrapper.offsetHeight
+                        });
+
+                        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+                        if (i > 0) pdf.addPage([11, 8.5], 'landscape');
+                        pdf.addImage(imgData, 'JPEG', 0, 0, 11, 8.5, undefined, 'FAST');
+
+                        container.removeChild(wrapper);
+                    }
+
+                    // Sanitize filename
+                    const safeSchool = school.name.replace(/[^a-z0-9]+/gi, '_').substring(0, 30);
+                    const safeClass = className.replace(/[^a-z0-9]+/gi, '_');
+                    const filename = `Certificates_${safeClass}_${safeSchool}_${selectedLevel}.pdf`;
+
+                    pdf.save(filename);
+
+                    setSaveStatus('cloud', `📥 Downloaded ${sortedStudents.length} certificate(s)`);
+                } catch(err) {
+                    console.error('PDF generation failed:', err);
+                    alert('PDF generation failed: ' + err.message);
+                    setSaveStatus('error', 'PDF generation failed');
+                } finally {
+                    document.body.removeChild(container);
+                    if (btnEl) {
+                        btnEl.disabled = false;
+                        btnEl.innerHTML = originalText;
+                    }
+                }
             }
 
             // ==================== ADD / CLEAR ====================

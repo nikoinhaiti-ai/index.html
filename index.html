@@ -1280,6 +1280,90 @@
             box-shadow: none;
         }
 
+        /* ===== PER-SCHOOL SEARCH ===== */
+        .school-search-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: auto;
+            flex: 1;
+            min-width: 160px;
+            max-width: 260px;
+        }
+
+        .school-search-input {
+            width: 100%;
+            padding: 6px 12px 6px 32px;
+            border: 1px solid #c8dcc8;
+            border-radius: 40px;
+            font-size: 0.78rem;
+            background: #f8fbf8 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239ab09a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 10px center;
+            background-size: 14px;
+            color: #1e2e1e;
+            outline: none;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+
+        .school-search-input::placeholder { color: #9ab09a; font-weight: 400; }
+
+        .school-search-input:focus {
+            border-color: #1a6b3a;
+            box-shadow: 0 0 0 3px rgba(26, 107, 58, 0.12);
+            background-color: #ffffff;
+        }
+
+        .school-search-clear {
+            background: transparent;
+            border: none;
+            font-size: 0.85rem;
+            color: #9ab09a;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 50%;
+            transition: 0.15s;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .school-search-clear:hover {
+            background: #f0f5f0;
+            color: #4a6b4a;
+        }
+
+        .school-search-clear.hidden { display: none; }
+
+        .school-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .school-header .school-name {
+            flex-shrink: 0;
+        }
+
+        .school-header .school-actions {
+            flex-shrink: 0;
+        }
+
+        .school-search-wrap {
+            order: 2;
+        }
+
+        .school-actions {
+            order: 3;
+        }
+
+        .no-school-results {
+            text-align: center;
+            padding: 1.2rem;
+            color: #9ab09a;
+            font-style: italic;
+            font-size: 0.85rem;
+        }
+
         @media (max-width: 700px) {
             .foundation-logo { height: 50px; }
             .foundation-title h1 { font-size: 1rem; }
@@ -1290,6 +1374,22 @@
             .total-students-value { font-size: 2.2rem; }
             .total-students-icon { font-size: 2rem; }
             .auth-box { padding: 2rem 1.5rem; }
+
+            .school-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .school-search-wrap {
+                max-width: 100%;
+                margin-left: 0;
+                order: 2;
+            }
+
+            .school-actions {
+                order: 3;
+                justify-content: flex-end;
+            }
         }
     </style>
 </head>
@@ -1445,6 +1545,9 @@
 
             let store = { csc: [], csa: [], eureka: [], bethanie: [] };
 
+            // Per-school search queries
+            let schoolSearchQueries = { csc: '', csa: '', eureka: '', bethanie: '' };
+
             let selectedSchoolId = 'all';
             let searchQuery = '';
             let selectedLevel = 'A1';
@@ -1493,7 +1596,6 @@
                 const authErrorText = document.getElementById('authErrorText');
                 const togglePwdBtn = document.getElementById('togglePwdBtn');
 
-                // Pre-fill logo in auth screen
                 updateAuthLogo();
 
                 function tryLogin() {
@@ -1545,7 +1647,6 @@
                     togglePwdBtn.textContent = isPwd ? '🙈' : '👁️';
                 });
 
-                // Lock button
                 document.getElementById('lockBtn').addEventListener('click', () => {
                     if (!confirm('Lock admin mode? You will need the password to edit again.')) return;
                     setUnlocked(false);
@@ -1872,9 +1973,15 @@
                 return div.innerHTML;
             }
 
-            function matchesSearch(student) {
+            function matchesGlobalSearch(student) {
                 if (!searchQuery) return true;
                 return student.name.toLowerCase().includes(searchQuery.toLowerCase());
+            }
+
+            function matchesSchoolSearch(student, schoolId) {
+                const query = schoolSearchQueries[schoolId] || '';
+                if (!query) return true;
+                return student.name.toLowerCase().includes(query.toLowerCase());
             }
 
             function sortStudentsAlphabetically(students) {
@@ -2162,7 +2269,10 @@
 
                 schoolsToRender.forEach(school => {
                     const students = store[school.id] || [];
-                    const filteredStudents = students.filter(matchesSearch);
+                    // Apply both global search and per-school search
+                    const filteredStudents = students.filter(s => 
+                        matchesGlobalSearch(s) && matchesSchoolSearch(s, school.id)
+                    );
 
                     if (selectedSchoolId === 'all' && searchQuery && filteredStudents.length === 0) return;
 
@@ -2173,14 +2283,61 @@
 
                     const header = document.createElement('div');
                     header.className = 'school-header';
-                    header.innerHTML = `
-                        <div class="school-name">
-                            <i>${school.icon}</i> ${school.name}
-                        </div>
-                        <div class="school-actions">
-                            <button class="icon-btn admin-only" title="Clear all students" data-action="clear-school" data-school="${school.id}">🗑️</button>
-                        </div>
+
+                    // School name
+                    const nameDiv = document.createElement('div');
+                    nameDiv.className = 'school-name';
+                    nameDiv.innerHTML = `<i>${school.icon}</i> ${school.name}`;
+                    header.appendChild(nameDiv);
+
+                    // Per-school search input
+                    const searchWrap = document.createElement('div');
+                    searchWrap.className = 'school-search-wrap';
+
+                    const searchInput = document.createElement('input');
+                    searchInput.type = 'text';
+                    searchInput.className = 'school-search-input';
+                    searchInput.placeholder = `Search in ${school.name.split(' ')[0]}...`;
+                    searchInput.value = schoolSearchQueries[school.id] || '';
+                    searchInput.setAttribute('data-school', school.id);
+
+                    const clearBtn = document.createElement('button');
+                    clearBtn.className = 'school-search-clear' + (searchInput.value ? '' : ' hidden');
+                    clearBtn.innerHTML = '✕';
+                    clearBtn.title = 'Clear school search';
+                    clearBtn.setAttribute('data-school', school.id);
+
+                    searchInput.addEventListener('input', (e) => {
+                        const sid = e.target.getAttribute('data-school');
+                        schoolSearchQueries[sid] = e.target.value.trim();
+                        if (e.target.value.trim()) {
+                            clearBtn.classList.remove('hidden');
+                        } else {
+                            clearBtn.classList.add('hidden');
+                        }
+                        render();
+                    });
+
+                    clearBtn.addEventListener('click', (e) => {
+                        const sid = e.target.getAttribute('data-school');
+                        schoolSearchQueries[sid] = '';
+                        searchInput.value = '';
+                        clearBtn.classList.add('hidden');
+                        render();
+                    });
+
+                    searchWrap.appendChild(searchInput);
+                    searchWrap.appendChild(clearBtn);
+                    header.appendChild(searchWrap);
+
+                    // Actions
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.className = 'school-actions';
+                    actionsDiv.innerHTML = `
+                        <button class="icon-btn admin-only" title="Clear all students" data-action="clear-school" data-school="${school.id}">🗑️</button>
                     `;
+                    header.appendChild(actionsDiv);
+
                     card.appendChild(header);
 
                     const pasteArea = document.createElement('div');
@@ -2267,10 +2424,15 @@
                     grid.appendChild(card);
                 });
 
-                if (!anyStudentRendered && searchQuery) {
+                if (!anyStudentRendered && (searchQuery || Object.values(schoolSearchQueries).some(q => q))) {
                     const noRes = document.createElement('div');
                     noRes.className = 'no-results';
-                    noRes.innerHTML = `🔍 No students found matching "<strong>${escapeHtml(searchQuery)}</strong>".`;
+                    const activeQueries = [];
+                    if (searchQuery) activeQueries.push(`global: "${escapeHtml(searchQuery)}"`);
+                    SCHOOLS.forEach(s => {
+                        if (schoolSearchQueries[s.id]) activeQueries.push(`${s.name.split(' ')[0]}: "${escapeHtml(schoolSearchQueries[s.id])}"`);
+                    });
+                    noRes.innerHTML = `🔍 No students found matching ${activeQueries.join(' · ')}.`;
                     grid.appendChild(noRes);
                 }
             }
@@ -2279,7 +2441,9 @@
                 const card = document.createElement('div');
                 card.className = 'student-card-item';
 
-                if (searchQuery && student.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+                const globalMatch = searchQuery && student.name.toLowerCase().includes(searchQuery.toLowerCase());
+                const schoolMatch = schoolSearchQueries[schoolId] && student.name.toLowerCase().includes(schoolSearchQueries[schoolId].toLowerCase());
+                if (globalMatch || schoolMatch) {
                     card.classList.add('match-highlight');
                 }
 
@@ -2635,7 +2799,6 @@
                 loadSavedLogo();
                 render();
 
-                // Auto-focus password
                 if (!isUnlocked()) {
                     setTimeout(() => document.getElementById('adminPwd')?.focus(), 300);
                 }

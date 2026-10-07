@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1988,6 +1989,37 @@
                 return [...students].sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
             }
 
+            // ==================== FOCUS PRESERVATION ====================
+            function captureFocus() {
+                const active = document.activeElement;
+                if (!active) return null;
+                const isSchoolSearch = active.classList.contains('school-search-input');
+                const isGlobalSearch = active.id === 'searchInput';
+                if (!isSchoolSearch && !isGlobalSearch) return null;
+                return {
+                    type: isSchoolSearch ? 'school' : 'global',
+                    schoolId: isSchoolSearch ? active.getAttribute('data-school') : null,
+                    value: active.value,
+                    start: active.selectionStart,
+                    end: active.selectionEnd
+                };
+            }
+
+            function restoreFocus(snapshot) {
+                if (!snapshot) return;
+                let el = null;
+                if (snapshot.type === 'school') {
+                    el = document.querySelector(`.school-search-input[data-school="${snapshot.schoolId}"]`);
+                } else {
+                    el = document.getElementById('searchInput');
+                }
+                if (!el) return;
+                el.focus();
+                try {
+                    el.setSelectionRange(snapshot.start, snapshot.end);
+                } catch (e) {}
+            }
+
             // ==================== ANALYTICS ====================
             function renderAnalytics() {
                 let grandTotal = 0;
@@ -2256,6 +2288,7 @@
 
             // ==================== RENDER ====================
             function render() {
+                const focusSnapshot = captureFocus();
                 renderAnalytics();
 
                 const grid = document.getElementById('schoolsGrid');
@@ -2269,7 +2302,6 @@
 
                 schoolsToRender.forEach(school => {
                     const students = store[school.id] || [];
-                    // Apply both global search and per-school search
                     const filteredStudents = students.filter(s => 
                         matchesGlobalSearch(s) && matchesSchoolSearch(s, school.id)
                     );
@@ -2284,13 +2316,11 @@
                     const header = document.createElement('div');
                     header.className = 'school-header';
 
-                    // School name
                     const nameDiv = document.createElement('div');
                     nameDiv.className = 'school-name';
                     nameDiv.innerHTML = `<i>${school.icon}</i> ${school.name}`;
                     header.appendChild(nameDiv);
 
-                    // Per-school search input
                     const searchWrap = document.createElement('div');
                     searchWrap.className = 'school-search-wrap';
 
@@ -2330,7 +2360,6 @@
                     searchWrap.appendChild(clearBtn);
                     header.appendChild(searchWrap);
 
-                    // Actions
                     const actionsDiv = document.createElement('div');
                     actionsDiv.className = 'school-actions';
                     actionsDiv.innerHTML = `
@@ -2435,6 +2464,8 @@
                     noRes.innerHTML = `🔍 No students found matching ${activeQueries.join(' · ')}.`;
                     grid.appendChild(noRes);
                 }
+
+                restoreFocus(focusSnapshot);
             }
 
             function createStudentCard(student, schoolId) {
@@ -2817,3 +2848,4 @@
     </script>
 </body>
 </html>
+```

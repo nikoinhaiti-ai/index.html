@@ -67,9 +67,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .auth-logo-wrap {
-            margin-bottom: 1.5rem;
-        }
+        .auth-logo-wrap { margin-bottom: 1.5rem; }
 
         .auth-logo {
             max-height: 80px;
@@ -80,10 +78,7 @@
             border-radius: 10px;
         }
 
-        .auth-logo-fallback {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-        }
+        .auth-logo-fallback { font-size: 3rem; margin-bottom: 0.5rem; }
 
         .auth-org {
             font-size: 0.72rem;
@@ -107,10 +102,7 @@
             margin-bottom: 1.8rem;
         }
 
-        .auth-field {
-            margin-bottom: 1rem;
-            text-align: left;
-        }
+        .auth-field { margin-bottom: 1rem; text-align: left; }
 
         .auth-field label {
             display: block;
@@ -122,9 +114,7 @@
             text-transform: uppercase;
         }
 
-        .auth-input-wrap {
-            position: relative;
-        }
+        .auth-input-wrap { position: relative; }
 
         .auth-input-wrap .field-icon {
             position: absolute;
@@ -171,10 +161,7 @@
             transition: 0.15s;
         }
 
-        .auth-input-wrap .toggle-pwd:hover {
-            opacity: 1;
-            background: #f0f5f0;
-        }
+        .auth-input-wrap .toggle-pwd:hover { opacity: 1; background: #f0f5f0; }
 
         .auth-error {
             background: #fdecea;
@@ -193,9 +180,7 @@
 
         .auth-error.show { display: flex; }
 
-        .auth-error.shake {
-            animation: shake 0.4s ease;
-        }
+        .auth-error.shake { animation: shake 0.4s ease; }
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
@@ -268,11 +253,7 @@
             gap: 14px;
         }
 
-        .foundation-title {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+        .foundation-title { display: flex; align-items: center; gap: 16px; }
 
         .foundation-logo {
             height: 70px;
@@ -352,10 +333,7 @@
             transition: 0.2s;
         }
 
-        .lock-btn:hover {
-            background: #fdecea;
-            border-color: #f5b7b1;
-        }
+        .lock-btn:hover { background: #fdecea; border-color: #f5b7b1; }
 
         .badge {
             background: #f8f4e8;
@@ -421,7 +399,8 @@
         body.locked .class-download-all-btn,
         body.locked .class-delete-all-btn,
         body.locked .icon-btn,
-        body.locked .logo-upload-label {
+        body.locked .logo-upload-label,
+        body.locked .mic-btn {
             pointer-events: none;
             opacity: 0.5;
             cursor: not-allowed;
@@ -807,7 +786,6 @@
             border-color: #c0dcc0;
         }
 
-        /* Special styling for CFTPL & OTHERS */
         .school-card.special-cftpl {
             border: 2px solid #d4b84a;
             background: linear-gradient(180deg, #fffef8 0%, #ffffff 60%);
@@ -871,11 +849,17 @@
             gap: 10px;
         }
 
+        /* ===== PASTE INPUT WITH MIC ===== */
+        .paste-input-wrap {
+            position: relative;
+            width: 100%;
+        }
+
         .paste-area textarea {
             width: 100%;
             border: 1px solid #c8dcc8;
             border-radius: 20px;
-            padding: 12px 16px;
+            padding: 12px 55px 12px 16px;
             font-size: 0.9rem;
             resize: vertical;
             min-height: 70px;
@@ -883,6 +867,7 @@
             color: #1e2e1e;
             outline: none;
             transition: 0.2s;
+            font-family: inherit;
         }
 
         .paste-area textarea::placeholder { color: #9ab09a; }
@@ -893,6 +878,96 @@
             background: #ffffff;
         }
 
+        .paste-area textarea.listening {
+            border-color: #c0392b;
+            box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.18);
+            background: #fff8f8;
+        }
+
+        .mic-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a6b3a, #0f4b28);
+            color: #fff;
+            border: none;
+            font-size: 1.05rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(26, 107, 58, 0.35);
+            transition: 0.2s;
+            padding: 0;
+            line-height: 1;
+            z-index: 2;
+        }
+
+        .mic-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 5px 15px rgba(26, 107, 58, 0.45);
+        }
+
+        .mic-btn:active { transform: scale(0.95); }
+
+        .mic-btn.listening {
+            background: linear-gradient(135deg, #c0392b, #922b21);
+            animation: micPulse 1.2s ease-in-out infinite;
+            box-shadow: 0 0 0 0 rgba(192, 57, 43, 0.6);
+        }
+
+        @keyframes micPulse {
+            0%   { box-shadow: 0 0 0 0 rgba(192, 57, 43, 0.7); }
+            70%  { box-shadow: 0 0 0 14px rgba(192, 57, 43, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(192, 57, 43, 0); }
+        }
+
+        .mic-btn:disabled {
+            background: #a8c8a8;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .mic-status {
+            font-size: 0.72rem;
+            color: #c0392b;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            padding-left: 4px;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mic-status.show { display: flex; }
+
+        .mic-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #c0392b;
+            animation: dotBlink 1s infinite;
+        }
+
+        .mic-status.success {
+            color: #1a6b3a;
+        }
+
+        .mic-status.success .dot {
+            background: #1a6b3a;
+            animation: none;
+        }
+
+        @keyframes dotBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* ===== CLASS ROW ===== */
         .class-row {
             display: flex;
             gap: 10px;
@@ -1059,6 +1134,15 @@
         .student-card-item:hover {
             border-color: #b8d4b8;
             box-shadow: 0 4px 12px rgba(20, 80, 50, 0.1);
+        }
+
+        .student-card-item.just-added {
+            animation: justAdded 1.2s ease;
+        }
+
+        @keyframes justAdded {
+            0% { background: #f8f4e8; box-shadow: 0 0 0 4px rgba(212, 184, 74, 0.4); }
+            100% { background: #ffffff; box-shadow: 0 2px 6px rgba(20, 80, 50, 0.04); }
         }
 
         .student-name-line {
@@ -1233,60 +1317,6 @@
             text-align: center;
         }
 
-        .admin-card h2 {
-            font-size: 1.3rem;
-            color: #0f4b28;
-            margin-bottom: 0.5rem;
-        }
-
-        .admin-card .admin-icon {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .admin-card p {
-            font-size: 0.85rem;
-            color: #4a6b4a;
-            margin-bottom: 1.2rem;
-        }
-
-        .admin-card input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 1.5px solid #c8dcc8;
-            border-radius: 14px;
-            font-size: 1rem;
-            background: #f8fbf8;
-            color: #1e2e1e;
-            outline: none;
-            text-align: center;
-            letter-spacing: 2px;
-            font-weight: 600;
-        }
-
-        .admin-card input:focus {
-            border-color: #1a6b3a;
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(26, 107, 58, 0.12);
-        }
-
-        .admin-card .modal-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 1.2rem;
-        }
-
-        .admin-card .modal-actions .btn { flex: 1; }
-
-        .admin-card .modal-actions .btn-cancel {
-            background: #f8f4e8;
-            color: #a67c10;
-            border: 1px solid #e8d9a8;
-            box-shadow: none;
-        }
-
-        .admin-card .modal-actions .btn-cancel:hover { background: #f5edcf; }
-
         .edit-card h3 {
             font-size: 1.1rem;
             color: #0f4b28;
@@ -1389,29 +1419,11 @@
             gap: 10px;
         }
 
-        .school-header .school-name {
-            flex-shrink: 0;
-        }
+        .school-header .school-name { flex-shrink: 0; }
+        .school-header .school-actions { flex-shrink: 0; }
 
-        .school-header .school-actions {
-            flex-shrink: 0;
-        }
-
-        .school-search-wrap {
-            order: 2;
-        }
-
-        .school-actions {
-            order: 3;
-        }
-
-        .no-school-results {
-            text-align: center;
-            padding: 1.2rem;
-            color: #9ab09a;
-            font-style: italic;
-            font-size: 0.85rem;
-        }
+        .school-search-wrap { order: 2; }
+        .school-actions { order: 3; }
 
         @media (max-width: 700px) {
             .foundation-logo { height: 50px; }
@@ -1444,7 +1456,7 @@
 </head>
 <body class="locked">
 
-    <!-- ===== AUTH SCREEN (PASSWORD ONLY) ===== -->
+    <!-- ===== AUTH SCREEN ===== -->
     <div class="auth-screen" id="authScreen">
         <div class="auth-box">
             <div class="auth-logo-wrap">
@@ -1521,7 +1533,7 @@
                     <div class="total-students-text">
                         <div class="total-students-label">Total Students</div>
                         <div class="total-students-value" id="totalStudentsValue">0</div>
-                        <div class="total-students-sub" id="totalStudentsSub">across all schools</div>
+                        <div class="total-students-sub" id="totalStudentsSub">across all sections</div>
                     </div>
                 </div>
                 <div class="total-students-breakdown" id="totalStudentsBreakdown"></div>
@@ -1530,7 +1542,7 @@
             <div class="stats-overview" id="statsOverview"></div>
             <div class="top-students-title">
                 <span>🏆</span>
-                <span>Top Student per Class · Each School</span>
+                <span>Top Student per Class · Each Section</span>
             </div>
             <div id="schoolAnalyticsList"></div>
         </div>
@@ -1538,7 +1550,7 @@
         <div class="control-bar">
             <label for="schoolSelector">🏫 School:</label>
             <select id="schoolSelector" class="school-select">
-                <option value="all">All schools</option>
+                <option value="all">All sections</option>
             </select>
 
             <label for="levelSelector">📚 Level:</label>
@@ -1563,9 +1575,9 @@
 
         <div class="footer-note">
             🔒 <strong>Admin locked.</strong> Unlock to edit.<br>
-            ⚡ Paste names (one per line) — add class — click boxes to give +2 points.<br>
-            ✏️ Double-click a name to edit · 📥 Download All per Class · 🗑️ Delete All per Class · 🖨️ Print individual certificates.<br>
-            🎓 <strong>CFTPL</strong> and 🌍 <strong>OTHERS</strong> work exactly like schools — add any person!<br>
+            🎤 <strong>Voice:</strong> Click mic → say <em>"John Smith 2 points"</em> → auto-adds John with 2 pts.<br>
+            ⚡ Or paste names (one per line) — add class — click boxes to give +2 points.<br>
+            ✏️ Double-click a name to edit · 📥 Download All per Class · 🗑️ Delete All per Class · 🖨️ Print certificates.<br>
             ☁️ Data saved to Supabase.
         </div>
     </div>
@@ -1573,14 +1585,19 @@
     <script>
         (function() {
             // ============================================================
-            // ADMIN PASSWORD — CHANGE THIS TO YOUR OWN SECRET
+            // ADMIN PASSWORD
             // ============================================================
             const ADMIN_PASSWORD = 'fpf2024';
             // ============================================================
 
+            // ============================================================
+            // VOICE LANGUAGE — change to 'en-US' for English, 'fr-FR' for French
+            // ============================================================
+            const VOICE_LANG = 'fr-FR';
+            // ============================================================
+
             const SESSION_KEY = 'fpf_admin_unlocked';
 
-            // ===== SCHOOLS + CFTPL + OTHERS =====
             const SCHOOLS = [
                 { id: 'csc', name: 'COLLÈGE SAINT-CROIX', icon: '✝️' },
                 { id: 'csa', name: 'COLLÈGE SAINTE AGNÈS', icon: '🕊️' },
@@ -1597,24 +1614,22 @@
             const LOGO_KEY = 'fpf_logo';
 
             let store = { csc: [], csa: [], eureka: [], bethanie: [], cftpl: [], others: [] };
-
-            // Per-school search queries
             let schoolSearchQueries = { csc: '', csa: '', eureka: '', bethanie: '', cftpl: '', others: '' };
 
             let selectedSchoolId = 'all';
             let searchQuery = '';
             let selectedLevel = 'A1';
             let savedLogoDataUrl = '';
-
             let supabase = null;
+
+            // Voice recognition state
+            let recognition = null;
+            let activeRecognitionSchoolId = null;
+            let lastAddedStudentId = null;
 
             // ==================== AUTH ====================
             function isUnlocked() {
-                try {
-                    return sessionStorage.getItem(SESSION_KEY) === 'true';
-                } catch(e) {
-                    return false;
-                }
+                try { return sessionStorage.getItem(SESSION_KEY) === 'true'; } catch(e) { return false; }
             }
 
             function setUnlocked(val) {
@@ -1639,6 +1654,8 @@
                     body.classList.add('locked');
                     authScreen.style.display = 'flex';
                     appContainer.classList.remove('visible');
+                    // Stop any active recognition when locking
+                    stopVoiceRecognition();
                 }
             }
 
@@ -1653,10 +1670,7 @@
 
                 function tryLogin() {
                     const pwd = pwdInput.value;
-                    if (!pwd) {
-                        showError('Please enter a password.');
-                        return;
-                    }
+                    if (!pwd) { showError('Please enter a password.'); return; }
                     loginBtn.disabled = true;
                     loginBtn.innerHTML = '<span>⏳</span><span>Checking...</span>';
 
@@ -1686,12 +1700,8 @@
                 }
 
                 loginBtn.addEventListener('click', tryLogin);
-
                 pwdInput.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        tryLogin();
-                    }
+                    if (e.key === 'Enter') { e.preventDefault(); tryLogin(); }
                 });
 
                 togglePwdBtn.addEventListener('click', () => {
@@ -1721,7 +1731,7 @@
                 }
             }
 
-            // ==================== SUPABASE SETUP ====================
+            // ==================== SUPABASE ====================
             function getSupabaseConfig() {
                 try {
                     const url = localStorage.getItem(SUPABASE_URL_KEY);
@@ -1748,7 +1758,6 @@
                     supabase = window.supabase.createClient(config.url, config.key);
                     return true;
                 } catch(e) {
-                    console.error('Supabase init failed:', e);
                     updateCloudStatus('error', 'Cloud config error: ' + e.message);
                     return false;
                 }
@@ -1759,17 +1768,11 @@
                 const icon = document.getElementById('cloudIcon');
                 const textEl = document.getElementById('cloudText');
                 banner.classList.remove('disconnected', 'local');
-                if (state === 'connected') {
-                    icon.textContent = '☁️';
-                    textEl.textContent = text;
-                } else if (state === 'setup' || state === 'local') {
-                    banner.classList.add('local');
-                    icon.textContent = '📴';
-                    textEl.textContent = text;
+                if (state === 'connected') { icon.textContent = '☁️'; textEl.textContent = text; }
+                else if (state === 'setup' || state === 'local') {
+                    banner.classList.add('local'); icon.textContent = '📴'; textEl.textContent = text;
                 } else if (state === 'error' || state === 'disconnected') {
-                    banner.classList.add('disconnected');
-                    icon.textContent = '⚠️';
-                    textEl.textContent = text;
+                    banner.classList.add('disconnected'); icon.textContent = '⚠️'; textEl.textContent = text;
                 }
             }
 
@@ -1829,10 +1832,7 @@
                         saveSupabaseConfig(url, key);
                         msg.innerHTML = `<div style="background:#e8f5e8;color:#1a6b3a;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">✅ Connected! Syncing data...</div>`;
                         supabase = testClient;
-                        setTimeout(async () => {
-                            modal.remove();
-                            await syncFromCloud();
-                        }, 800);
+                        setTimeout(async () => { modal.remove(); await syncFromCloud(); }, 800);
                     } catch(e) {
                         msg.innerHTML = `<div style="background:#fdecea;color:#c0392b;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">❌ Connection failed: ${escapeHtml(e.message)}</div>`;
                     }
@@ -1843,10 +1843,7 @@
             async function loadFromCloud() {
                 if (!supabase) return false;
                 try {
-                    const { data, error } = await supabase
-                        .from('students')
-                        .select('*')
-                        .order('created_at', { ascending: true });
+                    const { data, error } = await supabase.from('students').select('*').order('created_at', { ascending: true });
                     if (error) throw error;
                     SCHOOLS.forEach(school => { store[school.id] = []; });
                     (data || []).forEach(row => {
@@ -1857,10 +1854,7 @@
                         }
                     });
                     return true;
-                } catch(e) {
-                    console.error('Cloud load failed:', e);
-                    return false;
-                }
+                } catch(e) { return false; }
             }
 
             async function syncFromCloud() {
@@ -2022,7 +2016,7 @@
             // ==================== HELPERS ====================
             function populateSchoolSelector() {
                 const sel = document.getElementById('schoolSelector');
-                sel.innerHTML = '<option value="all">All schools</option>';
+                sel.innerHTML = '<option value="all">All sections</option>';
                 SCHOOLS.forEach(school => {
                     const opt = document.createElement('option');
                     opt.value = school.id;
@@ -2064,7 +2058,6 @@
                 return {
                     type: isSchoolSearch ? 'school' : 'global',
                     schoolId: isSchoolSearch ? active.getAttribute('data-school') : null,
-                    value: active.value,
                     start: active.selectionStart,
                     end: active.selectionEnd
                 };
@@ -2080,9 +2073,7 @@
                 }
                 if (!el) return;
                 el.focus();
-                try {
-                    el.setSelectionRange(snapshot.start, snapshot.end);
-                } catch (e) {}
+                try { el.setSelectionRange(snapshot.start, snapshot.end); } catch (e) {}
             }
 
             // ==================== ANALYTICS ====================
@@ -2297,10 +2288,7 @@
 
             // ==================== EDIT NAME MODAL ====================
             function openEditNameModal(student, schoolId) {
-                if (!isUnlocked()) {
-                    alert('🔒 Admin locked. Please unlock to edit.');
-                    return;
-                }
+                if (!isUnlocked()) { alert('🔒 Admin locked. Please unlock to edit.'); return; }
                 const existing = document.querySelector('.edit-modal');
                 if (existing) existing.remove();
 
@@ -2333,11 +2321,7 @@
                     setSaveStatus('saving', 'Updating name...');
                     if (supabase) {
                         const ok = await updateStudentNameInCloud(student.id, newName);
-                        if (!ok) {
-                            setSaveStatus('error', 'Cloud update failed');
-                            alert('Could not update name in cloud.');
-                            return;
-                        }
+                        if (!ok) { setSaveStatus('error', 'Cloud update failed'); alert('Could not update name in cloud.'); return; }
                     }
                     student.name = newName;
                     render();
@@ -2372,7 +2356,6 @@
                     );
 
                     if (selectedSchoolId === 'all' && searchQuery && filteredStudents.length === 0) return;
-
                     if (filteredStudents.length > 0) anyStudentRendered = true;
 
                     const card = document.createElement('div');
@@ -2407,11 +2390,8 @@
                     searchInput.addEventListener('input', (e) => {
                         const sid = e.target.getAttribute('data-school');
                         schoolSearchQueries[sid] = e.target.value.trim();
-                        if (e.target.value.trim()) {
-                            clearBtn.classList.remove('hidden');
-                        } else {
-                            clearBtn.classList.add('hidden');
-                        }
+                        if (e.target.value.trim()) clearBtn.classList.remove('hidden');
+                        else clearBtn.classList.add('hidden');
                         render();
                     });
 
@@ -2439,12 +2419,34 @@
                     const pasteArea = document.createElement('div');
                     pasteArea.className = 'paste-area';
 
+                    const inputWrap = document.createElement('div');
+                    inputWrap.className = 'paste-input-wrap';
+
                     const textarea = document.createElement('textarea');
-                    textarea.placeholder = school.special === 'others'
-                        ? 'Paste names of other people (one per line)...'
-                        : 'Paste names (one per line)...';
+                    textarea.placeholder = 'Paste names OR use 🎤 mic → say "John Smith 2 points"...';
                     textarea.id = `paste-${school.id}`;
-                    pasteArea.appendChild(textarea);
+
+                    const micBtn = document.createElement('button');
+                    micBtn.className = 'mic-btn admin-only';
+                    micBtn.type = 'button';
+                    micBtn.innerHTML = '🎤';
+                    micBtn.title = 'Click to speak: "Name X points"';
+                    micBtn.setAttribute('data-school', school.id);
+                    micBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleMicClick(school.id);
+                    });
+
+                    inputWrap.appendChild(textarea);
+                    inputWrap.appendChild(micBtn);
+                    pasteArea.appendChild(inputWrap);
+
+                    const micStatus = document.createElement('div');
+                    micStatus.className = 'mic-status';
+                    micStatus.id = `mic-status-${school.id}`;
+                    micStatus.innerHTML = `<span class="dot"></span><span class="mic-status-text"></span>`;
+                    pasteArea.appendChild(micStatus);
 
                     const classRow = document.createElement('div');
                     classRow.className = 'class-row';
@@ -2494,7 +2496,7 @@
                             const downloadAllBtn = document.createElement('button');
                             downloadAllBtn.className = 'class-download-all-btn';
                             downloadAllBtn.innerHTML = `📥 Download (${classStudents.length})`;
-                            downloadAllBtn.title = `Download all ${classStudents.length} certificate(s) as one PDF for class ${cls}`;
+                            downloadAllBtn.title = `Download all ${classStudents.length} certificate(s) for class ${cls}`;
                             downloadAllBtn.addEventListener('click', (e) => {
                                 e.stopPropagation();
                                 if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
@@ -2550,17 +2552,29 @@
                 }
 
                 restoreFocus(focusSnapshot);
+
+                // Re-highlight last added student
+                if (lastAddedStudentId) {
+                    requestAnimationFrame(() => {
+                        const el = document.querySelector(`[data-student-id="${lastAddedStudentId}"]`);
+                        if (el) {
+                            el.classList.add('just-added');
+                            setTimeout(() => el.classList.remove('just-added'), 1500);
+                            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                        lastAddedStudentId = null;
+                    });
+                }
             }
 
             function createStudentCard(student, schoolId) {
                 const card = document.createElement('div');
                 card.className = 'student-card-item';
+                card.setAttribute('data-student-id', student.id);
 
                 const globalMatch = searchQuery && student.name.toLowerCase().includes(searchQuery.toLowerCase());
                 const schoolMatch = schoolSearchQueries[schoolId] && student.name.toLowerCase().includes(schoolSearchQueries[schoolId].toLowerCase());
-                if (globalMatch || schoolMatch) {
-                    card.classList.add('match-highlight');
-                }
+                if (globalMatch || schoolMatch) card.classList.add('match-highlight');
 
                 const nameLine = document.createElement('div');
                 nameLine.className = 'student-name-line';
@@ -2603,7 +2617,6 @@
                         const ok = await deleteStudentFromCloud(student.id);
                         if (!ok) { setSaveStatus('error', 'Delete failed'); alert('Could not delete from cloud.'); return; }
                     }
-
                     const schoolStudents = store[schoolId];
                     const idx = schoolStudents.findIndex(s => s.id === student.id);
                     if (idx !== -1) {
@@ -2675,20 +2688,253 @@
                 return card;
             }
 
-            // ==================== DELETE ALL IN CLASS ====================
-            async function deleteAllStudentsInClass(school, className, classStudents, btnEl) {
-                if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
-                if (!classStudents || classStudents.length === 0) {
-                    alert('No entries in this class.');
+            // ==================== VOICE RECOGNITION ====================
+            function getSpeechRecognition() {
+                return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+            }
+
+            function showMicStatus(schoolId, text, isSuccess) {
+                const el = document.getElementById(`mic-status-${schoolId}`);
+                if (!el) return;
+                el.classList.add('show');
+                if (isSuccess) el.classList.add('success');
+                else el.classList.remove('success');
+                el.querySelector('.mic-status-text').textContent = text;
+            }
+
+            function hideMicStatus(schoolId) {
+                const el = document.getElementById(`mic-status-${schoolId}`);
+                if (el) el.classList.remove('show', 'success');
+            }
+
+            function stopVoiceRecognition() {
+                if (recognition) {
+                    try { recognition.stop(); } catch(e) {}
+                    recognition = null;
+                }
+                if (activeRecognitionSchoolId) {
+                    const btn = document.querySelector(`.mic-btn[data-school="${activeRecognitionSchoolId}"]`);
+                    if (btn) btn.classList.remove('listening');
+                    hideMicStatus(activeRecognitionSchoolId);
+                    const ta = document.getElementById(`paste-${activeRecognitionSchoolId}`);
+                    if (ta) ta.classList.remove('listening');
+                }
+                activeRecognitionSchoolId = null;
+            }
+
+            function handleMicClick(schoolId) {
+                if (!isUnlocked()) { alert('🔒 Admin locked. Please unlock to use voice.'); return; }
+
+                const SpeechRecognition = getSpeechRecognition();
+                if (!SpeechRecognition) {
+                    alert('🎤 Voice recognition is not supported in this browser.\n\nPlease use Google Chrome, Microsoft Edge, or Safari.');
                     return;
                 }
 
-                if (!confirm(`Delete ALL ${classStudents.length} entr${classStudents.length !== 1 ? 'ies' : 'y'} in ${school.name} — class ${className}?\n\nThis will also delete them from the cloud. Cannot be undone.`)) {
+                // If already listening on this school → stop
+                if (activeRecognitionSchoolId === schoolId) {
+                    stopVoiceRecognition();
                     return;
                 }
-                if (!confirm('Are you REALLY sure? This action is permanent.')) {
+
+                // Stop any existing session first
+                stopVoiceRecognition();
+
+                // Start new session
+                recognition = new SpeechRecognition();
+                recognition.lang = VOICE_LANG;
+                recognition.continuous = true;
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+
+                activeRecognitionSchoolId = schoolId;
+
+                const btn = document.querySelector(`.mic-btn[data-school="${schoolId}"]`);
+                if (btn) btn.classList.add('listening');
+                const ta = document.getElementById(`paste-${schoolId}`);
+                if (ta) ta.classList.add('listening');
+                showMicStatus(schoolId, '🎤 Listening... say "John Smith 2 points"');
+
+                recognition.onresult = (event) => {
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        if (event.results[i].isFinal) {
+                            const transcript = event.results[i][0].transcript.trim();
+                            processVoiceCommand(schoolId, transcript);
+                        }
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    console.warn('Speech error:', event.error);
+                    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                        showMicStatus(schoolId, '⚠️ Microphone permission denied. Please allow in browser settings.');
+                        setTimeout(() => stopVoiceRecognition(), 3000);
+                    } else if (event.error === 'no-speech') {
+                        // ignore silently
+                    } else if (event.error === 'aborted') {
+                        // ignore
+                    } else {
+                        showMicStatus(schoolId, `⚠️ Error: ${event.error}`);
+                    }
+                };
+
+                recognition.onend = () => {
+                    // If still the active school, auto-restart (continuous listening)
+                    if (activeRecognitionSchoolId === schoolId && recognition) {
+                        try { recognition.start(); } catch(e) {}
+                    }
+                };
+
+                try {
+                    recognition.start();
+                } catch(e) {
+                    alert('Could not start microphone: ' + e.message);
+                    stopVoiceRecognition();
+                }
+            }
+
+            // Parse spoken phrase → { name, points }
+            // Examples:
+            //   "John Smith 2 points"     → { name: "John Smith", points: 2 }
+            //   "Jean Pierre deux points" → { name: "Jean Pierre", points: 2 }
+            //   "Marie 4 points"          → { name: "Marie", points: 4 }
+            //   "Paul dix points"         → { name: "Paul", points: 10 }
+            function parseVoiceCommand(text) {
+                if (!text) return null;
+                let cleaned = text.toLowerCase().trim();
+
+                // Number word mapping (FR + EN)
+                const numberWords = {
+                    'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
+                    'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+                    'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15,
+                    'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19, 'twenty': 20,
+                    'un': 1, 'une': 1, 'deux': 2, 'trois': 3, 'quatre': 4, 'cinq': 5,
+                    'sept': 7, 'huit': 8, 'neuf': 9, 'dix': 10,
+                    'onze': 11, 'douze': 12, 'treize': 13, 'quatorze': 14, 'quinze': 15,
+                    'seize': 16, 'vingt': 20
+                };
+
+                let points = null;
+                let namePart = '';
+
+                // Try pattern: <name> <number> points/pts/point/pt
+                const pointsRegex = /^(.+?)\s+(\d+|zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|un|une|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|onze|douze|treize|quatorze|quinze|seize|vingt)\s+(points?|pts?|point|pt)\s*$/i;
+                const match = cleaned.match(pointsRegex);
+
+                if (match) {
+                    namePart = match[1].trim();
+                    const numStr = match[2].toLowerCase();
+                    if (numberWords[numStr] !== undefined) points = numberWords[numStr];
+                    else points = parseInt(numStr, 10);
+                } else {
+                    // Fallback: <name> <number> (no "points" word)
+                    const fallbackRegex = /^(.+?)\s+(\d+)\s*$/;
+                    const fbMatch = cleaned.match(fallbackRegex);
+                    if (fbMatch) {
+                        namePart = fbMatch[1].trim();
+                        points = parseInt(fbMatch[2], 10);
+                    }
+                }
+
+                if (!namePart || points === null || isNaN(points) || points <= 0) return null;
+
+                // Capitalize name words
+                const finalName = namePart.split(/\s+/).map(w => 
+                    w.charAt(0).toUpperCase() + w.slice(1)
+                ).join(' ');
+
+                return { name: finalName, points: Math.min(points, 100) };
+            }
+
+            async function processVoiceCommand(schoolId, transcript) {
+                const parsed = parseVoiceCommand(transcript);
+
+                if (!parsed) {
+                    showMicStatus(schoolId, `⚠️ Could not understand: "${transcript}". Try "John Smith 2 points".`);
                     return;
                 }
+
+                const school = SCHOOLS.find(s => s.id === schoolId);
+                const classSelect = document.getElementById(`class-${schoolId}`);
+                const className = classSelect ? classSelect.value : CLASSES[0];
+
+                if (!school) return;
+
+                // Check if student already exists in this school + class (case-insensitive name match)
+                const existing = (store[schoolId] || []).find(s => 
+                    s.name.toLowerCase() === parsed.name.toLowerCase() &&
+                    s.class === className
+                );
+
+                if (existing) {
+                    // Add points to existing student
+                    const newScore = Math.min(100, (existing.score || 0) + parsed.points);
+                    const addedPoints = newScore - (existing.score || 0);
+                    existing.score = newScore;
+
+                    if (supabase) {
+                        setSaveStatus('saving', 'Saving voice points...');
+                        const ok = await updateStudentScoreInCloud(existing.id, existing.score);
+                        if (ok) setSaveStatus('cloud', '☁️ Voice points saved');
+                        else setSaveStatus('error', 'Save failed');
+                    }
+
+                    lastAddedStudentId = existing.id;
+                    render();
+                    showMicStatus(schoolId, `✅ ${existing.name} → +${addedPoints} pts (total ${newScore})`, true);
+
+                } else {
+                    // Add new student with the spoken points
+                    setSaveStatus('saving', `Adding "${parsed.name}" with ${parsed.points} pts...`);
+
+                    let newStudent = null;
+                    if (supabase) newStudent = await addStudentToCloud(schoolId, parsed.name, className, parsed.points);
+
+                    if (newStudent) {
+                        store[schoolId].push({
+                            id: newStudent.id,
+                            name: newStudent.name,
+                            class: newStudent.class,
+                            score: newStudent.score || parsed.points
+                        });
+                        lastAddedStudentId = newStudent.id;
+                        setSaveStatus('cloud', `☁️ Added ${parsed.name} (+${parsed.points} pts)`);
+                    } else if (!supabase) {
+                        const localId = 'local_' + Date.now() + Math.random().toString(36).substring(2, 9);
+                        store[schoolId].push({
+                            id: localId,
+                            name: parsed.name,
+                            class: className,
+                            score: parsed.points
+                        });
+                        lastAddedStudentId = localId;
+                        setSaveStatus('cloud', `Added ${parsed.name} (local)`);
+                    } else {
+                        setSaveStatus('error', 'Failed to add from voice');
+                        showMicStatus(schoolId, `⚠️ Cloud add failed for "${parsed.name}".`);
+                        return;
+                    }
+
+                    render();
+                    showMicStatus(schoolId, `✅ Added ${parsed.name} · ${className} · ${parsed.points} pts`, true);
+                }
+
+                // Auto-clear status after 4s
+                setTimeout(() => {
+                    if (activeRecognitionSchoolId === schoolId) {
+                        showMicStatus(schoolId, '🎤 Listening... say "John Smith 2 points"');
+                    }
+                }, 4000);
+            }
+
+            // ==================== DELETE ALL IN CLASS ====================
+            async function deleteAllStudentsInClass(school, className, classStudents, btnEl) {
+                if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
+                if (!classStudents || classStudents.length === 0) { alert('No entries in this class.'); return; }
+
+                if (!confirm(`Delete ALL ${classStudents.length} entr${classStudents.length !== 1 ? 'ies' : 'y'} in ${school.name} — class ${className}?\n\nThis will also delete them from the cloud. Cannot be undone.`)) return;
+                if (!confirm('Are you REALLY sure? This action is permanent.')) return;
 
                 const originalText = btnEl ? btnEl.innerHTML : '';
                 if (btnEl) { btnEl.disabled = true; btnEl.innerHTML = `⏳ Deleting...`; }
@@ -2711,7 +2957,7 @@
                 setSaveStatus('cloud', `☁️ Deleted ${idsToRemove.size} entr${idsToRemove.size !== 1 ? 'ies' : 'y'}`);
             }
 
-            // ==================== CERTIFICATE HTML ====================
+            // ==================== CERTIFICATE ====================
             function buildCertificateHTML(student) {
                 const today = new Date();
                 const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -2775,7 +3021,6 @@
                 `;
             }
 
-            // ==================== SINGLE CERTIFICATE ====================
             function generateCertificate(student) {
                 const certHTML = buildCertificateHTML(student);
                 const printWindow = window.open('', '_blank', 'width=1200,height=900');
@@ -2803,7 +3048,6 @@
                 }
             }
 
-            // ==================== DOWNLOAD ALL (PDF) ====================
             async function downloadAllCertificatesForClass(school, className, students, btnEl) {
                 if (!students || students.length === 0) { alert('No entries in this class.'); return; }
 

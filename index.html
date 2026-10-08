@@ -807,6 +807,26 @@
             border-color: #c0dcc0;
         }
 
+        /* Special styling for CFTPL & OTHERS */
+        .school-card.special-cftpl {
+            border: 2px solid #d4b84a;
+            background: linear-gradient(180deg, #fffef8 0%, #ffffff 60%);
+        }
+
+        .school-card.special-others {
+            border: 2px solid #7a5cba;
+            background: linear-gradient(180deg, #faf8ff 0%, #ffffff 60%);
+        }
+
+        .school-card.special-cftpl .school-name { color: #8a6b0f; }
+        .school-card.special-others .school-name { color: #5a3fa0; }
+
+        .school-card.special-cftpl .class-column-header { color: #8a6b0f; border-bottom-color: #e8d9a8; }
+        .school-card.special-others .class-column-header { color: #5a3fa0; border-bottom-color: #d4c8ec; }
+
+        .school-card.special-cftpl .school-header { border-bottom-color: #e8d9a8; }
+        .school-card.special-others .school-header { border-bottom-color: #d4c8ec; }
+
         .school-header {
             padding: 1.4rem 1.5rem 0.8rem 1.5rem;
             border-bottom: 2px dashed #d8e8d8;
@@ -1545,6 +1565,7 @@
             🔒 <strong>Admin locked.</strong> Unlock to edit.<br>
             ⚡ Paste names (one per line) — add class — click boxes to give +2 points.<br>
             ✏️ Double-click a name to edit · 📥 Download All per Class · 🗑️ Delete All per Class · 🖨️ Print individual certificates.<br>
+            🎓 <strong>CFTPL</strong> and 🌍 <strong>OTHERS</strong> work exactly like schools — add any person!<br>
             ☁️ Data saved to Supabase.
         </div>
     </div>
@@ -1559,11 +1580,14 @@
 
             const SESSION_KEY = 'fpf_admin_unlocked';
 
+            // ===== SCHOOLS + CFTPL + OTHERS =====
             const SCHOOLS = [
                 { id: 'csc', name: 'COLLÈGE SAINT-CROIX', icon: '✝️' },
                 { id: 'csa', name: 'COLLÈGE SAINTE AGNÈS', icon: '🕊️' },
                 { id: 'eureka', name: 'INSTITUT EUREKA', icon: '🔬' },
-                { id: 'bethanie', name: 'INSTITUTION CHRÉTIENNE BÉTHANIE DU LIMBÉ', icon: '⛪' }
+                { id: 'bethanie', name: 'INSTITUTION CHRÉTIENNE BÉTHANIE DU LIMBÉ', icon: '⛪' },
+                { id: 'cftpl', name: 'CFTPL', icon: '🎓', special: 'cftpl' },
+                { id: 'others', name: 'OTHERS', icon: '🌍', special: 'others' }
             ];
 
             const CLASSES = ['7e', '8e', '9e', 'Ns1', 'Ns2'];
@@ -1572,10 +1596,10 @@
             const SUPABASE_KEY_KEY = 'fpf_supabase_anon_key';
             const LOGO_KEY = 'fpf_logo';
 
-            let store = { csc: [], csa: [], eureka: [], bethanie: [] };
+            let store = { csc: [], csa: [], eureka: [], bethanie: [], cftpl: [], others: [] };
 
             // Per-school search queries
-            let schoolSearchQueries = { csc: '', csa: '', eureka: '', bethanie: '' };
+            let schoolSearchQueries = { csc: '', csa: '', eureka: '', bethanie: '', cftpl: '', others: '' };
 
             let selectedSchoolId = 'all';
             let searchQuery = '';
@@ -2068,7 +2092,7 @@
 
                 document.getElementById('totalStudentsValue').textContent = grandTotal;
                 document.getElementById('totalStudentsSub').textContent = 
-                    grandTotal === 1 ? 'student across all schools' : 'students across all schools';
+                    grandTotal === 1 ? 'person across all sections' : 'people across all sections';
 
                 const breakdownDiv = document.getElementById('totalStudentsBreakdown');
                 breakdownDiv.innerHTML = '';
@@ -2099,11 +2123,11 @@
                 });
 
                 const stats = [
-                    { value: grandTotal, label: 'Total Students' },
+                    { value: grandTotal, label: 'Total People' },
                     { value: totalPoints, label: 'Total Points' },
-                    { value: totalSchoolsWithStudents, label: 'Active Schools' },
-                    { value: SCHOOLS.length, label: 'Total Schools' },
-                    { value: CLASSES.length, label: 'Classes per School' }
+                    { value: totalSchoolsWithStudents, label: 'Active Sections' },
+                    { value: SCHOOLS.length, label: 'Total Sections' },
+                    { value: CLASSES.length, label: 'Classes per Section' }
                 ];
 
                 stats.forEach(stat => {
@@ -2133,7 +2157,7 @@
                             <span>${school.icon}</span>
                             <span>${school.name}</span>
                         </div>
-                        <div class="school-analytics-count">${students.length} student${students.length !== 1 ? 's' : ''}</div>
+                        <div class="school-analytics-count">${students.length} ${students.length !== 1 ? 'people' : 'person'}</div>
                     `;
                     schoolBlock.appendChild(header);
 
@@ -2152,14 +2176,14 @@
 
                         if (topStudent) {
                             card.innerHTML = `
-                                <div class="class-top-label">${cls} · ${classStudents.length} student${classStudents.length !== 1 ? 's' : ''}</div>
+                                <div class="class-top-label">${cls} · ${classStudents.length} ${classStudents.length !== 1 ? 'people' : 'person'}</div>
                                 <div class="class-top-name">🏅 ${escapeHtml(topStudent.name)}</div>
                                 <div class="class-top-points">★ ${topStudent.score || 0} pts</div>
                             `;
                         } else {
                             card.innerHTML = `
                                 <div class="class-top-label">${cls}</div>
-                                <div class="class-top-empty">— no students —</div>
+                                <div class="class-top-empty">— no entries —</div>
                             `;
                         }
                         classGrid.appendChild(card);
@@ -2170,7 +2194,7 @@
                 });
 
                 if (!hasAnyData) {
-                    listContainer.innerHTML = `<div class="no-data-analytics">📭 No students added yet.</div>`;
+                    listContainer.innerHTML = `<div class="no-data-analytics">📭 No entries added yet.</div>`;
                 }
             }
 
@@ -2284,7 +2308,7 @@
                 modal.className = 'edit-modal';
                 modal.innerHTML = `
                     <div class="edit-card">
-                        <h3>✏️ Edit Student Name</h3>
+                        <h3>✏️ Edit Name</h3>
                         <input type="text" id="editNameInput" value="${escapeHtml(student.name)}" maxlength="100" autocomplete="off">
                         <div class="edit-actions">
                             <button class="btn" id="editSaveBtn">💾 Save</button>
@@ -2353,6 +2377,8 @@
 
                     const card = document.createElement('div');
                     card.className = 'school-card';
+                    if (school.special === 'cftpl') card.classList.add('special-cftpl');
+                    if (school.special === 'others') card.classList.add('special-others');
 
                     const header = document.createElement('div');
                     header.className = 'school-header';
@@ -2404,7 +2430,7 @@
                     const actionsDiv = document.createElement('div');
                     actionsDiv.className = 'school-actions';
                     actionsDiv.innerHTML = `
-                        <button class="icon-btn admin-only" title="Clear all students" data-action="clear-school" data-school="${school.id}">🗑️</button>
+                        <button class="icon-btn admin-only" title="Clear all entries" data-action="clear-school" data-school="${school.id}">🗑️</button>
                     `;
                     header.appendChild(actionsDiv);
 
@@ -2414,7 +2440,9 @@
                     pasteArea.className = 'paste-area';
 
                     const textarea = document.createElement('textarea');
-                    textarea.placeholder = 'Paste student names (one per line)...';
+                    textarea.placeholder = school.special === 'others'
+                        ? 'Paste names of other people (one per line)...'
+                        : 'Paste names (one per line)...';
                     textarea.id = `paste-${school.id}`;
                     pasteArea.appendChild(textarea);
 
@@ -2459,7 +2487,6 @@
                         headerLabel.textContent = cls;
                         colHeader.appendChild(headerLabel);
 
-                        // Buttons row for the class (Download All + Delete All)
                         const btnRow = document.createElement('div');
                         btnRow.className = 'class-btn-row';
 
@@ -2478,7 +2505,7 @@
                             const deleteAllBtn = document.createElement('button');
                             deleteAllBtn.className = 'class-delete-all-btn';
                             deleteAllBtn.innerHTML = `🗑️ Delete (${classStudents.length})`;
-                            deleteAllBtn.title = `Delete all ${classStudents.length} student(s) in class ${cls}`;
+                            deleteAllBtn.title = `Delete all ${classStudents.length} entries in class ${cls}`;
                             deleteAllBtn.addEventListener('click', (e) => {
                                 e.stopPropagation();
                                 if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
@@ -2518,7 +2545,7 @@
                     SCHOOLS.forEach(s => {
                         if (schoolSearchQueries[s.id]) activeQueries.push(`${s.name.split(' ')[0]}: "${escapeHtml(schoolSearchQueries[s.id])}"`);
                     });
-                    noRes.innerHTML = `🔍 No students found matching ${activeQueries.join(' · ')}.`;
+                    noRes.innerHTML = `🔍 No entries found matching ${activeQueries.join(' · ')}.`;
                     grid.appendChild(noRes);
                 }
 
@@ -2565,7 +2592,7 @@
                 const removeBtn = document.createElement('button');
                 removeBtn.className = 'remove-student';
                 removeBtn.innerHTML = '✕';
-                removeBtn.title = 'Remove student';
+                removeBtn.title = 'Remove';
                 removeBtn.addEventListener('click', async (e) => {
                     e.stopPropagation();
                     if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
@@ -2652,11 +2679,11 @@
             async function deleteAllStudentsInClass(school, className, classStudents, btnEl) {
                 if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
                 if (!classStudents || classStudents.length === 0) {
-                    alert('No students in this class.');
+                    alert('No entries in this class.');
                     return;
                 }
 
-                if (!confirm(`Delete ALL ${classStudents.length} student(s) in ${school.name} — class ${className}?\n\nThis will also delete them from the cloud. Cannot be undone.`)) {
+                if (!confirm(`Delete ALL ${classStudents.length} entr${classStudents.length !== 1 ? 'ies' : 'y'} in ${school.name} — class ${className}?\n\nThis will also delete them from the cloud. Cannot be undone.`)) {
                     return;
                 }
                 if (!confirm('Are you REALLY sure? This action is permanent.')) {
@@ -2665,9 +2692,8 @@
 
                 const originalText = btnEl ? btnEl.innerHTML : '';
                 if (btnEl) { btnEl.disabled = true; btnEl.innerHTML = `⏳ Deleting...`; }
-                setSaveStatus('saving', `Deleting ${classStudents.length} student(s)...`);
+                setSaveStatus('saving', `Deleting ${classStudents.length} entr${classStudents.length !== 1 ? 'ies' : 'y'}...`);
 
-                // Delete from cloud first
                 if (supabase) {
                     const ok = await deleteClassFromCloud(school.id, className);
                     if (!ok) {
@@ -2678,12 +2704,11 @@
                     }
                 }
 
-                // Remove from local store
                 const idsToRemove = new Set(classStudents.map(s => s.id));
                 store[school.id] = (store[school.id] || []).filter(s => !idsToRemove.has(s.id));
 
                 render();
-                setSaveStatus('cloud', `☁️ Deleted ${idsToRemove.size} student(s)`);
+                setSaveStatus('cloud', `☁️ Deleted ${idsToRemove.size} entr${idsToRemove.size !== 1 ? 'ies' : 'y'}`);
             }
 
             // ==================== CERTIFICATE HTML ====================
@@ -2780,7 +2805,7 @@
 
             // ==================== DOWNLOAD ALL (PDF) ====================
             async function downloadAllCertificatesForClass(school, className, students, btnEl) {
-                if (!students || students.length === 0) { alert('No students in this class.'); return; }
+                if (!students || students.length === 0) { alert('No entries in this class.'); return; }
 
                 const { jsPDF } = window.jspdf;
                 const sortedStudents = sortStudentsAlphabetically(students);
@@ -2841,12 +2866,12 @@
                 if (!textarea || !classSelect) return;
 
                 const rawText = textarea.value.trim();
-                if (!rawText) { alert('Please paste at least one student name.'); return; }
+                if (!rawText) { alert('Please paste at least one name.'); return; }
                 const className = classSelect.value;
                 const lines = rawText.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
                 if (lines.length === 0) return;
 
-                setSaveStatus('saving', `Adding ${lines.length} student${lines.length !== 1 ? 's' : ''}...`);
+                setSaveStatus('saving', `Adding ${lines.length} entr${lines.length !== 1 ? 'ies' : 'y'}...`);
 
                 let successCount = 0, failCount = 0;
                 for (const name of lines) {
@@ -2862,13 +2887,14 @@
                 }
                 textarea.value = '';
                 render();
-                if (failCount === 0) setSaveStatus('cloud', `☁️ Added ${successCount} student${successCount !== 1 ? 's' : ''}`);
+                if (failCount === 0) setSaveStatus('cloud', `☁️ Added ${successCount} entr${successCount !== 1 ? 'ies' : 'y'}`);
                 else setSaveStatus('error', `${successCount} added, ${failCount} failed`);
             }
 
             async function clearSchool(schoolId) {
                 if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
-                if (!confirm('Remove ALL students from this school? This will also delete them from the cloud. Cannot be undone.')) return;
+                const school = SCHOOLS.find(s => s.id === schoolId);
+                if (!confirm(`Remove ALL entries from ${school ? school.name : 'this section'}? This will also delete them from the cloud. Cannot be undone.`)) return;
                 if (!confirm('Are you REALLY sure? This action is permanent.')) return;
 
                 if (supabase) {
@@ -2878,7 +2904,7 @@
                 }
                 store[schoolId] = [];
                 render();
-                setSaveStatus('cloud', '☁️ School cleared');
+                setSaveStatus('cloud', '☁️ Section cleared');
             }
 
             // ==================== EVENTS ====================

@@ -419,6 +419,7 @@
         body.locked .remove-student,
         body.locked .cert-btn,
         body.locked .class-download-all-btn,
+        body.locked .class-delete-all-btn,
         body.locked .icon-btn,
         body.locked .logo-upload-label {
             pointer-events: none;
@@ -965,6 +966,14 @@
             gap: 6px;
         }
 
+        .class-column-header .class-btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            justify-content: center;
+            width: 100%;
+        }
+
         .class-column-header .class-download-all-btn {
             font-size: 0.62rem;
             padding: 5px 10px;
@@ -984,6 +993,26 @@
 
         .class-column-header .class-download-all-btn:hover { background: #0a3a1e; transform: scale(0.96); }
         .class-column-header .class-download-all-btn:disabled { background: #a8c8a8; cursor: not-allowed; }
+
+        .class-column-header .class-delete-all-btn {
+            font-size: 0.62rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #c0392b, #922b21);
+            color: #fff;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .class-column-header .class-delete-all-btn:hover { background: #7b241c; transform: scale(0.96); }
+        .class-column-header .class-delete-all-btn:disabled { background: #e8a8a0; cursor: not-allowed; }
 
         .student-list-column {
             display: flex;
@@ -1515,7 +1544,7 @@
         <div class="footer-note">
             🔒 <strong>Admin locked.</strong> Unlock to edit.<br>
             ⚡ Paste names (one per line) — add class — click boxes to give +2 points.<br>
-            ✏️ Double-click a name to edit · 📥 Download All per Class · 🖨️ Print individual certificates.<br>
+            ✏️ Double-click a name to edit · 📥 Download All per Class · 🗑️ Delete All per Class · 🖨️ Print individual certificates.<br>
             ☁️ Data saved to Supabase.
         </div>
     </div>
@@ -1871,6 +1900,19 @@
                 if (!supabase) return false;
                 try {
                     const { error } = await supabase.from('students').delete().eq('school_id', schoolId);
+                    if (error) throw error;
+                    return true;
+                } catch(e) { return false; }
+            }
+
+            async function deleteClassFromCloud(schoolId, className) {
+                if (!supabase) return false;
+                try {
+                    const { error } = await supabase
+                        .from('students')
+                        .delete()
+                        .eq('school_id', schoolId)
+                        .eq('class', className);
                     if (error) throw error;
                     return true;
                 } catch(e) { return false; }
@@ -2417,19 +2459,35 @@
                         headerLabel.textContent = cls;
                         colHeader.appendChild(headerLabel);
 
+                        // Buttons row for the class (Download All + Delete All)
+                        const btnRow = document.createElement('div');
+                        btnRow.className = 'class-btn-row';
+
                         if (classStudents.length > 0) {
                             const downloadAllBtn = document.createElement('button');
                             downloadAllBtn.className = 'class-download-all-btn';
-                            downloadAllBtn.innerHTML = `📥 Download All (${classStudents.length})`;
+                            downloadAllBtn.innerHTML = `📥 Download (${classStudents.length})`;
                             downloadAllBtn.title = `Download all ${classStudents.length} certificate(s) as one PDF for class ${cls}`;
                             downloadAllBtn.addEventListener('click', (e) => {
                                 e.stopPropagation();
                                 if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
                                 downloadAllCertificatesForClass(school, cls, classStudents, downloadAllBtn);
                             });
-                            colHeader.appendChild(downloadAllBtn);
+                            btnRow.appendChild(downloadAllBtn);
+
+                            const deleteAllBtn = document.createElement('button');
+                            deleteAllBtn.className = 'class-delete-all-btn';
+                            deleteAllBtn.innerHTML = `🗑️ Delete (${classStudents.length})`;
+                            deleteAllBtn.title = `Delete all ${classStudents.length} student(s) in class ${cls}`;
+                            deleteAllBtn.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
+                                deleteAllStudentsInClass(school, cls, classStudents, deleteAllBtn);
+                            });
+                            btnRow.appendChild(deleteAllBtn);
                         }
 
+                        colHeader.appendChild(btnRow);
                         colDiv.appendChild(colHeader);
 
                         const listDiv = document.createElement('div');
@@ -2588,6 +2646,44 @@
                 card.appendChild(certBtn);
 
                 return card;
+            }
+
+            // ==================== DELETE ALL IN CLASS ====================
+            async function deleteAllStudentsInClass(school, className, classStudents, btnEl) {
+                if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
+                if (!classStudents || classStudents.length === 0) {
+                    alert('No students in this class.');
+                    return;
+                }
+
+                if (!confirm(`Delete ALL ${classStudents.length} student(s) in ${school.name} — class ${className}?\n\nThis will also delete them from the cloud. Cannot be undone.`)) {
+                    return;
+                }
+                if (!confirm('Are you REALLY sure? This action is permanent.')) {
+                    return;
+                }
+
+                const originalText = btnEl ? btnEl.innerHTML : '';
+                if (btnEl) { btnEl.disabled = true; btnEl.innerHTML = `⏳ Deleting...`; }
+                setSaveStatus('saving', `Deleting ${classStudents.length} student(s)...`);
+
+                // Delete from cloud first
+                if (supabase) {
+                    const ok = await deleteClassFromCloud(school.id, className);
+                    if (!ok) {
+                        setSaveStatus('error', 'Cloud delete failed');
+                        alert('Could not delete from cloud. Please try again.');
+                        if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = originalText; }
+                        return;
+                    }
+                }
+
+                // Remove from local store
+                const idsToRemove = new Set(classStudents.map(s => s.id));
+                store[school.id] = (store[school.id] || []).filter(s => !idsToRemove.has(s.id));
+
+                render();
+                setSaveStatus('cloud', `☁️ Deleted ${idsToRemove.size} student(s)`);
             }
 
             // ==================== CERTIFICATE HTML ====================
@@ -2847,4 +2943,3 @@
     </script>
 </body>
 </html>
-```

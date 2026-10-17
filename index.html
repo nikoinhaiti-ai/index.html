@@ -238,6 +238,37 @@
             box-shadow: 0 4px 12px rgba(26, 107, 58, 0.15);
         }
 
+        /* ===== iPHONE / CONFIGURED-LINK BUTTON ===== */
+        .auth-btn-iphone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            background: linear-gradient(135deg, #007AFF, #0051D5);
+            color: #ffffff;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 6px 18px rgba(0, 122, 255, 0.4);
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .auth-btn-iphone:hover {
+            background: #004ea8;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 22px rgba(0, 81, 213, 0.5);
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .auth-btn-iphone:active { transform: translateY(0); }
+
         .auth-footer {
             margin-top: 1.6rem;
             padding-top: 1.2rem;
@@ -360,9 +391,36 @@
             font-size: 0.78rem;
             cursor: pointer;
             transition: 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .verify-open-btn:hover { background: #f0f8f0; border-color: #a8c8a8; }
+        .verify-open-btn:hover { background: #f0f8f0; border-color: #a8c8a8; color: #1a6b3a; }
+
+        .iphone-header-btn {
+            background: linear-gradient(135deg, #007AFF, #0051D5);
+            color: #ffffff !important;
+            border: 1.5px solid #0051D5;
+            border-radius: 30px;
+            padding: 0.4rem 1rem;
+            font-weight: 700;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 3px 10px rgba(0, 122, 255, 0.35);
+        }
+        .iphone-header-btn:hover {
+            background: #004ea8;
+            color: #ffffff !important;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 14px rgba(0, 81, 213, 0.45);
+        }
 
         .badge {
             background: #f8f4e8;
@@ -414,9 +472,23 @@
             font-size: 0.75rem;
             cursor: pointer;
             transition: 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .cloud-btn:hover { background: #f0f8f0; }
+        .cloud-btn:hover { background: #f0f8f0; color: #1a6b3a; }
+
+        .cloud-btn-iphone {
+            background: linear-gradient(135deg, #007AFF, #0051D5);
+            border-color: #0051D5;
+            color: #ffffff !important;
+        }
+        .cloud-btn-iphone:hover {
+            background: #004ea8;
+            color: #ffffff !important;
+        }
 
         /* ===== LOCKED STATE ===== */
         body.locked .admin-only { display: none !important; }
@@ -1785,6 +1857,14 @@
                 <span>Verify a Certificate</span>
             </button>
 
+            <!-- 📱 iPHONE / CONFIGURED-LINK BUTTON -->
+            <a class="auth-btn auth-btn-iphone"
+               href="https://my-post-ste8.onrender.com/?supa_url=https%3A%2F%2Fxhzhtwihrbjfqstxqffl.supabase.co&supa_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhoemh0d2locmJqZnN0eHFmZmwiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc5MDkxOTY5NSwiZXhwIjoyMTA2NDk1Njk1fQ.3NYmwl08rDKZY9--L2zlVc8zo5iZRbRIP-oAWZspZZg"
+               target="_blank" rel="noopener">
+                <span>📱</span>
+                <span>Open iPhone link (auto-configured)</span>
+            </a>
+
             <div class="auth-footer">
                 <strong>Feed People Foundation</strong> · Gospel · Food · Education<br>
                 Authorized administrators only · Students may verify certificates above
@@ -1805,6 +1885,12 @@
                     <span>Admin</span>
                     <div class="avatar">✓</div>
                 </div>
+                <a class="iphone-header-btn"
+                   href="https://my-post-ste8.onrender.com/?supa_url=https%3A%2F%2Fxhzhtwihrbjfqstxqffl.supabase.co&supa_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhoemh0d2locmJqZnN0eHFmZmwiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc5MDkxOTY5NSwiZXhwIjoyMTA2NDk1Njk1fQ.3NYmwl08rDKZY9--L2zlVc8zo5iZRbRIP-oAWZspZZg"
+                   target="_blank" rel="noopener"
+                   title="Open the auto-configured version — works on iPhone even in Private Browsing">
+                    📱 iPhone
+                </a>
                 <button class="verify-open-btn" id="verifyOpenBtn" title="Verify a certificate ID">🔎 Verify ID</button>
                 <button class="lock-btn" id="lockBtn" title="Lock admin mode">🔒 Lock</button>
                 <div class="save-status" id="saveStatus">
@@ -1819,6 +1905,10 @@
             <span class="cloud-icon" id="cloudIcon">☁️</span>
             <span class="cloud-text" id="cloudText">Connecting to cloud...</span>
             <button class="cloud-btn" id="cloudConfigBtn">⚙️ Configure</button>
+            <a class="cloud-btn cloud-btn-iphone"
+               href="https://my-post-ste8.onrender.com/?supa_url=https%3A%2F%2Fxhzhtwihrbjfqstxqffl.supabase.co&supa_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhoemh0d2locmJqZnN0eHFmZmwiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc5MDkxOTY5NSwiZXhwIjoyMTA2NDk1Njk1fQ.3NYmwl08rDKZY9--L2zlVc8zo5iZRbRIP-oAWZspZZg"
+               target="_blank" rel="noopener"
+               title="Open the auto-configured version">📱 iPhone link</a>
             <button class="cloud-btn" id="cloudShareBtn" style="display:none;">🔗 Copy phone link</button>
         </div>
 
@@ -1968,11 +2058,9 @@
             let savedLogoDataUrl = '';
             let supabase = null;
 
-            // Certificate registry + picture gallery
             let certificates = [];
             let photos = [];
 
-            // Voice recognition state
             let recognition = null;
             let activeRecognitionSchoolId = null;
             let lastAddedStudentId = null;
@@ -2066,7 +2154,6 @@
                     document.getElementById('adminPwd').focus();
                 });
 
-                // Public verification — works even when locked
                 document.getElementById('authVerifyBtn').addEventListener('click', openVerifyModal);
             }
 
@@ -2084,9 +2171,6 @@
             }
 
             // ==================== STORAGE AVAILABILITY ====================
-            // iOS Safari in Private Browsing (and some lockdown modes) throws on
-            // localStorage.setItem. Detect that up front so the app can explain
-            // the problem instead of silently behaving like "never configured".
             let storageOk = true;
 
             function checkStorageAvailable() {
@@ -2102,8 +2186,6 @@
 
             // ==================== SUPABASE ====================
             function buildConfigLink(url, key) {
-                // Config travels in the URL so a phone can be set up with one tap.
-                // Works even when localStorage is blocked.
                 try {
                     const base = location.origin + location.pathname;
                     return base +
@@ -2113,7 +2195,6 @@
             }
 
             function getSupabaseConfig() {
-                // A) ?supa_url=...&supa_key=... → auto-save and use immediately
                 try {
                     const p = new URLSearchParams(location.search);
                     const u = p.get('supa_url');
@@ -2124,7 +2205,6 @@
                     }
                 } catch(e) {}
 
-                // B) normal localStorage path
                 try {
                     const url = localStorage.getItem(SUPABASE_URL_KEY);
                     const key = localStorage.getItem(SUPABASE_KEY_KEY);
@@ -2139,7 +2219,7 @@
                     localStorage.setItem(SUPABASE_KEY_KEY, key);
                     return true;
                 } catch(e) {
-                    return false;   // blocked storage — config still works this session
+                    return false;
                 }
             }
 
@@ -2475,7 +2555,6 @@ create table if not exists photos (
                 } catch(e) { return false; }
             }
 
-            // ---------- certificates ----------
             async function loadCertificatesFromCloud() {
                 if (!supabase) return;
                 try {
@@ -2487,7 +2566,7 @@ create table if not exists photos (
                         else certificates.push(row);
                     });
                     persistCertificates();
-                } catch(e) { /* table may not exist yet */ }
+                } catch(e) {}
             }
 
             async function upsertCertificateToCloud(rec) {
@@ -2505,7 +2584,6 @@ create table if not exists photos (
                 } catch(e) {}
             }
 
-            // ---------- photos ----------
             async function loadPhotosFromCloud() {
                 if (!supabase) return;
                 try {
@@ -2517,7 +2595,7 @@ create table if not exists photos (
                         else photos.push(row);
                     });
                     persistPhotos();
-                } catch(e) { /* table may not exist yet */ }
+                } catch(e) {}
             }
 
             async function addPhotoToCloud(photo) {
@@ -3166,12 +3244,10 @@ create table if not exists photos (
 
                 restoreFocus(focusSnapshot);
 
-                // Keep the picture form in sync with the current data
                 const levelChip = document.getElementById('photoLevelChip');
                 if (levelChip) levelChip.textContent = selectedLevel;
                 populatePhotoStudentSelect();
 
-                // Re-highlight last added student
                 if (lastAddedStudentId) {
                     requestAnimationFrame(() => {
                         const el = document.querySelector(`[data-student-id="${lastAddedStudentId}"]`);
@@ -3385,7 +3461,6 @@ create table if not exists photos (
                         showMicStatus(schoolId, '⚠️ Microphone permission denied. Please allow in browser settings.');
                         setTimeout(() => stopVoiceRecognition(), 3000);
                     } else if (event.error === 'no-speech' || event.error === 'aborted') {
-                        // ignore
                     } else {
                         showMicStatus(schoolId, `⚠️ Error: ${event.error}`);
                     }
@@ -4141,7 +4216,6 @@ create table if not exists photos (
 
             document.getElementById('verifyOpenBtn').addEventListener('click', openVerifyModal);
 
-            // Picture form events
             document.getElementById('photoSchool').addEventListener('change', populatePhotoStudentSelect);
             document.getElementById('photoClass').addEventListener('change', populatePhotoStudentSelect);
             document.getElementById('photoUploadBtn').addEventListener('click', uploadPhoto);

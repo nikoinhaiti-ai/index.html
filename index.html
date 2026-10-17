@@ -1821,6 +1821,11 @@
             <button class="cloud-btn" id="cloudConfigBtn">⚙️ Configure</button>
         </div>
 
+        <div class="cloud-banner local" id="privateBanner" style="display:none;">
+            <span class="cloud-icon">🕶️</span>
+            <span class="cloud-text">Private / incognito browsing detected — data is kept only for this tab. Configure cloud sync (⚙️) to keep students, points, certificates and pictures permanently.</span>
+        </div>
+
         <div class="analytics-section" id="analyticsSection">
             <div class="analytics-title">
                 <span class="icon">📊</span>
@@ -1928,6 +1933,65 @@
     <script>
         (function() {
             // ============================================================
+            // STORAGE SHIM — works in private / incognito / storage-blocked browsers
+            // ============================================================
+            function createSafeStorage(kind) {
+                let backing = null;
+                try {
+                    backing = kind === 'local' ? window.localStorage : window.sessionStorage;
+                } catch (e) { backing = null; }
+
+                const memory = new Map();
+                let available = !!backing;
+
+                // Probe once: some private modes expose the object but throw on write
+                if (available) {
+                    try {
+                        const probe = '__fpf_probe__';
+                        backing.setItem(probe, '1');
+                        backing.removeItem(probe);
+                    } catch (e) { available = false; }
+                }
+
+                return {
+                    get available() { return available; },
+                    getItem(key) {
+                        if (available) {
+                            try { return backing.getItem(key); } catch (e) { available = false; }
+                        }
+                        return memory.has(key) ? memory.get(key) : null;
+                    },
+                    // true  -> written to the real storage
+                    // false -> kept in memory only (private mode / quota full)
+                    setItem(key, value) {
+                        const str = String(value);
+                        memory.set(key, str);
+                        if (!available) return false;
+                        try { backing.setItem(key, str); return true; }
+                        catch (e) { return false; }
+                    },
+                    removeItem(key) {
+                        memory.delete(key);
+                        if (available) { try { backing.removeItem(key); } catch (e) { available = false; } }
+                    },
+                    get persistent() {
+                        try {
+                            if (!available) return false;
+                            backing.setItem('__fpf_p__', '1');
+                            backing.removeItem('__fpf_p__');
+                            return true;
+                        } catch (e) { return false; }
+                    }
+                };
+            }
+
+            const localStore = createSafeStorage('local');
+            const sessionStore = createSafeStorage('session');
+
+            // true when the browser cannot keep data after the tab is closed
+            const STORAGE_EPHEMERAL = !localStore.persistent;
+
+            // ============================================================
             // ADMIN PASSWORD
             // ============================================================
             const ADMIN_PASSWORD = 'fpf2024';
@@ -1978,14 +2042,12 @@
 
             // ==================== AUTH ====================
             function isUnlocked() {
-                try { return sessionStorage.getItem(SESSION_KEY) === 'true'; } catch(e) { return false; }
+                return sessionStore.getItem(SESSION_KEY) === 'true';
             }
 
             function setUnlocked(val) {
-                try {
-                    if (val) sessionStorage.setItem(SESSION_KEY, 'true');
-                    else sessionStorage.removeItem(SESSION_KEY);
-                } catch(e) {}
+                if (val) sessionStore.setItem(SESSION_KEY, 'true');
+                else sessionStore.removeItem(SESSION_KEY);
                 applyLockState();
             }
 
@@ -2084,19 +2146,15 @@
 
             // ==================== SUPABASE ====================
             function getSupabaseConfig() {
-                try {
-                    const url = localStorage.getItem(SUPABASE_URL_KEY);
-                    const key = localStorage.getItem(SUPABASE_KEY_KEY);
-                    if (url && key) return { url, key };
-                } catch(e) {}
+                const url = localStore.getItem(SUPABASE_URL_KEY);
+                const key = localStore.getItem(SUPABASE_KEY_KEY);
+                if (url && key) return { url, key };
                 return null;
             }
 
             function saveSupabaseConfig(url, key) {
-                try {
-                    localStorage.setItem(SUPABASE_URL_KEY, url);
-                    localStorage.setItem(SUPABASE_KEY_KEY, key);
-                } catch(e) {}
+                localStore.setItem(SUPABASE_URL_KEY, url);
+                localStore.setItem(SUPABASE_KEY_KEY, key);
             }
 
             function initSupabase() {
@@ -2341,7 +2399,7 @@ create table if not exists photos (
                     if (error && error.code !== 'PGRST116') throw error;
                     if (data && data.value) {
                         savedLogoDataUrl = data.value;
-                        try { localStorage.setItem(LOGO_KEY, data.value); } catch(e) {}
+                        localStore.setItem(LOGO_KEY, data.value);
                         applyLogo();
                         updateAuthLogo();
                     }
@@ -2444,21 +2502,21 @@ create table if not exists photos (
 
             // ==================== LOGO ====================
             function loadSavedLogo() {
-                try {
-                    const saved = localStorage.getItem(LOGO_KEY);
-                    if (saved) { savedLogoDataUrl = saved; applyLogo(); }
-                } catch(e) {}
+                const saved = localStore.getItem(LOGO_KEY);
+                if (saved) { savedLogoDataUrl = saved; applyLogo(); }
                 updateAuthLogo();
             }
 
             async function saveLogo(dataUrl) {
                 savedLogoDataUrl = dataUrl;
-                try { localStorage.setItem(LOGO_KEY, dataUrl); } catch(e) {}
+                const persisted = localStore.setItem(LOGO_KEY, dataUrl);
                 applyLogo();
                 updateAuthLogo();
                 if (supabase) {
                     const ok = await saveLogoSettings(dataUrl);
                     if (ok) setSaveStatus('cloud', '☁️ Logo synced');
+                } else if (!persisted) {
+                    setSaveStatus('cloud', '📴 Logo kept for this session only');
                 }
             }
 
@@ -2488,23 +2546,21 @@ create table if not exists photos (
             // ==================== LOCAL CERT / PHOTO STORAGE ====================
             function loadLocalCertsPhotos() {
                 try {
-                    const c = localStorage.getItem(CERTS_KEY);
+                    const c = localStore.getItem(CERTS_KEY);
                     certificates = c ? (JSON.parse(c) || []) : [];
                 } catch(e) { certificates = []; }
                 try {
-                    const p = localStorage.getItem(PHOTOS_KEY);
+                    const p = localStore.getItem(PHOTOS_KEY);
                     photos = p ? (JSON.parse(p) || []) : [];
                 } catch(e) { photos = []; }
             }
 
             function persistCertificates() {
-                try { localStorage.setItem(CERTS_KEY, JSON.stringify(certificates)); }
-                catch(e) { console.warn('Certificate storage full', e); }
+                return localStore.setItem(CERTS_KEY, JSON.stringify(certificates));
             }
 
             function persistPhotos() {
-                try { localStorage.setItem(PHOTOS_KEY, JSON.stringify(photos)); return true; }
-                catch(e) { console.warn('Photo storage full', e); return false; }
+                return localStore.setItem(PHOTOS_KEY, JSON.stringify(photos));
             }
 
             // ==================== HELPERS ====================
@@ -3725,8 +3781,8 @@ create table if not exists photos (
                     setSaveStatus('cloud', 'Picture saved locally');
                     if (!supabase) alert('Picture saved on this device only.\n\nConfigure cloud sync (⚙️) so students can verify it from any device.');
                 } else {
-                    setSaveStatus('error', 'Storage full — picture not saved');
-                    alert('Local storage is full and no cloud is configured. Please set up cloud sync (⚙️) to store pictures.');
+                    setSaveStatus('cloud', '📴 Picture kept for this session only');
+                    if (!supabase) alert('This browser is in private mode (or storage is full), so the picture cannot be written to the device.\n\nIt will still be visible until you close the tab. Configure cloud sync (⚙️) to keep it permanently.');
                 }
             }
 
@@ -4021,6 +4077,10 @@ create table if not exists photos (
             async function init() {
                 setupAuthUI();
                 applyLockState();
+                if (STORAGE_EPHEMERAL) {
+                    const pb = document.getElementById('privateBanner');
+                    if (pb) pb.style.display = 'flex';
+                }
                 populateSchoolSelector();
                 loadSavedLogo();
                 loadLocalCertsPhotos();
@@ -4037,7 +4097,9 @@ create table if not exists photos (
                     await syncFromCloud();
                     await loadLogoSettings();
                 } else {
-                    updateCloudStatus('setup', 'Cloud not configured. Click ⚙️ to set up.');
+                    updateCloudStatus('setup', STORAGE_EPHEMERAL
+                        ? 'Cloud not configured. In private mode you must re-enter it each session — click ⚙️.'
+                        : 'Cloud not configured. Click ⚙️ to set up.');
                 }
             }
 

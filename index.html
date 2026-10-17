@@ -2,10 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="theme-color" content="#1a6b3a">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FEED PEOPLE FOUNDATION · School Points</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -16,16 +13,6 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html {
-            -webkit-text-size-adjust: 100%;
-            text-size-adjust: 100%;
-        }
-
-        input, textarea, select, button {
-            touch-action: manipulation;
         }
 
         body {
@@ -49,7 +36,6 @@
             justify-content: center;
             padding: 1.5rem;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         .auth-screen::before {
@@ -152,8 +138,6 @@
             transition: 0.2s;
             font-weight: 600;
             letter-spacing: 1px;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .auth-input-wrap input:focus {
@@ -222,8 +206,6 @@
             justify-content: center;
             gap: 8px;
             margin-top: 0.5rem;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .auth-btn:hover {
@@ -364,14 +346,11 @@
             font-size: 0.72rem;
             cursor: pointer;
             transition: 0.2s;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .lock-btn:hover { background: #fdecea; border-color: #f5b7b1; }
 
-        .verify-open-btn,
-        .backup-btn {
+        .verify-open-btn {
             background: #ffffff;
             border: 1.5px solid #c8dcc8;
             color: #1a6b3a;
@@ -381,21 +360,9 @@
             font-size: 0.78rem;
             cursor: pointer;
             transition: 0.2s;
-            -webkit-appearance: none;
-            appearance: none;
-            white-space: nowrap;
         }
 
-        .verify-open-btn:hover,
-        .backup-btn:hover { background: #f0f8f0; border-color: #a8c8a8; }
-
-        .backup-btn {
-            background: linear-gradient(135deg, #fef3e0, #fdebd0);
-            border-color: #f0d9a8;
-            color: #a67c10;
-        }
-
-        .backup-btn:hover { background: linear-gradient(135deg, #fdebd0, #fce4b8); border-color: #e8c87a; }
+        .verify-open-btn:hover { background: #f0f8f0; border-color: #a8c8a8; }
 
         .badge {
             background: #f8f4e8;
@@ -405,50 +372,6 @@
             color: #a67c10;
             border: 1px solid #e8d9a8;
             font-size: 0.9rem;
-        }
-
-        /* ===== SAFETY BANNER ===== */
-        .safety-banner {
-            display: none;
-            align-items: center;
-            gap: 12px;
-            padding: 0.9rem 1.2rem;
-            border-radius: 20px;
-            margin-bottom: 1.2rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            line-height: 1.5;
-            border: 1px solid;
-        }
-
-        .safety-banner.show { display: flex; }
-
-        .safety-banner.danger {
-            background: linear-gradient(135deg, #fdecea, #fadbd8);
-            border-color: #f5b7b1;
-            color: #922b21;
-        }
-
-        .safety-banner.warn {
-            background: linear-gradient(135deg, #fef3e0, #fdebd0);
-            border-color: #f0d9a8;
-            color: #7d6608;
-        }
-
-        .safety-banner.safe {
-            background: linear-gradient(135deg, #e8f5e8, #d4ecd4);
-            border-color: #a8d0a8;
-            color: #0f4b28;
-        }
-
-        .safety-banner-icon { font-size: 1.5rem; flex-shrink: 0; }
-        .safety-banner-text { flex: 1; }
-        .safety-banner-text strong { display: block; margin-bottom: 2px; }
-
-        .safety-banner .btn {
-            flex-shrink: 0;
-            padding: 8px 16px;
-            font-size: 0.78rem;
         }
 
         /* ===== CLOUD BANNER ===== */
@@ -491,8 +414,6 @@
             font-size: 0.75rem;
             cursor: pointer;
             transition: 0.15s;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .cloud-btn:hover { background: #f0f8f0; }
@@ -613,7 +534,6 @@
 
         .breakdown-item {
             background: rgba(255, 255, 255, 0.15);
-            -webkit-backdrop-filter: blur(6px);
             backdrop-filter: blur(6px);
             border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 16px;
@@ -801,25 +721,22 @@
         .school-select, .level-select {
             flex: 1;
             min-width: 150px;
-            padding: 10px 36px 10px 18px;
+            padding: 10px 18px;
             border: 1px solid #c8dcc8;
             border-radius: 40px;
             font-size: 0.95rem;
             font-weight: 600;
-            background: #f8fbf8 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ab09a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 14px center;
+            background: #f8fbf8;
             color: #1e2e1e;
             outline: none;
             cursor: pointer;
             transition: 0.2s;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
         }
 
         .school-select:focus, .level-select:focus {
             border-color: #1a6b3a;
             box-shadow: 0 0 0 3px rgba(26, 107, 58, 0.15);
-            background-color: #ffffff;
+            background: #ffffff;
         }
 
         .search-input {
@@ -833,8 +750,6 @@
             color: #1e2e1e;
             outline: none;
             transition: 0.2s;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .search-input::placeholder { color: #9ab09a; }
@@ -855,8 +770,6 @@
             font-size: 0.8rem;
             cursor: pointer;
             transition: 0.15s;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .clear-search:hover { background: #f5edcf; border-color: #d4b84a; }
@@ -954,8 +867,6 @@
             transition: 0.1s;
             color: #a67c10;
             line-height: 1;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .icon-btn:hover { background: #f8f4e8; }
@@ -986,8 +897,6 @@
             outline: none;
             transition: 0.2s;
             font-family: inherit;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .paste-area textarea::placeholder { color: #9ab09a; }
@@ -1024,8 +933,6 @@
             padding: 0;
             line-height: 1;
             z-index: 2;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .mic-btn:hover {
@@ -1102,16 +1009,13 @@
             min-width: 140px;
             border: 1px solid #c8dcc8;
             border-radius: 40px;
-            padding: 10px 36px 10px 16px;
+            padding: 10px 16px;
             font-size: 0.9rem;
-            background: #f8fbf8 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ab09a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 14px center;
+            background: #f8fbf8;
             color: #1e2e1e;
             outline: none;
             cursor: pointer;
             font-weight: 500;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
         }
 
         .class-row select:focus {
@@ -1135,8 +1039,6 @@
             gap: 6px;
             box-shadow: 0 3px 10px rgba(26, 107, 58, 0.25);
             white-space: nowrap;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .btn:hover {
@@ -1160,7 +1062,6 @@
             padding: 0.8rem 1.5rem 1.5rem 1.5rem;
             overflow-x: auto;
             align-items: flex-start;
-            -webkit-overflow-scrolling: touch;
         }
 
         .class-column {
@@ -1212,8 +1113,6 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .class-column-header .class-download-all-btn:hover { background: #0a3a1e; transform: scale(0.96); }
@@ -1234,8 +1133,6 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .class-column-header .class-delete-all-btn:hover { background: #7b241c; transform: scale(0.96); }
@@ -1249,7 +1146,6 @@
             max-height: 420px;
             overflow-y: auto;
             padding-right: 2px;
-            -webkit-overflow-scrolling: touch;
         }
 
         .student-card-item {
@@ -1262,7 +1158,6 @@
             flex-direction: column;
             gap: 6px;
             transition: 0.2s;
-            min-height: 0;
         }
 
         .student-card-item:hover {
@@ -1312,8 +1207,6 @@
             padding: 0 4px;
             border-radius: 20px;
             transition: 0.15s;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .remove-student:hover { opacity: 1; background: #fdecea; }
@@ -1339,10 +1232,8 @@
             cursor: pointer;
             transition: 0.15s;
             user-select: none;
-            -webkit-user-select: none;
             padding: 0;
             line-height: 1;
-            min-height: 1.6em;
         }
 
         .point-box:hover {
@@ -1391,8 +1282,6 @@
             gap: 4px;
             width: 100%;
             letter-spacing: 0.3px;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .cert-btn:hover { background: #f5edcf; border-color: #d4b84a; }
@@ -1434,11 +1323,10 @@
         }
 
         /* ===== MODALS ===== */
-        .edit-modal, .admin-modal, .setup-modal, .restore-modal {
+        .edit-modal, .admin-modal, .setup-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(15, 45, 30, 0.8);
-            -webkit-backdrop-filter: blur(6px);
             backdrop-filter: blur(6px);
             z-index: 10002;
             display: flex;
@@ -1447,7 +1335,7 @@
             padding: 1.5rem;
         }
 
-        .edit-card, .admin-card, .setup-card, .restore-card {
+        .edit-card, .admin-card, .setup-card {
             background: #ffffff;
             border-radius: 28px;
             max-width: 440px;
@@ -1478,8 +1366,6 @@
             color: #1e2e1e;
             outline: none;
             font-weight: 500;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .edit-card input:focus {
@@ -1525,8 +1411,6 @@
             outline: none;
             transition: 0.2s;
             font-weight: 500;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .school-search-input::placeholder { color: #9ab09a; font-weight: 400; }
@@ -1548,8 +1432,6 @@
             transition: 0.15s;
             line-height: 1;
             flex-shrink: 0;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .school-search-clear:hover {
@@ -1614,16 +1496,6 @@
             outline: none;
             font-family: inherit;
             width: 100%;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        .photo-form select {
-            padding-right: 36px;
-            background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ab09a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 14px center;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
         }
 
         .photo-form select:focus, .photo-form input[type="text"]:focus {
@@ -1702,8 +1574,6 @@
             opacity: 0;
             transition: 0.2s;
             line-height: 1;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .photo-card:hover .photo-delete { opacity: 1; }
@@ -1714,7 +1584,6 @@
             position: fixed;
             inset: 0;
             background: rgba(15, 45, 30, 0.88);
-            -webkit-backdrop-filter: blur(6px);
             backdrop-filter: blur(6px);
             z-index: 30000;
             display: flex;
@@ -1722,7 +1591,6 @@
             justify-content: center;
             padding: 1.5rem;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         .verify-card {
@@ -1734,7 +1602,6 @@
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
             max-height: 92vh;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         .verify-card h3 {
@@ -1771,8 +1638,6 @@
             color: #1e2e1e;
             text-transform: uppercase;
             min-width: 0;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .verify-input-row input:focus {
@@ -1880,33 +1745,6 @@
                 order: 3;
                 justify-content: flex-end;
             }
-
-            .safety-banner { flex-direction: column; align-items: stretch; }
-            .safety-banner .btn { width: 100%; }
-        }
-
-        /* ===== SAFARI / iOS FIXES ===== */
-
-        @media (max-width: 700px) {
-            input, select, textarea {
-                font-size: 16px !important;
-            }
-        }
-
-        .auth-screen,
-        .verify-modal,
-        .student-list-column,
-        .class-columns-container,
-        .verify-card {
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .point-box {
-            min-height: 1.6em;
-        }
-
-        .student-card-item {
-            min-height: 0;
         }
     </style>
 </head>
@@ -1967,8 +1805,6 @@
                     <span>Admin</span>
                     <div class="avatar">✓</div>
                 </div>
-                <button class="backup-btn admin-only" id="exportBtn" title="Download a full backup of all data">💾 Backup</button>
-                <button class="backup-btn admin-only" id="importBtn" title="Restore data from a backup file">📂 Restore</button>
                 <button class="verify-open-btn" id="verifyOpenBtn" title="Verify a certificate ID">🔎 Verify ID</button>
                 <button class="lock-btn" id="lockBtn" title="Lock admin mode">🔒 Lock</button>
                 <div class="save-status" id="saveStatus">
@@ -1977,16 +1813,6 @@
                 </div>
                 <div class="badge">📋 Points & students</div>
             </div>
-        </div>
-
-        <!-- Hidden file input for restore -->
-        <input type="file" id="restoreFileInput" accept="application/json,.json" style="display:none;">
-
-        <!-- ===== SAFETY BANNER ===== -->
-        <div class="safety-banner" id="safetyBanner">
-            <span class="safety-banner-icon" id="safetyBannerIcon">🛡️</span>
-            <div class="safety-banner-text" id="safetyBannerText"></div>
-            <button class="btn" id="safetyBannerBtn" style="display:none;">Fix now</button>
         </div>
 
         <div class="cloud-banner" id="cloudBanner">
@@ -2095,7 +1921,6 @@
             ✏️ Double-click a name to edit · 📥 Download All per Class · 🗑️ Delete All per Class · 🖨️ Print certificates.<br>
             📸 <strong>Pictures:</strong> Post a photo for a student — it is attached to the certificate ID.<br>
             🔎 <strong>Verification:</strong> Students enter the ID printed on their certificate to confirm it is genuine.<br>
-            💾 <strong>Data safety:</strong> Use <em>Backup</em> to save a full copy of everything to a file. <em>Restore</em> brings it back.<br>
             ☁️ Data saved to Supabase (tables: students, settings, certificates, photos).
         </div>
     </div>
@@ -2116,24 +1941,6 @@
 
             const SESSION_KEY = 'fpf_admin_unlocked';
 
-            // ---------- Safari & iOS detection ----------
-            const isSafari = (() => {
-                const vendor = navigator.vendor || '';
-                const ua = navigator.userAgent || '';
-                return vendor.indexOf('Apple') > -1 &&
-                       ua.indexOf('CriOS') === -1 &&
-                       ua.indexOf('FxiOS') === -1 &&
-                       ua.indexOf('EdgiOS') === -1 &&
-                       ua.indexOf('Chrome') === -1;
-            })();
-
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-            const isSecureContextCheck = location.protocol === 'https:' ||
-                                    location.hostname === 'localhost' ||
-                                    location.hostname === '127.0.0.1';
-
             const SCHOOLS = [
                 { id: 'csc', name: 'COLLÈGE SAINT-CROIX', icon: '✝️' },
                 { id: 'csa', name: 'COLLÈGE SAINTE AGNÈS', icon: '🕊️' },
@@ -2149,13 +1956,7 @@
             const SUPABASE_KEY_KEY = 'fpf_supabase_anon_key';
             const LOGO_KEY = 'fpf_logo';
             const CERTS_KEY = 'fpf_certificates';
-            const BACKUP_META_KEY = 'fpf_last_backup';
-            const LAST_SAVE_KEY = 'fpf_last_save';
-
-            const IDB_NAME = 'fpf_data_v1';
-            const IDB_VERSION = 1;
-            const IDB_PHOTOS = 'photos';
-            const IDB_BACKUPS = 'backups';
+            const PHOTOS_KEY = 'fpf_photos';
 
             let store = { csc: [], csa: [], eureka: [], bethanie: [], cftpl: [], others: [] };
             let schoolSearchQueries = { csc: '', csa: '', eureka: '', bethanie: '', cftpl: '', others: '' };
@@ -2166,12 +1967,11 @@
             let savedLogoDataUrl = '';
             let supabase = null;
 
+            // Certificate registry + picture gallery
             let certificates = [];
             let photos = [];
 
-            let photoDB = null;
-            let idbAvailable = true;
-
+            // Voice recognition state
             let recognition = null;
             let activeRecognitionSchoolId = null;
             let lastAddedStudentId = null;
@@ -2199,7 +1999,6 @@
                     body.classList.remove('locked');
                     authScreen.style.display = 'none';
                     appContainer.classList.add('visible');
-                    refreshSafetyBanner();
                 } else {
                     body.classList.add('locked');
                     authScreen.style.display = 'flex';
@@ -2266,6 +2065,7 @@
                     document.getElementById('adminPwd').focus();
                 });
 
+                // Public verification — works even when locked
                 document.getElementById('authVerifyBtn').addEventListener('click', openVerifyModal);
             }
 
@@ -2282,447 +2082,6 @@
                 }
             }
 
-            // ==================== INDEXEDDB (safe bulk storage) ====================
-            function openIDB() {
-                return new Promise((resolve) => {
-                    if (!window.indexedDB) { idbAvailable = false; resolve(null); return; }
-                    let req;
-                    try {
-                        req = indexedDB.open(IDB_NAME, IDB_VERSION);
-                    } catch(e) {
-                        idbAvailable = false; resolve(null); return;
-                    }
-                    req.onupgradeneeded = (e) => {
-                        const db = e.target.result;
-                        if (!db.objectStoreNames.contains(IDB_PHOTOS)) {
-                            db.createObjectStore(IDB_PHOTOS, { keyPath: 'id' });
-                        }
-                        if (!db.objectStoreNames.contains(IDB_BACKUPS)) {
-                            db.createObjectStore(IDB_BACKUPS, { keyPath: 'id' });
-                        }
-                    };
-                    req.onsuccess = (e) => { photoDB = e.target.result; resolve(photoDB); };
-                    req.onerror = () => { idbAvailable = false; resolve(null); };
-                    req.onblocked = () => { idbAvailable = false; resolve(null); };
-                });
-            }
-
-            function idbPut(storeName, value) {
-                return new Promise((resolve) => {
-                    if (!photoDB) { resolve(false); return; }
-                    try {
-                        const tx = photoDB.transaction(storeName, 'readwrite');
-                        const st = tx.objectStore(storeName);
-                        const req = st.put(value);
-                        req.onsuccess = () => resolve(true);
-                        req.onerror = () => resolve(false);
-                    } catch(e) { resolve(false); }
-                });
-            }
-
-            function idbGetAll(storeName) {
-                return new Promise((resolve) => {
-                    if (!photoDB) { resolve([]); return; }
-                    try {
-                        const tx = photoDB.transaction(storeName, 'readonly');
-                        const st = tx.objectStore(storeName);
-                        const req = st.getAll();
-                        req.onsuccess = () => resolve(req.result || []);
-                        req.onerror = () => resolve([]);
-                    } catch(e) { resolve([]); }
-                });
-            }
-
-            function idbDelete(storeName, id) {
-                return new Promise((resolve) => {
-                    if (!photoDB) { resolve(false); return; }
-                    try {
-                        const tx = photoDB.transaction(storeName, 'readwrite');
-                        const st = tx.objectStore(storeName);
-                        const req = st.delete(id);
-                        req.onsuccess = () => resolve(true);
-                        req.onerror = () => resolve(false);
-                    } catch(e) { resolve(false); }
-                });
-            }
-
-            function idbClear(storeName) {
-                return new Promise((resolve) => {
-                    if (!photoDB) { resolve(false); return; }
-                    try {
-                        const tx = photoDB.transaction(storeName, 'readwrite');
-                        const st = tx.objectStore(storeName);
-                        const req = st.clear();
-                        req.onsuccess = () => resolve(true);
-                        req.onerror = () => resolve(false);
-                    } catch(e) { resolve(false); }
-                });
-            }
-
-            // ==================== SAFE STORAGE HELPERS ====================
-            function safeLocalSet(key, value) {
-                try {
-                    localStorage.setItem(key, value);
-                    // Verify write actually stuck (Safari private mode)
-                    if (localStorage.getItem(key) !== value) return false;
-                    return true;
-                } catch(e) {
-                    console.warn('localStorage write failed:', key, e);
-                    return false;
-                }
-            }
-
-            function safeLocalGet(key) {
-                try { return localStorage.getItem(key); } catch(e) { return null; }
-            }
-
-            // ==================== DATA SNAPSHOT & RESTORE ====================
-            function takeSnapshot() {
-                return {
-                    version: 2,
-                    timestamp: new Date().toISOString(),
-                    students: JSON.parse(JSON.stringify(store)),
-                    certificates: JSON.parse(JSON.stringify(certificates)),
-                    photos: photos.map(p => ({...p})),
-                    logo: savedLogoDataUrl || ''
-                };
-            }
-
-            async function persistStudentsAndCerts() {
-                const studentsJson = JSON.stringify(store);
-                const certsJson = JSON.stringify(certificates);
-
-                const okStudents = safeLocalSet('fpf_students', studentsJson);
-                const okCerts = safeLocalSet(CERTS_KEY, certsJson);
-
-                // Write a rolling backup snapshot to IDB (last 3)
-                if (idbAvailable && photoDB) {
-                    try {
-                        const snapshot = {
-                            id: 'backup_' + Date.now(),
-                            timestamp: new Date().toISOString(),
-                            students: store,
-                            certificates: certificates,
-                            logo: savedLogoDataUrl || ''
-                        };
-                        await idbPut(IDB_BACKUPS, snapshot);
-                        const all = await idbGetAll(IDB_BACKUPS);
-                        if (all.length > 3) {
-                            all.sort((a,b) => a.timestamp.localeCompare(b.timestamp));
-                            const toDelete = all.slice(0, all.length - 3);
-                            for (const b of toDelete) await idbDelete(IDB_BACKUPS, b.id);
-                        }
-                    } catch(e) { /* silent */ }
-                }
-
-                if (okStudents && okCerts) {
-                    safeLocalSet(LAST_SAVE_KEY, new Date().toISOString());
-                    return true;
-                }
-                return false;
-            }
-
-            async function loadAllData() {
-                // Students
-                const studentsRaw = safeLocalGet('fpf_students');
-                if (studentsRaw) {
-                    try {
-                        const parsed = JSON.parse(studentsRaw);
-                        if (parsed && typeof parsed === 'object') {
-                            SCHOOLS.forEach(s => {
-                                store[s.id] = Array.isArray(parsed[s.id]) ? parsed[s.id] : [];
-                            });
-                        }
-                    } catch(e) { console.warn('Could not parse students:', e); }
-                }
-
-                // Certificates
-                const certsRaw = safeLocalGet(CERTS_KEY);
-                if (certsRaw) {
-                    try { certificates = JSON.parse(certsRaw) || []; } catch(e) { certificates = []; }
-                }
-
-                // Photos — prefer IndexedDB, fallback to localStorage
-                let loadedPhotos = [];
-                if (idbAvailable) {
-                    try {
-                        loadedPhotos = await idbGetAll(IDB_PHOTOS);
-                    } catch(e) { loadedPhotos = []; }
-                }
-                // legacy localStorage fallback
-                if (!loadedPhotos.length) {
-                    const legacyRaw = safeLocalGet('fpf_photos');
-                    if (legacyRaw) {
-                        try {
-                            const legacy = JSON.parse(legacyRaw) || [];
-                            if (legacy.length) {
-                                loadedPhotos = legacy;
-                                // migrate to IDB
-                                for (const p of legacy) await idbPut(IDB_PHOTOS, p);
-                                try { localStorage.removeItem('fpf_photos'); } catch(e) {}
-                            }
-                        } catch(e) {}
-                    }
-                }
-                photos = loadedPhotos || [];
-            }
-
-            // ==================== SAFETY BANNER ====================
-            function refreshSafetyBanner() {
-                const banner = document.getElementById('safetyBanner');
-                const icon = document.getElementById('safetyBannerIcon');
-                const text = document.getElementById('safetyBannerText');
-                const btn = document.getElementById('safetyBannerBtn');
-                if (!banner) return;
-
-                banner.classList.remove('show', 'danger', 'warn', 'safe');
-                btn.style.display = 'none';
-                btn.onclick = null;
-
-                if (supabase) {
-                    banner.classList.add('show', 'safe');
-                    icon.textContent = '🛡️';
-                    text.innerHTML = '<strong>Your data is synced to the cloud.</strong> Even if this device is lost, you can recover everything from another device using the same Supabase project.';
-                    return;
-                }
-
-                if (!idbAvailable) {
-                    banner.classList.add('show', 'danger');
-                    icon.textContent = '⚠️';
-                    text.innerHTML = '<strong>Safe storage is not available.</strong> This browser blocks local databases. Please configure cloud sync to protect your data.';
-                    btn.style.display = 'inline-flex';
-                    btn.textContent = '⚙️ Configure cloud';
-                    btn.onclick = () => showSetupModal();
-                    return;
-                }
-
-                // Data is local only — encourage backup
-                const lastBackup = safeLocalGet(BACKUP_META_KEY);
-                const needsBackup = !lastBackup ||
-                    (Date.now() - new Date(lastBackup).getTime()) > 7 * 24 * 60 * 60 * 1000;
-
-                if (needsBackup) {
-                    banner.classList.add('show', 'warn');
-                    icon.textContent = '💾';
-                    text.innerHTML = '<strong>Your data lives only on this device.</strong> Click <em>Backup</em> regularly, or set up cloud sync so it survives phone changes or browser clears.';
-                    btn.style.display = 'inline-flex';
-                    btn.textContent = '💾 Backup now';
-                    btn.onclick = downloadBackup;
-                } else {
-                    banner.classList.add('show', 'safe');
-                    icon.textContent = '🛡️';
-                    const days = Math.floor((Date.now() - new Date(lastBackup).getTime()) / (1000*60*60*24));
-                    text.innerHTML = `<strong>Data saved locally &amp; backups up to date</strong> (last backup ${days === 0 ? 'today' : days + ' day' + (days !== 1 ? 's' : '') + ' ago'}). For extra safety, configure cloud sync.`;
-                }
-            }
-
-            // ==================== BACKUP / RESTORE ====================
-            async function downloadBackup() {
-                try {
-                    // Ensure any pending writes are captured
-                    const snapshot = takeSnapshot();
-                    const meta = {
-                        app: 'Feed People Foundation - School Points',
-                        exportedAt: new Date().toISOString(),
-                        version: 2,
-                        stats: {
-                            students: SCHOOLS.reduce((sum, s) => sum + (store[s.id]?.length || 0), 0),
-                            certificates: certificates.length,
-                            photos: photos.length
-                        }
-                    };
-
-                    const payload = {
-                        meta,
-                        students: snapshot.students,
-                        certificates: snapshot.certificates,
-                        photos: snapshot.photos,
-                        logo: snapshot.logo,
-                        supabaseConfig: getSupabaseConfig() || null
-                    };
-
-                    const json = JSON.stringify(payload, null, 2);
-                    const blob = new Blob([json], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-                    a.href = url;
-                    a.download = `FPF_Backup_${stamp}.json`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    setTimeout(() => URL.revokeObjectURL(url), 60000);
-
-                    safeLocalSet(BACKUP_META_KEY, new Date().toISOString());
-                    refreshSafetyBanner();
-                    setSaveStatus('cloud', `💾 Backup saved · ${meta.stats.students} students · ${meta.stats.photos} photos`);
-                } catch(e) {
-                    console.error('Backup failed:', e);
-                    alert('Could not create backup: ' + e.message);
-                    setSaveStatus('error', 'Backup failed');
-                }
-            }
-
-            function showRestoreModal(file) {
-                const existing = document.querySelector('.restore-modal');
-                if (existing) existing.remove();
-
-                const modal = document.createElement('div');
-                modal.className = 'restore-modal';
-                modal.innerHTML = `
-                    <div class="restore-card">
-                        <h2 style="font-size:1.2rem;color:#0f4b28;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:8px;">📂 Restore from backup</h2>
-                        <p style="font-size:0.85rem;color:#4a6b4a;line-height:1.6;margin-bottom:1rem;text-align:left;">
-                            You are about to replace <strong>all current data</strong> with the contents of:<br>
-                            <code style="display:block;margin-top:6px;background:#f8fbf8;padding:6px 10px;border-radius:8px;font-size:0.78rem;color:#0f4b28;word-break:break-all;">${escapeHtml(file.name)}</code>
-                        </p>
-                        <div id="restorePreview" style="background:#f8fbf8;border:1px solid #e0ebe0;border-radius:14px;padding:12px 14px;text-align:left;font-size:0.82rem;line-height:1.7;color:#1e2e1e;margin-bottom:1rem;">
-                            ⏳ Reading file…
-                        </div>
-                        <div style="background:#fdecea;color:#922b21;padding:10px 14px;border-radius:10px;font-size:0.78rem;border:1px solid #f5b7b1;font-weight:600;margin-bottom:1rem;line-height:1.5;">
-                            ⚠️ This action <strong>cannot be undone</strong>. Your current data will be overwritten.
-                        </div>
-                        <div style="display:flex;gap:10px;">
-                            <button class="btn" id="restoreConfirmBtn" style="flex:1;background:#c0392b;box-shadow:none;">✅ Yes, restore</button>
-                            <button class="btn" id="restoreCancelBtn" style="flex:1;background:#f8f4e8;color:#a67c10;border:1px solid #e8d9a8;box-shadow:none;">Cancel</button>
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(modal);
-
-                const preview = document.getElementById('restorePreview');
-                let parsed = null;
-
-                file.text().then(text => {
-                    try {
-                        parsed = JSON.parse(text);
-                        const studentsCount = parsed.students
-                            ? SCHOOLS.reduce((sum, s) => sum + ((parsed.students[s.id] || []).length), 0)
-                            : 0;
-                        const photosCount = Array.isArray(parsed.photos) ? parsed.photos.length : 0;
-                        const certsCount = Array.isArray(parsed.certificates) ? parsed.certificates.length : 0;
-                        const exportedAt = parsed.meta?.exportedAt
-                            ? new Date(parsed.meta.exportedAt).toLocaleString()
-                            : 'unknown';
-                        preview.innerHTML = `
-                            📅 Exported: <strong>${escapeHtml(exportedAt)}</strong><br>
-                            👥 Students: <strong>${studentsCount}</strong><br>
-                            🎓 Certificates: <strong>${certsCount}</strong><br>
-                            📸 Pictures: <strong>${photosCount}</strong><br>
-                            🖼️ Logo: <strong>${parsed.logo ? 'Yes' : 'No'}</strong>
-                        `;
-                    } catch(e) {
-                        preview.innerHTML = `<div style="color:#c0392b;font-weight:700;">❌ Invalid backup file: ${escapeHtml(e.message)}</div>`;
-                        document.getElementById('restoreConfirmBtn').disabled = true;
-                        document.getElementById('restoreConfirmBtn').style.background = '#a8c8a8';
-                    }
-                }).catch(e => {
-                    preview.innerHTML = `<div style="color:#c0392b;font-weight:700;">❌ Could not read file: ${escapeHtml(e.message)}</div>`;
-                });
-
-                document.getElementById('restoreCancelBtn').addEventListener('click', () => modal.remove());
-                document.getElementById('restoreConfirmBtn').addEventListener('click', async () => {
-                    if (!parsed) return;
-                    await applyRestore(parsed);
-                    modal.remove();
-                });
-            }
-
-            async function applyRestore(parsed) {
-                setSaveStatus('saving', 'Restoring backup...');
-
-                try {
-                    // 1) Students
-                    if (parsed.students && typeof parsed.students === 'object') {
-                        SCHOOLS.forEach(s => {
-                            store[s.id] = Array.isArray(parsed.students[s.id]) ? parsed.students[s.id] : [];
-                        });
-                    }
-
-                    // 2) Certificates
-                    certificates = Array.isArray(parsed.certificates) ? parsed.certificates : [];
-
-                    // 3) Photos → IDB (clear existing first)
-                    if (idbAvailable && photoDB) {
-                        await idbClear(IDB_PHOTOS);
-                    }
-                    photos = [];
-                    if (Array.isArray(parsed.photos)) {
-                        for (const p of parsed.photos) {
-                            photos.push(p);
-                            if (idbAvailable && photoDB) {
-                                await idbPut(IDB_PHOTOS, p);
-                            }
-                        }
-                    }
-
-                    // 4) Logo
-                    if (parsed.logo) {
-                        savedLogoDataUrl = parsed.logo;
-                        safeLocalSet(LOGO_KEY, parsed.logo);
-                        applyLogo();
-                        updateAuthLogo();
-                    }
-
-                    // 5) Persist everything
-                    await persistStudentsAndCerts();
-
-                    // 6) Save new backup timestamp
-                    safeLocalSet(BACKUP_META_KEY, new Date().toISOString());
-
-                    // 7) If cloud configured, sync to cloud
-                    if (supabase) {
-                        setSaveStatus('saving', 'Syncing restored data to cloud...');
-                        await pushAllToCloud();
-                    }
-
-                    render();
-                    renderPhotos();
-                    refreshSafetyBanner();
-                    setSaveStatus('cloud', '✅ Backup restored successfully');
-                } catch(e) {
-                    console.error('Restore failed:', e);
-                    alert('Restore failed: ' + e.message);
-                    setSaveStatus('error', 'Restore failed');
-                }
-            }
-
-            async function pushAllToCloud() {
-                if (!supabase) return;
-                try {
-                    // Clear existing (scoped by school) — use batched upserts
-                    for (const school of SCHOOLS) {
-                        const students = store[school.id] || [];
-                        if (students.length === 0) continue;
-                        const rows = students.map(s => ({
-                            id: (String(s.id).startsWith('local_') ? crypto.randomUUID() : s.id),
-                            school_id: school.id,
-                            name: s.name,
-                            class: s.class,
-                            score: s.score || 0
-                        }));
-                        // Assign new ids back
-                        rows.forEach((r, i) => { students[i].id = r.id; });
-                        await supabase.from('students').upsert(rows);
-                    }
-                    // Certificates
-                    if (certificates.length) {
-                        await supabase.from('certificates').upsert(certificates.map(c => ({
-                            id: c.id, student_id: c.student_id, student_name: c.student_name,
-                            level: c.level, school_id: c.school_id, class_name: c.class_name,
-                            issued_at: c.issued_at
-                        })));
-                    }
-                    // Photos
-                    for (const p of photos) {
-                        await addPhotoToCloud(p);
-                    }
-                    await persistStudentsAndCerts();
-                } catch(e) {
-                    console.warn('Cloud sync after restore failed:', e);
-                }
-            }
-
             // ==================== SUPABASE ====================
             function getSupabaseConfig() {
                 try {
@@ -2734,8 +2093,10 @@
             }
 
             function saveSupabaseConfig(url, key) {
-                safeLocalSet(SUPABASE_URL_KEY, url);
-                safeLocalSet(SUPABASE_KEY_KEY, key);
+                try {
+                    localStorage.setItem(SUPABASE_URL_KEY, url);
+                    localStorage.setItem(SUPABASE_KEY_KEY, key);
+                } catch(e) {}
             }
 
             function initSupabase() {
@@ -2816,7 +2177,7 @@ create table if not exists photos (
                 modal.innerHTML = `
                     <div class="setup-card" style="text-align:left;max-width:520px;">
                         <h2 style="font-size:1.3rem;color:#0f4b28;margin-bottom:0.5rem;display:flex;align-items:center;justify-content:center;gap:10px;">☁️ Cloud Sync Setup</h2>
-                        <p style="font-size:0.85rem;color:#4a6b4a;margin-bottom:1rem;line-height:1.5;text-align:center;">Enter your Supabase project credentials. Your data will be saved permanently to the cloud and survive device loss.</p>
+                        <p style="font-size:0.85rem;color:#4a6b4a;margin-bottom:1rem;line-height:1.5;text-align:center;">Enter your Supabase project credentials. Your data will be saved permanently to the cloud.</p>
 
                         <label style="display:block;font-size:0.82rem;font-weight:700;color:#0f4b28;margin-bottom:0.4rem;margin-top:0.8rem;text-transform:uppercase;">Project URL</label>
                         <input type="text" id="supaUrl" placeholder="https://xxxxxxxxxxxx.supabase.co" value="${escapeHtml(config.url)}" style="width:100%;padding:12px 14px;border:1px solid #c8dcc8;border-radius:14px;font-size:0.9rem;background:#f8fbf8;color:#1e2e1e;outline:none;font-family:monospace;">
@@ -2866,7 +2227,7 @@ create table if not exists photos (
                         saveSupabaseConfig(url, key);
                         msg.innerHTML = `<div style="background:#e8f5e8;color:#1a6b3a;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">✅ Connected! Syncing data...</div>`;
                         supabase = testClient;
-                        setTimeout(async () => { modal.remove(); await syncFromCloud(); refreshSafetyBanner(); }, 800);
+                        setTimeout(async () => { modal.remove(); await syncFromCloud(); }, 800);
                     } catch(e) {
                         msg.innerHTML = `<div style="background:#fdecea;color:#c0392b;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">❌ Connection failed: ${escapeHtml(e.message)}</div>`;
                     }
@@ -2887,7 +2248,6 @@ create table if not exists photos (
                             });
                         }
                     });
-                    await persistStudentsAndCerts();
                     return true;
                 } catch(e) { return false; }
             }
@@ -2902,7 +2262,6 @@ create table if not exists photos (
                     updateCloudStatus('connected', `☁️ Cloud synced · ${total} student${total !== 1 ? 's' : ''} · ${photos.length} picture${photos.length !== 1 ? 's' : ''}`);
                     render();
                     renderPhotos();
-                    refreshSafetyBanner();
                 } else {
                     updateCloudStatus('error', 'Cloud load failed. Working locally.');
                 }
@@ -2982,7 +2341,7 @@ create table if not exists photos (
                     if (error && error.code !== 'PGRST116') throw error;
                     if (data && data.value) {
                         savedLogoDataUrl = data.value;
-                        safeLocalSet(LOGO_KEY, data.value);
+                        try { localStorage.setItem(LOGO_KEY, data.value); } catch(e) {}
                         applyLogo();
                         updateAuthLogo();
                     }
@@ -2998,6 +2357,7 @@ create table if not exists photos (
                 } catch(e) { return false; }
             }
 
+            // ---------- certificates ----------
             async function loadCertificatesFromCloud() {
                 if (!supabase) return;
                 try {
@@ -3008,8 +2368,8 @@ create table if not exists photos (
                         if (existing) Object.assign(existing, row);
                         else certificates.push(row);
                     });
-                    await persistStudentsAndCerts();
-                } catch(e) { /* table may not exist */ }
+                    persistCertificates();
+                } catch(e) { /* table may not exist yet */ }
             }
 
             async function upsertCertificateToCloud(rec) {
@@ -3027,17 +2387,19 @@ create table if not exists photos (
                 } catch(e) {}
             }
 
+            // ---------- photos ----------
             async function loadPhotosFromCloud() {
                 if (!supabase) return;
                 try {
                     const { data, error } = await supabase.from('photos').select('*').order('created_at', { ascending: false });
                     if (error) throw error;
-                    photos = [];
-                    for (const row of (data || [])) {
-                        photos.push(row);
-                        if (idbAvailable && photoDB) await idbPut(IDB_PHOTOS, row);
-                    }
-                } catch(e) { /* table may not exist */ }
+                    (data || []).forEach(row => {
+                        const existing = photos.find(p => p.id === row.id);
+                        if (existing) Object.assign(existing, row);
+                        else photos.push(row);
+                    });
+                    persistPhotos();
+                } catch(e) { /* table may not exist yet */ }
             }
 
             async function addPhotoToCloud(photo) {
@@ -3082,14 +2444,16 @@ create table if not exists photos (
 
             // ==================== LOGO ====================
             function loadSavedLogo() {
-                const saved = safeLocalGet(LOGO_KEY);
-                if (saved) { savedLogoDataUrl = saved; applyLogo(); }
+                try {
+                    const saved = localStorage.getItem(LOGO_KEY);
+                    if (saved) { savedLogoDataUrl = saved; applyLogo(); }
+                } catch(e) {}
                 updateAuthLogo();
             }
 
             async function saveLogo(dataUrl) {
                 savedLogoDataUrl = dataUrl;
-                safeLocalSet(LOGO_KEY, dataUrl);
+                try { localStorage.setItem(LOGO_KEY, dataUrl); } catch(e) {}
                 applyLogo();
                 updateAuthLogo();
                 if (supabase) {
@@ -3120,6 +2484,28 @@ create table if not exists photos (
                 };
                 reader.readAsDataURL(file);
             });
+
+            // ==================== LOCAL CERT / PHOTO STORAGE ====================
+            function loadLocalCertsPhotos() {
+                try {
+                    const c = localStorage.getItem(CERTS_KEY);
+                    certificates = c ? (JSON.parse(c) || []) : [];
+                } catch(e) { certificates = []; }
+                try {
+                    const p = localStorage.getItem(PHOTOS_KEY);
+                    photos = p ? (JSON.parse(p) || []) : [];
+                } catch(e) { photos = []; }
+            }
+
+            function persistCertificates() {
+                try { localStorage.setItem(CERTS_KEY, JSON.stringify(certificates)); }
+                catch(e) { console.warn('Certificate storage full', e); }
+            }
+
+            function persistPhotos() {
+                try { localStorage.setItem(PHOTOS_KEY, JSON.stringify(photos)); return true; }
+                catch(e) { console.warn('Photo storage full', e); return false; }
+            }
 
             // ==================== HELPERS ====================
             function populateSchoolSelector() {
@@ -3309,7 +2695,6 @@ create table if not exists photos (
                     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
                     background: #fff; z-index: 9999; overflow-y: auto;
                     padding: 2rem 1.5rem; display: flex; flex-direction: column;
-                    -webkit-overflow-scrolling: touch;
                 `;
 
                 const header = document.createElement('div');
@@ -3321,7 +2706,7 @@ create table if not exists photos (
                 `;
                 header.innerHTML = `
                     <h2 style="color:#0f4b28;font-size:1.6rem;">👤 ${escapeHtml(student.name)} — ${escapeHtml(student.class || '')}</h2>
-                    <button style="background:#1a6b3a;border:none;color:#fff;border-radius:30px;padding:10px 20px;font-weight:700;cursor:pointer;-webkit-appearance:none;appearance:none;">✕ Close</button>
+                    <button style="background:#1a6b3a;border:none;color:#fff;border-radius:30px;padding:10px 20px;font-weight:700;cursor:pointer;">✕ Close</button>
                 `;
                 header.querySelector('button').addEventListener('click', () => overlay.remove());
                 overlay.appendChild(header);
@@ -3350,8 +2735,7 @@ create table if not exists photos (
                             font-size:1.4rem; font-weight:700;
                             color:${i < filled ? '#fff' : '#4a6b4a'};
                             cursor:${unlocked ? 'pointer' : 'not-allowed'};
-                            user-select:none; -webkit-user-select:none;
-                            min-height:1.4em;
+                            user-select:none;
                             ${i < filled ? 'box-shadow:0 0 15px rgba(26,107,58,0.4);' : ''}
                             ${!unlocked ? 'opacity:0.6;' : ''}
                         `;
@@ -3363,7 +2747,6 @@ create table if not exists photos (
                                 student.score = (student.score || 0) + 2;
                                 renderFullGrid();
                                 render();
-                                await persistStudentsAndCerts();
                                 if (supabase) {
                                     setSaveStatus('saving', 'Saving...');
                                     const ok = await updateStudentScoreInCloud(student.id, student.score);
@@ -3378,7 +2761,6 @@ create table if not exists photos (
                                 else student.score = 0;
                                 renderFullGrid();
                                 render();
-                                await persistStudentsAndCerts();
                                 if (supabase) {
                                     setSaveStatus('saving', 'Saving...');
                                     const ok = await updateStudentScoreInCloud(student.id, student.score);
@@ -3437,7 +2819,6 @@ create table if not exists photos (
                         if (!ok) { setSaveStatus('error', 'Cloud update failed'); alert('Could not update name in cloud.'); return; }
                     }
                     student.name = newName;
-                    await persistStudentsAndCerts();
                     render();
                     setSaveStatus('cloud', '☁️ Name updated');
                     closeModal();
@@ -3667,10 +3048,12 @@ create table if not exists photos (
 
                 restoreFocus(focusSnapshot);
 
+                // Keep the picture form in sync with the current data
                 const levelChip = document.getElementById('photoLevelChip');
                 if (levelChip) levelChip.textContent = selectedLevel;
                 populatePhotoStudentSelect();
 
+                // Re-highlight last added student
                 if (lastAddedStudentId) {
                     requestAnimationFrame(() => {
                         const el = document.querySelector(`[data-student-id="${lastAddedStudentId}"]`);
@@ -3738,7 +3121,6 @@ create table if not exists photos (
                     const idx = schoolStudents.findIndex(s => s.id === student.id);
                     if (idx !== -1) {
                         schoolStudents.splice(idx, 1);
-                        await persistStudentsAndCerts();
                         render();
                         setSaveStatus('cloud', '☁️ Deleted');
                     }
@@ -3762,7 +3144,6 @@ create table if not exists photos (
                         if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
                         if (student.score >= 100) return;
                         student.score = (student.score || 0) + 2;
-                        await persistStudentsAndCerts();
                         render();
                         if (supabase) {
                             setSaveStatus('saving', 'Saving...');
@@ -3777,7 +3158,6 @@ create table if not exists photos (
                         if (!isUnlocked()) return;
                         if (student.score >= 2) student.score -= 2;
                         else student.score = 0;
-                        await persistStudentsAndCerts();
                         render();
                         if (supabase) {
                             setSaveStatus('saving', 'Saving...');
@@ -3845,14 +3225,9 @@ create table if not exists photos (
             function handleMicClick(schoolId) {
                 if (!isUnlocked()) { alert('🔒 Admin locked. Please unlock to use voice.'); return; }
 
-                if (!isSecureContextCheck) {
-                    alert('🎤 Voice recognition requires a secure (HTTPS) connection.\n\nPlease open this site via https:// to use the microphone.');
-                    return;
-                }
-
                 const SpeechRecognition = getSpeechRecognition();
                 if (!SpeechRecognition) {
-                    alert('🎤 Voice recognition is not supported in this browser.\n\nSafari 14.1+ / iOS 14.5+ support it. Please update Safari or use Chrome/Edge.');
+                    alert('🎤 Voice recognition is not supported in this browser.\n\nPlease use Google Chrome, Microsoft Edge, or Safari.');
                     return;
                 }
 
@@ -3865,7 +3240,7 @@ create table if not exists photos (
 
                 recognition = new SpeechRecognition();
                 recognition.lang = VOICE_LANG;
-                recognition.continuous = !isSafari;
+                recognition.continuous = true;
                 recognition.interimResults = false;
                 recognition.maxAlternatives = 1;
 
@@ -3889,7 +3264,7 @@ create table if not exists photos (
                 recognition.onerror = (event) => {
                     console.warn('Speech error:', event.error);
                     if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-                        showMicStatus(schoolId, '⚠️ Microphone permission denied. Please allow it in browser settings.');
+                        showMicStatus(schoolId, '⚠️ Microphone permission denied. Please allow in browser settings.');
                         setTimeout(() => stopVoiceRecognition(), 3000);
                     } else if (event.error === 'no-speech' || event.error === 'aborted') {
                         // ignore
@@ -3900,27 +3275,14 @@ create table if not exists photos (
 
                 recognition.onend = () => {
                     if (activeRecognitionSchoolId === schoolId && recognition) {
-                        const delay = isSafari ? 400 : 30;
-                        setTimeout(() => {
-                            if (activeRecognitionSchoolId === schoolId && recognition) {
-                                try {
-                                    recognition.start();
-                                } catch(e) {
-                                    console.warn('Recognition restart failed:', e);
-                                    if (isIOS) {
-                                        showMicStatus(schoolId, '🎤 Tap the mic again to resume listening.');
-                                    }
-                                }
-                            }
-                        }, delay);
+                        try { recognition.start(); } catch(e) {}
                     }
                 };
 
                 try {
                     recognition.start();
                 } catch(e) {
-                    alert('Could not start microphone: ' + e.message +
-                          '\n\nSafari may need a fresh tap on the mic button.');
+                    alert('Could not start microphone: ' + e.message);
                     stopVoiceRecognition();
                 }
             }
@@ -3993,8 +3355,6 @@ create table if not exists photos (
                     const addedPoints = newScore - (existing.score || 0);
                     existing.score = newScore;
 
-                    await persistStudentsAndCerts();
-
                     if (supabase) {
                         setSaveStatus('saving', 'Saving voice points...');
                         const ok = await updateStudentScoreInCloud(existing.id, existing.score);
@@ -4037,7 +3397,6 @@ create table if not exists photos (
                         return;
                     }
 
-                    await persistStudentsAndCerts();
                     render();
                     showMicStatus(schoolId, `✅ Added ${parsed.name} · ${className} · ${parsed.points} pts`, true);
                 }
@@ -4057,9 +3416,6 @@ create table if not exists photos (
                 if (!confirm(`Delete ALL ${classStudents.length} entr${classStudents.length !== 1 ? 'ies' : 'y'} in ${school.name} — class ${className}?\n\nThis will also delete them from the cloud. Cannot be undone.`)) return;
                 if (!confirm('Are you REALLY sure? This action is permanent.')) return;
 
-                // Snapshot before destructive operation
-                await downloadBackup();
-
                 const originalText = btnEl ? btnEl.innerHTML : '';
                 if (btnEl) { btnEl.disabled = true; btnEl.innerHTML = `⏳ Deleting...`; }
                 setSaveStatus('saving', `Deleting ${classStudents.length} entr${classStudents.length !== 1 ? 'ies' : 'y'}...`);
@@ -4077,13 +3433,12 @@ create table if not exists photos (
                 const idsToRemove = new Set(classStudents.map(s => s.id));
                 store[school.id] = (store[school.id] || []).filter(s => !idsToRemove.has(s.id));
 
-                await persistStudentsAndCerts();
                 render();
                 setSaveStatus('cloud', `☁️ Deleted ${idsToRemove.size} entr${idsToRemove.size !== 1 ? 'ies' : 'y'}`);
             }
 
             // ==================== CERTIFICATE REGISTRY ====================
-            async function getOrCreateCertificate(student, schoolId, level) {
+            function getOrCreateCertificate(student, schoolId, level) {
                 let rec = certificates.find(c =>
                     String(c.student_id) === String(student.id) && c.level === level
                 );
@@ -4091,7 +3446,7 @@ create table if not exists photos (
                     rec.student_name = student.name;
                     rec.class_name = student.class;
                     rec.school_id = schoolId;
-                    await persistStudentsAndCerts();
+                    persistCertificates();
                     return rec;
                 }
                 const rand = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -4105,7 +3460,7 @@ create table if not exists photos (
                     issued_at: new Date().toISOString()
                 };
                 certificates.push(rec);
-                await persistStudentsAndCerts();
+                persistCertificates();
                 upsertCertificateToCloud(rec);
                 return rec;
             }
@@ -4176,8 +3531,8 @@ create table if not exists photos (
                 `;
             }
 
-            async function generateCertificate(student, schoolId) {
-                const rec = await getOrCreateCertificate(student, schoolId, selectedLevel);
+            function generateCertificate(student, schoolId) {
+                const rec = getOrCreateCertificate(student, schoolId, selectedLevel);
                 const certHTML = buildCertificateHTML(student, rec);
                 const printWindow = window.open('', '_blank', 'width=1200,height=900');
                 if (printWindow) {
@@ -4225,7 +3580,7 @@ create table if not exists photos (
                         const student = sortedStudents[i];
                         if (btnEl) btnEl.innerHTML = `⏳ ${i + 1}/${sortedStudents.length}...`;
 
-                        const rec = await getOrCreateCertificate(student, school.id, selectedLevel);
+                        const rec = getOrCreateCertificate(student, school.id, selectedLevel);
 
                         const wrapper = document.createElement('div');
                         wrapper.style.cssText = 'width:11in;height:8.5in;background:#fdfefd;position:relative;overflow:hidden;';
@@ -4248,22 +3603,8 @@ create table if not exists photos (
                     const safeSchool = school.name.replace(/[^a-z0-9]+/gi, '_').substring(0, 30);
                     const safeClass = className.replace(/[^a-z0-9]+/gi, '_');
                     const filename = `Certificates_${safeClass}_${safeSchool}_${selectedLevel}.pdf`;
-                    try {
-                        pdf.save(filename);
-                        setSaveStatus('cloud', `📥 Downloaded ${sortedStudents.length} certificate(s)`);
-                    } catch (saveErr) {
-                        console.warn('pdf.save() failed, using blob fallback:', saveErr);
-                        const blob = pdf.output('blob');
-                        const blobUrl = URL.createObjectURL(blob);
-                        const link = document.createElement('a');
-                        link.href = blobUrl;
-                        link.download = filename;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-                        setSaveStatus('cloud', `📥 Generated ${sortedStudents.length} certificate(s) — check your Downloads`);
-                    }
+                    pdf.save(filename);
+                    setSaveStatus('cloud', `📥 Downloaded ${sortedStudents.length} certificate(s)`);
                 } catch(err) {
                     console.error('PDF generation failed:', err);
                     alert('PDF generation failed: ' + err.message);
@@ -4354,7 +3695,7 @@ create table if not exists photos (
                     return;
                 }
 
-                const rec = await getOrCreateCertificate(student, schoolId, selectedLevel);
+                const rec = getOrCreateCertificate(student, schoolId, selectedLevel);
 
                 const photo = {
                     id: 'ph_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8),
@@ -4369,14 +3710,7 @@ create table if not exists photos (
                 };
 
                 photos.unshift(photo);
-
-                // Primary storage: IndexedDB (much larger, no Safari private issue)
-                let storedInIDB = false;
-                if (idbAvailable && photoDB) {
-                    storedInIDB = await idbPut(IDB_PHOTOS, photo);
-                }
-
-                // Also save to cloud if configured
+                const storedLocally = persistPhotos();
                 const cloudOk = await addPhotoToCloud(photo);
 
                 fileInput.value = '';
@@ -4387,15 +3721,12 @@ create table if not exists photos (
 
                 if (cloudOk) {
                     setSaveStatus('cloud', '☁️ Picture saved & synced');
-                } else if (storedInIDB) {
+                } else if (storedLocally) {
                     setSaveStatus('cloud', 'Picture saved locally');
                     if (!supabase) alert('Picture saved on this device only.\n\nConfigure cloud sync (⚙️) so students can verify it from any device.');
                 } else {
                     setSaveStatus('error', 'Storage full — picture not saved');
-                    alert('Could not save picture. Please configure cloud sync (⚙️) to store pictures.');
-                    // Remove from memory since not persisted
-                    photos = photos.filter(p => p.id !== photo.id);
-                    renderPhotos();
+                    alert('Local storage is full and no cloud is configured. Please set up cloud sync (⚙️) to store pictures.');
                 }
             }
 
@@ -4436,7 +3767,7 @@ create table if not exists photos (
                         if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
                         if (!confirm('Delete this picture?')) return;
                         photos = photos.filter(p => p.id !== photo.id);
-                        if (idbAvailable && photoDB) await idbDelete(IDB_PHOTOS, photo.id);
+                        persistPhotos();
                         await deletePhotoFromCloud(photo.id);
                         renderPhotos();
                         renderAnalytics();
@@ -4456,7 +3787,7 @@ create table if not exists photos (
 
                 const overlay = document.createElement('div');
                 overlay.className = 'photo-viewer';
-                overlay.style.cssText = 'position:fixed;inset:0;background:rgba(8,30,18,0.93);z-index:30001;display:flex;align-items:center;justify-content:center;padding:2rem;flex-direction:column;gap:12px;cursor:zoom-out;-webkit-overflow-scrolling:touch;overflow-y:auto;';
+                overlay.style.cssText = 'position:fixed;inset:0;background:rgba(8,30,18,0.93);z-index:30001;display:flex;align-items:center;justify-content:center;padding:2rem;flex-direction:column;gap:12px;cursor:zoom-out;';
 
                 const img = document.createElement('img');
                 img.src = photo.data_url;
@@ -4490,7 +3821,7 @@ create table if not exists photos (
                         <p class="verify-hint">Enter the ID printed at the bottom of the certificate<br>(example: <strong>FPF-A1-AB12CD</strong>).</p>
 
                         <div class="verify-input-row">
-                            <input type="text" id="verifyInput" placeholder="FPF-A1-XXXXXX" autocomplete="off" spellcheck="false" autocapitalize="characters">
+                            <input type="text" id="verifyInput" placeholder="FPF-A1-XXXXXX" autocomplete="off" spellcheck="false">
                             <button class="btn" id="verifyBtn">Verify</button>
                         </div>
 
@@ -4539,7 +3870,7 @@ create table if not exists photos (
                             rec = data;
                             if (!certificates.find(c => c.id === data.id)) {
                                 certificates.push(data);
-                                await persistStudentsAndCerts();
+                                persistCertificates();
                             }
                         }
                     } catch(e) {}
@@ -4559,15 +3890,7 @@ create table if not exists photos (
                 if (certPhotos.length === 0 && supabase) {
                     try {
                         const { data } = await supabase.from('photos').select('*').eq('cert_id', rec.id);
-                        if (data && data.length) {
-                            certPhotos = data;
-                            for (const p of data) {
-                                if (!photos.find(x => x.id === p.id)) {
-                                    photos.push(p);
-                                    if (idbAvailable && photoDB) await idbPut(IDB_PHOTOS, p);
-                                }
-                            }
-                        }
+                        if (data && data.length) certPhotos = data;
                     } catch(e) {}
                 }
 
@@ -4630,7 +3953,6 @@ create table if not exists photos (
                     } else { failCount++; }
                 }
                 textarea.value = '';
-                await persistStudentsAndCerts();
                 render();
                 if (failCount === 0) setSaveStatus('cloud', `☁️ Added ${successCount} entr${successCount !== 1 ? 'ies' : 'y'}`);
                 else setSaveStatus('error', `${successCount} added, ${failCount} failed`);
@@ -4642,16 +3964,12 @@ create table if not exists photos (
                 if (!confirm(`Remove ALL entries from ${school ? school.name : 'this section'}? This will also delete them from the cloud. Cannot be undone.`)) return;
                 if (!confirm('Are you REALLY sure? This action is permanent.')) return;
 
-                // Snapshot before destructive operation
-                await downloadBackup();
-
                 if (supabase) {
                     setSaveStatus('saving', 'Clearing cloud...');
                     const ok = await clearSchoolFromCloud(schoolId);
                     if (!ok) { setSaveStatus('error', 'Cloud delete failed'); return; }
                 }
                 store[schoolId] = [];
-                await persistStudentsAndCerts();
                 render();
                 setSaveStatus('cloud', '☁️ Section cleared');
             }
@@ -4694,33 +4012,10 @@ create table if not exists photos (
 
             document.getElementById('verifyOpenBtn').addEventListener('click', openVerifyModal);
 
-            // Backup / Restore buttons
-            document.getElementById('exportBtn').addEventListener('click', downloadBackup);
-            document.getElementById('importBtn').addEventListener('click', () => {
-                if (!isUnlocked()) { alert('🔒 Admin locked. Please unlock to restore.'); return; }
-                document.getElementById('restoreFileInput').value = '';
-                document.getElementById('restoreFileInput').click();
-            });
-            document.getElementById('restoreFileInput').addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) showRestoreModal(file);
-            });
-
-            // Safety banner button fallback (button text/action set dynamically)
-            document.getElementById('safetyBannerBtn').addEventListener('click', () => {});
-
             // Picture form events
             document.getElementById('photoSchool').addEventListener('change', populatePhotoStudentSelect);
             document.getElementById('photoClass').addEventListener('change', populatePhotoStudentSelect);
             document.getElementById('photoUploadBtn').addEventListener('click', uploadPhoto);
-
-            // Before page unload, make sure data is written
-            window.addEventListener('beforeunload', () => {
-                try {
-                    localStorage.setItem('fpf_students', JSON.stringify(store));
-                    localStorage.setItem(CERTS_KEY, JSON.stringify(certificates));
-                } catch(e) {}
-            });
 
             // ==================== INIT ====================
             async function init() {
@@ -4728,14 +4023,10 @@ create table if not exists photos (
                 applyLockState();
                 populateSchoolSelector();
                 loadSavedLogo();
-
-                await openIDB();
-                await loadAllData();
-
+                loadLocalCertsPhotos();
                 populatePhotoSelects();
                 render();
                 renderPhotos();
-                refreshSafetyBanner();
 
                 if (!isUnlocked()) {
                     setTimeout(() => document.getElementById('adminPwd')?.focus(), 300);
@@ -4745,13 +4036,9 @@ create table if not exists photos (
                     updateCloudStatus('connected', 'Connecting to cloud...');
                     await syncFromCloud();
                     await loadLogoSettings();
-                    refreshSafetyBanner();
                 } else {
                     updateCloudStatus('setup', 'Cloud not configured. Click ⚙️ to set up.');
                 }
-
-                // Auto-refresh safety banner every 60s in case time passes
-                setInterval(refreshSafetyBanner, 60000);
             }
 
             init();

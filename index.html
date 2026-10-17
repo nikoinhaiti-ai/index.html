@@ -223,6 +223,21 @@
             transform: none;
         }
 
+        .auth-btn-secondary {
+            background: #ffffff;
+            color: #1a6b3a;
+            border: 1.5px solid #c8dcc8;
+            box-shadow: none;
+            margin-top: 10px;
+        }
+
+        .auth-btn-secondary:hover {
+            background: #f0f8f0;
+            border-color: #a8c8a8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(26, 107, 58, 0.15);
+        }
+
         .auth-footer {
             margin-top: 1.6rem;
             padding-top: 1.2rem;
@@ -334,6 +349,20 @@
         }
 
         .lock-btn:hover { background: #fdecea; border-color: #f5b7b1; }
+
+        .verify-open-btn {
+            background: #ffffff;
+            border: 1.5px solid #c8dcc8;
+            color: #1a6b3a;
+            border-radius: 30px;
+            padding: 0.4rem 1rem;
+            font-weight: 700;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .verify-open-btn:hover { background: #f0f8f0; border-color: #a8c8a8; }
 
         .badge {
             background: #f8f4e8;
@@ -1425,12 +1454,277 @@
         .school-search-wrap { order: 2; }
         .school-actions { order: 3; }
 
+        /* ===== PHOTO GALLERY ===== */
+        .photos-section {
+            background: #ffffff;
+            border-radius: 32px;
+            border: 1px solid #e0ebe0;
+            box-shadow: 0 6px 24px rgba(20, 80, 50, 0.06);
+            padding: 1.8rem 2rem;
+            margin-top: 2rem;
+        }
+
+        .photo-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            align-items: end;
+            margin-bottom: 1.4rem;
+            background: #f8fbf8;
+            border: 1px dashed #c8dcc8;
+            border-radius: 20px;
+            padding: 14px 16px;
+        }
+
+        .photo-form .field { display: flex; flex-direction: column; gap: 5px; }
+
+        .photo-form label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #0f4b28;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .photo-form select, .photo-form input[type="text"] {
+            padding: 9px 12px;
+            border: 1px solid #c8dcc8;
+            border-radius: 12px;
+            background: #ffffff;
+            font-size: 0.85rem;
+            color: #1e2e1e;
+            outline: none;
+            font-family: inherit;
+            width: 100%;
+        }
+
+        .photo-form select:focus, .photo-form input[type="text"]:focus {
+            border-color: #1a6b3a;
+            box-shadow: 0 0 0 3px rgba(26, 107, 58, 0.12);
+        }
+
+        .photo-form input[type="file"] { font-size: 0.75rem; color: #4a6b4a; width: 100%; }
+        .photo-form .btn { width: 100%; }
+
+        .photo-level-chip {
+            padding: 9px 12px;
+            border: 1px solid #e8d9a8;
+            border-radius: 12px;
+            background: #f8f4e8;
+            color: #a67c10;
+            font-weight: 700;
+            text-align: center;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .photo-card {
+            position: relative;
+            border: 1px solid #d8e8d8;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #f8fbf8;
+            display: flex;
+            flex-direction: column;
+            transition: 0.2s;
+        }
+
+        .photo-card:hover { border-color: #a8c8a8; box-shadow: 0 6px 16px rgba(20, 80, 50, 0.12); }
+
+        .photo-card img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+            background: #eef4ee;
+        }
+
+        .photo-meta {
+            padding: 8px 10px 10px 10px;
+            font-size: 0.72rem;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .photo-name { font-weight: 700; color: #0f4b28; font-size: 0.78rem; word-break: break-word; }
+        .photo-cert { font-family: monospace; color: #a67c10; font-weight: 600; font-size: 0.66rem; letter-spacing: 0.3px; }
+        .photo-caption { color: #4a6b4a; font-style: italic; line-height: 1.3; }
+
+        .photo-delete {
+            position: absolute;
+            top: 6px; right: 6px;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: rgba(192, 57, 43, 0.9);
+            color: #fff;
+            border: none;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: 0.2s;
+            line-height: 1;
+        }
+
+        .photo-card:hover .photo-delete { opacity: 1; }
+        .photo-delete:hover { background: #922b21; }
+
+        /* ===== VERIFY MODAL ===== */
+        .verify-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 45, 30, 0.88);
+            backdrop-filter: blur(6px);
+            z-index: 30000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .verify-card {
+            background: #ffffff;
+            border-radius: 28px;
+            max-width: 480px;
+            width: 100%;
+            padding: 2rem 2rem 1.5rem 2rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+
+        .verify-card h3 {
+            text-align: center;
+            color: #0f4b28;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .verify-hint {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #7a9a7a;
+            margin-bottom: 1.2rem;
+            line-height: 1.5;
+        }
+
+        .verify-input-row { display: flex; gap: 8px; }
+
+        .verify-input-row input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1.5px solid #c8dcc8;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: #f8fbf8;
+            outline: none;
+            color: #1e2e1e;
+            text-transform: uppercase;
+            min-width: 0;
+        }
+
+        .verify-input-row input:focus {
+            border-color: #1a6b3a;
+            box-shadow: 0 0 0 3px rgba(26, 107, 58, 0.15);
+            background: #ffffff;
+        }
+
+        .verify-result { margin-top: 1.2rem; }
+
+        .verify-error {
+            background: #fdecea;
+            color: #c0392b;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            border: 1px solid #f5b7b1;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .verify-loading { text-align: center; color: #7a9a7a; font-size: 0.9rem; padding: 12px; }
+
+        .verify-valid {
+            background: linear-gradient(135deg, #1a6b3a, #0f4b28);
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 14px;
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .verify-details {
+            background: #f8fbf8;
+            border: 1px solid #e0ebe0;
+            border-radius: 16px;
+            padding: 12px 16px;
+        }
+
+        .verify-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 7px 0;
+            border-bottom: 1px dashed #e0ebe0;
+            font-size: 0.85rem;
+        }
+
+        .verify-row:last-child { border-bottom: none; }
+
+        .verify-row span {
+            color: #7a9a7a;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+
+        .verify-row strong { color: #1e2e1e; text-align: right; word-break: break-word; }
+
+        .verify-photos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .verify-photos img {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid #d8e8d8;
+            cursor: pointer;
+            display: block;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+        }
+
         @media (max-width: 700px) {
             .foundation-logo { height: 50px; }
             .foundation-title h1 { font-size: 1rem; }
             .foundation-header { padding: 0.8rem 1rem; }
             .control-bar { padding: 0.8rem 1rem; }
             .analytics-section { padding: 1.2rem 1rem; }
+            .photos-section { padding: 1.2rem 1rem; }
             .total-students-banner { padding: 18px 20px; }
             .total-students-value { font-size: 2.2rem; }
             .total-students-icon { font-size: 2rem; }
@@ -1486,9 +1780,14 @@
                 <span>Unlock Admin Mode</span>
             </button>
 
+            <button class="auth-btn auth-btn-secondary" id="authVerifyBtn">
+                <span>🔎</span>
+                <span>Verify a Certificate</span>
+            </button>
+
             <div class="auth-footer">
                 <strong>Feed People Foundation</strong> · Gospel · Food · Education<br>
-                Authorized administrators only
+                Authorized administrators only · Students may verify certificates above
             </div>
         </div>
     </div>
@@ -1506,6 +1805,7 @@
                     <span>Admin</span>
                     <div class="avatar">✓</div>
                 </div>
+                <button class="verify-open-btn" id="verifyOpenBtn" title="Verify a certificate ID">🔎 Verify ID</button>
                 <button class="lock-btn" id="lockBtn" title="Lock admin mode">🔒 Lock</button>
                 <div class="save-status" id="saveStatus">
                     <span>💾</span>
@@ -1573,12 +1873,55 @@
 
         <div class="schools-grid" id="schoolsGrid"></div>
 
+        <!-- ===== PHOTO GALLERY ===== -->
+        <div class="photos-section" id="photosSection">
+            <div class="analytics-title">
+                <span class="icon">📸</span>
+                <span>Picture Gallery &amp; Certificate Verification</span>
+            </div>
+
+            <div class="photo-form admin-only">
+                <div class="field">
+                    <label for="photoSchool">School</label>
+                    <select id="photoSchool"></select>
+                </div>
+                <div class="field">
+                    <label for="photoClass">Class</label>
+                    <select id="photoClass"></select>
+                </div>
+                <div class="field">
+                    <label for="photoStudent">Student</label>
+                    <select id="photoStudent"></select>
+                </div>
+                <div class="field">
+                    <label>Certificate level</label>
+                    <div class="photo-level-chip" id="photoLevelChip">A1</div>
+                </div>
+                <div class="field">
+                    <label for="photoCaption">Caption (optional)</label>
+                    <input type="text" id="photoCaption" placeholder="e.g. Award ceremony" maxlength="80">
+                </div>
+                <div class="field">
+                    <label for="photoFileInput">Picture</label>
+                    <input type="file" id="photoFileInput" accept="image/*">
+                </div>
+                <div class="field">
+                    <label>&nbsp;</label>
+                    <button class="btn" id="photoUploadBtn">📤 Post Picture</button>
+                </div>
+            </div>
+
+            <div class="photo-gallery" id="photoGallery"></div>
+        </div>
+
         <div class="footer-note">
             🔒 <strong>Admin locked.</strong> Unlock to edit.<br>
             🎤 <strong>Voice:</strong> Click mic → say <em>"John Smith 2 points"</em> → auto-adds John with 2 pts.<br>
             ⚡ Or paste names (one per line) — add class — click boxes to give +2 points.<br>
             ✏️ Double-click a name to edit · 📥 Download All per Class · 🗑️ Delete All per Class · 🖨️ Print certificates.<br>
-            ☁️ Data saved to Supabase.
+            📸 <strong>Pictures:</strong> Post a photo for a student — it is attached to the certificate ID.<br>
+            🔎 <strong>Verification:</strong> Students enter the ID printed on their certificate to confirm it is genuine.<br>
+            ☁️ Data saved to Supabase (tables: students, settings, certificates, photos).
         </div>
     </div>
 
@@ -1612,6 +1955,8 @@
             const SUPABASE_URL_KEY = 'fpf_supabase_url';
             const SUPABASE_KEY_KEY = 'fpf_supabase_anon_key';
             const LOGO_KEY = 'fpf_logo';
+            const CERTS_KEY = 'fpf_certificates';
+            const PHOTOS_KEY = 'fpf_photos';
 
             let store = { csc: [], csa: [], eureka: [], bethanie: [], cftpl: [], others: [] };
             let schoolSearchQueries = { csc: '', csa: '', eureka: '', bethanie: '', cftpl: '', others: '' };
@@ -1621,6 +1966,10 @@
             let selectedLevel = 'A1';
             let savedLogoDataUrl = '';
             let supabase = null;
+
+            // Certificate registry + picture gallery
+            let certificates = [];
+            let photos = [];
 
             // Voice recognition state
             let recognition = null;
@@ -1654,7 +2003,6 @@
                     body.classList.add('locked');
                     authScreen.style.display = 'flex';
                     appContainer.classList.remove('visible');
-                    // Stop any active recognition when locking
                     stopVoiceRecognition();
                 }
             }
@@ -1716,6 +2064,9 @@
                     document.getElementById('adminPwd').value = '';
                     document.getElementById('adminPwd').focus();
                 });
+
+                // Public verification — works even when locked
+                document.getElementById('authVerifyBtn').addEventListener('click', openVerifyModal);
             }
 
             function updateAuthLogo() {
@@ -1776,6 +2127,45 @@
                 }
             }
 
+            const SETUP_SQL = `-- Run once in Supabase SQL editor
+create table if not exists students (
+  id uuid primary key default gen_random_uuid(),
+  school_id text not null,
+  name text not null,
+  class text not null,
+  score int default 0,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table if not exists settings (
+  key text primary key,
+  value text,
+  updated_at timestamptz default now()
+);
+
+create table if not exists certificates (
+  id text primary key,
+  student_id text,
+  student_name text,
+  level text,
+  school_id text,
+  class_name text,
+  issued_at timestamptz default now()
+);
+
+create table if not exists photos (
+  id text primary key,
+  cert_id text,
+  student_name text,
+  level text,
+  school_id text,
+  class_name text,
+  caption text,
+  data_url text,
+  created_at timestamptz default now()
+);`;
+
             function showSetupModal(errorMsg) {
                 const existing = document.querySelector('.setup-modal');
                 if (existing) existing.remove();
@@ -1785,7 +2175,7 @@
                 const config = getSupabaseConfig() || { url: '', key: '' };
 
                 modal.innerHTML = `
-                    <div class="setup-card" style="text-align:left;">
+                    <div class="setup-card" style="text-align:left;max-width:520px;">
                         <h2 style="font-size:1.3rem;color:#0f4b28;margin-bottom:0.5rem;display:flex;align-items:center;justify-content:center;gap:10px;">☁️ Cloud Sync Setup</h2>
                         <p style="font-size:0.85rem;color:#4a6b4a;margin-bottom:1rem;line-height:1.5;text-align:center;">Enter your Supabase project credentials. Your data will be saved permanently to the cloud.</p>
 
@@ -1795,7 +2185,12 @@
                         <label style="display:block;font-size:0.82rem;font-weight:700;color:#0f4b28;margin-bottom:0.4rem;margin-top:0.8rem;text-transform:uppercase;">Anon Public Key</label>
                         <input type="password" id="supaKey" placeholder="eyJhbGci..." value="${escapeHtml(config.key)}" style="width:100%;padding:12px 14px;border:1px solid #c8dcc8;border-radius:14px;font-size:0.9rem;background:#f8fbf8;color:#1e2e1e;outline:none;font-family:monospace;">
 
-                        <p style="font-size:0.75rem;color:#7a9a7a;margin-top:0.6rem;font-style:italic;line-height:1.5;">Find these in your Supabase project: <strong>Settings → API</strong>.</p>
+                        <details style="margin-top:1rem;">
+                            <summary style="cursor:pointer;font-size:0.8rem;font-weight:700;color:#1a6b3a;">📋 Required tables (click to show SQL)</summary>
+                            <pre style="margin-top:0.6rem;background:#0f2b1a;color:#c8e6c8;padding:12px;border-radius:12px;font-size:0.66rem;line-height:1.5;overflow-x:auto;white-space:pre;">${escapeHtml(SETUP_SQL)}</pre>
+                        </details>
+
+                        <p style="font-size:0.75rem;color:#7a9a7a;margin-top:0.6rem;font-style:italic;line-height:1.5;">Find the URL &amp; key in your Supabase project: <strong>Settings → API</strong>.</p>
                         ${errorMsg ? `<div style="background:#fdecea;color:#c0392b;padding:10px 14px;border-radius:12px;font-size:0.82rem;margin-top:1rem;border:1px solid #f5b7b1;font-weight:600;">⚠️ ${escapeHtml(errorMsg)}</div>` : ''}
                         <div id="setupMsg"></div>
 
@@ -1861,9 +2256,12 @@
                 updateCloudStatus('connected', 'Loading data from cloud...');
                 const ok = await loadFromCloud();
                 if (ok) {
+                    await loadCertificatesFromCloud();
+                    await loadPhotosFromCloud();
                     const total = SCHOOLS.reduce((sum, s) => sum + (store[s.id]?.length || 0), 0);
-                    updateCloudStatus('connected', `☁️ Cloud synced · ${total} student${total !== 1 ? 's' : ''}`);
+                    updateCloudStatus('connected', `☁️ Cloud synced · ${total} student${total !== 1 ? 's' : ''} · ${photos.length} picture${photos.length !== 1 ? 's' : ''}`);
                     render();
+                    renderPhotos();
                 } else {
                     updateCloudStatus('error', 'Cloud load failed. Working locally.');
                 }
@@ -1945,6 +2343,7 @@
                         savedLogoDataUrl = data.value;
                         try { localStorage.setItem(LOGO_KEY, data.value); } catch(e) {}
                         applyLogo();
+                        updateAuthLogo();
                     }
                 } catch(e) {}
             }
@@ -1953,6 +2352,79 @@
                 if (!supabase) return false;
                 try {
                     const { error } = await supabase.from('settings').upsert({ key: 'logo', value: dataUrl, updated_at: new Date().toISOString() });
+                    if (error) throw error;
+                    return true;
+                } catch(e) { return false; }
+            }
+
+            // ---------- certificates ----------
+            async function loadCertificatesFromCloud() {
+                if (!supabase) return;
+                try {
+                    const { data, error } = await supabase.from('certificates').select('*');
+                    if (error) throw error;
+                    (data || []).forEach(row => {
+                        const existing = certificates.find(c => c.id === row.id);
+                        if (existing) Object.assign(existing, row);
+                        else certificates.push(row);
+                    });
+                    persistCertificates();
+                } catch(e) { /* table may not exist yet */ }
+            }
+
+            async function upsertCertificateToCloud(rec) {
+                if (!supabase) return;
+                try {
+                    await supabase.from('certificates').upsert({
+                        id: rec.id,
+                        student_id: rec.student_id,
+                        student_name: rec.student_name,
+                        level: rec.level,
+                        school_id: rec.school_id,
+                        class_name: rec.class_name,
+                        issued_at: rec.issued_at
+                    });
+                } catch(e) {}
+            }
+
+            // ---------- photos ----------
+            async function loadPhotosFromCloud() {
+                if (!supabase) return;
+                try {
+                    const { data, error } = await supabase.from('photos').select('*').order('created_at', { ascending: false });
+                    if (error) throw error;
+                    (data || []).forEach(row => {
+                        const existing = photos.find(p => p.id === row.id);
+                        if (existing) Object.assign(existing, row);
+                        else photos.push(row);
+                    });
+                    persistPhotos();
+                } catch(e) { /* table may not exist yet */ }
+            }
+
+            async function addPhotoToCloud(photo) {
+                if (!supabase) return false;
+                try {
+                    const { error } = await supabase.from('photos').upsert({
+                        id: photo.id,
+                        cert_id: photo.cert_id,
+                        student_name: photo.student_name,
+                        level: photo.level,
+                        school_id: photo.school_id,
+                        class_name: photo.class_name,
+                        caption: photo.caption,
+                        data_url: photo.data_url,
+                        created_at: photo.created_at
+                    });
+                    if (error) throw error;
+                    return true;
+                } catch(e) { return false; }
+            }
+
+            async function deletePhotoFromCloud(id) {
+                if (!supabase) return false;
+                try {
+                    const { error } = await supabase.from('photos').delete().eq('id', id);
                     if (error) throw error;
                     return true;
                 } catch(e) { return false; }
@@ -2013,6 +2485,28 @@
                 reader.readAsDataURL(file);
             });
 
+            // ==================== LOCAL CERT / PHOTO STORAGE ====================
+            function loadLocalCertsPhotos() {
+                try {
+                    const c = localStorage.getItem(CERTS_KEY);
+                    certificates = c ? (JSON.parse(c) || []) : [];
+                } catch(e) { certificates = []; }
+                try {
+                    const p = localStorage.getItem(PHOTOS_KEY);
+                    photos = p ? (JSON.parse(p) || []) : [];
+                } catch(e) { photos = []; }
+            }
+
+            function persistCertificates() {
+                try { localStorage.setItem(CERTS_KEY, JSON.stringify(certificates)); }
+                catch(e) { console.warn('Certificate storage full', e); }
+            }
+
+            function persistPhotos() {
+                try { localStorage.setItem(PHOTOS_KEY, JSON.stringify(photos)); return true; }
+                catch(e) { console.warn('Photo storage full', e); return false; }
+            }
+
             // ==================== HELPERS ====================
             function populateSchoolSelector() {
                 const sel = document.getElementById('schoolSelector');
@@ -2027,9 +2521,9 @@
             }
 
             function escapeHtml(text) {
-                if (!text) return '';
+                if (text === null || text === undefined) return '';
                 const div = document.createElement('div');
-                div.textContent = text;
+                div.textContent = String(text);
                 return div.innerHTML;
             }
 
@@ -2094,7 +2588,7 @@
                         item.className = 'breakdown-item';
                         item.innerHTML = `
                             <div class="bd-value">${count}</div>
-                            <div class="bd-label">${school.icon} ${school.name.split(' ').slice(0,2).join(' ')}</div>
+                            <div class="bd-label">${school.icon} ${escapeHtml(school.name.split(' ').slice(0,2).join(' '))}</div>
                         `;
                         item.title = school.name;
                         breakdownDiv.appendChild(item);
@@ -2118,7 +2612,8 @@
                     { value: totalPoints, label: 'Total Points' },
                     { value: totalSchoolsWithStudents, label: 'Active Sections' },
                     { value: SCHOOLS.length, label: 'Total Sections' },
-                    { value: CLASSES.length, label: 'Classes per Section' }
+                    { value: CLASSES.length, label: 'Classes per Section' },
+                    { value: photos.length, label: 'Pictures Posted' }
                 ];
 
                 stats.forEach(stat => {
@@ -2146,7 +2641,7 @@
                     header.innerHTML = `
                         <div class="school-analytics-name">
                             <span>${school.icon}</span>
-                            <span>${school.name}</span>
+                            <span>${escapeHtml(school.name)}</span>
                         </div>
                         <div class="school-analytics-count">${students.length} ${students.length !== 1 ? 'people' : 'person'}</div>
                     `;
@@ -2368,7 +2863,7 @@
 
                     const nameDiv = document.createElement('div');
                     nameDiv.className = 'school-name';
-                    nameDiv.innerHTML = `<i>${school.icon}</i> ${school.name}`;
+                    nameDiv.innerHTML = `<i>${school.icon}</i> ${escapeHtml(school.name)}`;
                     header.appendChild(nameDiv);
 
                     const searchWrap = document.createElement('div');
@@ -2553,6 +3048,11 @@
 
                 restoreFocus(focusSnapshot);
 
+                // Keep the picture form in sync with the current data
+                const levelChip = document.getElementById('photoLevelChip');
+                if (levelChip) levelChip.textContent = selectedLevel;
+                populatePhotoStudentSelect();
+
                 // Re-highlight last added student
                 if (lastAddedStudentId) {
                     requestAnimationFrame(() => {
@@ -2681,7 +3181,7 @@
                 certBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
-                    generateCertificate(student);
+                    generateCertificate(student, schoolId);
                 });
                 card.appendChild(certBtn);
 
@@ -2731,16 +3231,13 @@
                     return;
                 }
 
-                // If already listening on this school → stop
                 if (activeRecognitionSchoolId === schoolId) {
                     stopVoiceRecognition();
                     return;
                 }
 
-                // Stop any existing session first
                 stopVoiceRecognition();
 
-                // Start new session
                 recognition = new SpeechRecognition();
                 recognition.lang = VOICE_LANG;
                 recognition.continuous = true;
@@ -2769,9 +3266,7 @@
                     if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
                         showMicStatus(schoolId, '⚠️ Microphone permission denied. Please allow in browser settings.');
                         setTimeout(() => stopVoiceRecognition(), 3000);
-                    } else if (event.error === 'no-speech') {
-                        // ignore silently
-                    } else if (event.error === 'aborted') {
+                    } else if (event.error === 'no-speech' || event.error === 'aborted') {
                         // ignore
                     } else {
                         showMicStatus(schoolId, `⚠️ Error: ${event.error}`);
@@ -2779,7 +3274,6 @@
                 };
 
                 recognition.onend = () => {
-                    // If still the active school, auto-restart (continuous listening)
                     if (activeRecognitionSchoolId === schoolId && recognition) {
                         try { recognition.start(); } catch(e) {}
                     }
@@ -2793,17 +3287,10 @@
                 }
             }
 
-            // Parse spoken phrase → { name, points }
-            // Examples:
-            //   "John Smith 2 points"     → { name: "John Smith", points: 2 }
-            //   "Jean Pierre deux points" → { name: "Jean Pierre", points: 2 }
-            //   "Marie 4 points"          → { name: "Marie", points: 4 }
-            //   "Paul dix points"         → { name: "Paul", points: 10 }
             function parseVoiceCommand(text) {
                 if (!text) return null;
                 let cleaned = text.toLowerCase().trim();
 
-                // Number word mapping (FR + EN)
                 const numberWords = {
                     'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
                     'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
@@ -2818,8 +3305,7 @@
                 let points = null;
                 let namePart = '';
 
-                // Try pattern: <name> <number> points/pts/point/pt
-                const pointsRegex = /^(.+?)\s+(\d+|zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|un|une|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|onze|douze|treize|quatorze|quinze|seize|vingt)\s+(points?|pts?|point|pt)\s*$/i;
+                const pointsRegex = /^(.+?)\s+(\d+|zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|un|une|deux|trois|quatre|cinq|sept|huit|neuf|dix|onze|douze|treize|quatorze|quinze|seize|vingt)\s+(points?|pts?|point|pt)\s*$/i;
                 const match = cleaned.match(pointsRegex);
 
                 if (match) {
@@ -2828,7 +3314,6 @@
                     if (numberWords[numStr] !== undefined) points = numberWords[numStr];
                     else points = parseInt(numStr, 10);
                 } else {
-                    // Fallback: <name> <number> (no "points" word)
                     const fallbackRegex = /^(.+?)\s+(\d+)\s*$/;
                     const fbMatch = cleaned.match(fallbackRegex);
                     if (fbMatch) {
@@ -2839,7 +3324,6 @@
 
                 if (!namePart || points === null || isNaN(points) || points <= 0) return null;
 
-                // Capitalize name words
                 const finalName = namePart.split(/\s+/).map(w => 
                     w.charAt(0).toUpperCase() + w.slice(1)
                 ).join(' ');
@@ -2861,14 +3345,12 @@
 
                 if (!school) return;
 
-                // Check if student already exists in this school + class (case-insensitive name match)
                 const existing = (store[schoolId] || []).find(s => 
                     s.name.toLowerCase() === parsed.name.toLowerCase() &&
                     s.class === className
                 );
 
                 if (existing) {
-                    // Add points to existing student
                     const newScore = Math.min(100, (existing.score || 0) + parsed.points);
                     const addedPoints = newScore - (existing.score || 0);
                     existing.score = newScore;
@@ -2885,7 +3367,6 @@
                     showMicStatus(schoolId, `✅ ${existing.name} → +${addedPoints} pts (total ${newScore})`, true);
 
                 } else {
-                    // Add new student with the spoken points
                     setSaveStatus('saving', `Adding "${parsed.name}" with ${parsed.points} pts...`);
 
                     let newStudent = null;
@@ -2920,7 +3401,6 @@
                     showMicStatus(schoolId, `✅ Added ${parsed.name} · ${className} · ${parsed.points} pts`, true);
                 }
 
-                // Auto-clear status after 4s
                 setTimeout(() => {
                     if (activeRecognitionSchoolId === schoolId) {
                         showMicStatus(schoolId, '🎤 Listening... say "John Smith 2 points"');
@@ -2957,11 +3437,40 @@
                 setSaveStatus('cloud', `☁️ Deleted ${idsToRemove.size} entr${idsToRemove.size !== 1 ? 'ies' : 'y'}`);
             }
 
+            // ==================== CERTIFICATE REGISTRY ====================
+            function getOrCreateCertificate(student, schoolId, level) {
+                let rec = certificates.find(c =>
+                    String(c.student_id) === String(student.id) && c.level === level
+                );
+                if (rec) {
+                    rec.student_name = student.name;
+                    rec.class_name = student.class;
+                    rec.school_id = schoolId;
+                    persistCertificates();
+                    return rec;
+                }
+                const rand = Math.random().toString(36).substring(2, 8).toUpperCase();
+                rec = {
+                    id: `FPF-${level}-${rand}`,
+                    student_id: String(student.id),
+                    student_name: student.name,
+                    level: level,
+                    school_id: schoolId,
+                    class_name: student.class,
+                    issued_at: new Date().toISOString()
+                };
+                certificates.push(rec);
+                persistCertificates();
+                upsertCertificateToCloud(rec);
+                return rec;
+            }
+
             // ==================== CERTIFICATE ====================
-            function buildCertificateHTML(student) {
-                const today = new Date();
-                const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                const certId = selectedLevel + '-' + student.id.substring(0, 8).toUpperCase() + '-' + Date.now().toString().slice(-4);
+            function buildCertificateHTML(student, certRec) {
+                const issued = (certRec && certRec.issued_at) ? new Date(certRec.issued_at) : new Date();
+                const dateStr = issued.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                const level = (certRec && certRec.level) ? certRec.level : selectedLevel;
+                const certId = (certRec && certRec.id) ? certRec.id : ('FPF-' + level + '-PENDING');
 
                 const logoHTML = savedLogoDataUrl
                     ? `<img src="${savedLogoDataUrl}" alt="LOGO" crossorigin="anonymous" style="max-height: 1in; max-width: 2.2in; object-fit: contain; display:block; margin: 0 auto 0.1in auto;">`
@@ -2986,7 +3495,7 @@
                             </div>
                             <div style="text-align: center; margin: 0.1in 0;">
                                 <p style="font-size: 0.13in; letter-spacing: 0.07in; color: #6b8a6b; margin: 0 0 0.08in 0; text-transform: uppercase;">Certificate of Completion</p>
-                                <h2 style="font-size: 0.42in; font-weight: 400; color: #1a6b3a; margin: 0; letter-spacing: 0.025in;">${selectedLevel} English Level</h2>
+                                <h2 style="font-size: 0.42in; font-weight: 400; color: #1a6b3a; margin: 0; letter-spacing: 0.025in;">${escapeHtml(level)} English Level</h2>
                                 <div style="width: 1.5in; height: 0.015in; background: #c8961e; margin: 0.1in auto;"></div>
                             </div>
                             <div style="text-align: center; margin: 0.08in 0;">
@@ -2994,13 +3503,14 @@
                                 <p style="font-size: 0.44in; font-weight: 600; color: #0f4b28; margin: 0.12in 0 0.08in 0; font-family: 'Georgia', serif; border-bottom: 0.025in solid #c8961e; display: inline-block; padding: 0 0.7in 0.08in 0.7in;">${escapeHtml(student.name)}</p>
                             </div>
                             <div style="text-align: center; max-width: 8in; margin: 0.06in auto;">
-                                <p style="font-size: 0.14in; color: #3a5a3a; line-height: 1.7; margin: 0;">For successfully completing the ${selectedLevel} English level requirements, demonstrating dedication, diligence, and a commendable commitment to learning.</p>
+                                <p style="font-size: 0.14in; color: #3a5a3a; line-height: 1.7; margin: 0;">For successfully completing the ${escapeHtml(level)} English level requirements, demonstrating dedication, diligence, and a commendable commitment to learning.</p>
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 0.1in; padding-top: 0.15in; border-top: 0.012in solid #d9e8d9;">
                                 <div style="text-align: left;">
                                     <p style="font-size: 0.1in; color: #6b8a6b; margin: 0 0 0.04in 0;">DATE</p>
                                     <p style="font-size: 0.14in; color: #1e2e1e; margin: 0; font-weight: 600;">${dateStr}</p>
-                                    <p style="font-size: 0.09in; color: #8aaa8a; margin: 0.08in 0 0 0;">ID: ${certId}</p>
+                                    <p style="font-size: 0.09in; color: #8aaa8a; margin: 0.08in 0 0 0;">ID: ${escapeHtml(certId)}</p>
+                                    <p style="font-size: 0.075in; color: #a8bca8; margin: 0.02in 0 0 0; font-style: italic;">Verify this ID at the Feed People Foundation portal</p>
                                 </div>
                                 <div style="text-align: center; min-width: 3.2in;">
                                     <div style="width: 3in; height: 0.5in; border-bottom: 0.02in solid #1a6b3a; margin: 0 auto 0.08in auto;"></div>
@@ -3021,13 +3531,14 @@
                 `;
             }
 
-            function generateCertificate(student) {
-                const certHTML = buildCertificateHTML(student);
+            function generateCertificate(student, schoolId) {
+                const rec = getOrCreateCertificate(student, schoolId, selectedLevel);
+                const certHTML = buildCertificateHTML(student, rec);
                 const printWindow = window.open('', '_blank', 'width=1200,height=900');
                 if (printWindow) {
                     printWindow.document.write(`
                         <!DOCTYPE html><html><head>
-                            <title>${selectedLevel} Certificate - ${escapeHtml(student.name)}</title>
+                            <title>${escapeHtml(rec.level)} Certificate - ${escapeHtml(student.name)}</title>
                             <style>
                                 @page { size: 11in 8.5in landscape; margin: 0; }
                                 html, body { margin: 0; padding: 0; width: 11in; height: 8.5in; background: white; overflow: hidden; }
@@ -3069,9 +3580,11 @@
                         const student = sortedStudents[i];
                         if (btnEl) btnEl.innerHTML = `⏳ ${i + 1}/${sortedStudents.length}...`;
 
+                        const rec = getOrCreateCertificate(student, school.id, selectedLevel);
+
                         const wrapper = document.createElement('div');
                         wrapper.style.cssText = 'width:11in;height:8.5in;background:#fdfefd;position:relative;overflow:hidden;';
-                        wrapper.innerHTML = buildCertificateHTML(student);
+                        wrapper.innerHTML = buildCertificateHTML(student, rec);
                         container.appendChild(wrapper);
 
                         await new Promise(resolve => setTimeout(resolve, 80));
@@ -3099,6 +3612,316 @@
                 } finally {
                     document.body.removeChild(container);
                     if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = originalText; }
+                }
+            }
+
+            // ==================== PICTURES ====================
+            function populatePhotoSelects() {
+                const schoolSel = document.getElementById('photoSchool');
+                const classSel = document.getElementById('photoClass');
+                if (!schoolSel || !classSel) return;
+                schoolSel.innerHTML = SCHOOLS.map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+                classSel.innerHTML = CLASSES.map(c => `<option value="${c}">${c}</option>`).join('');
+                populatePhotoStudentSelect();
+            }
+
+            function populatePhotoStudentSelect() {
+                const schoolSel = document.getElementById('photoSchool');
+                const classSel = document.getElementById('photoClass');
+                const sel = document.getElementById('photoStudent');
+                if (!schoolSel || !classSel || !sel) return;
+                const schoolId = schoolSel.value;
+                const className = classSel.value;
+                const prev = sel.value;
+                const students = sortStudentsAlphabetically((store[schoolId] || []).filter(s => s.class === className));
+                if (students.length === 0) {
+                    sel.innerHTML = `<option value="">— no students —</option>`;
+                    return;
+                }
+                sel.innerHTML = students.map(s =>
+                    `<option value="${escapeHtml(String(s.id))}">${escapeHtml(s.name)}</option>`
+                ).join('');
+                if (prev && students.some(s => String(s.id) === String(prev))) sel.value = prev;
+            }
+
+            function resizeImage(file, maxDim, quality) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            let { width, height } = img;
+                            const scale = Math.min(1, maxDim / Math.max(width, height));
+                            width = Math.round(width * scale);
+                            height = Math.round(height * scale);
+                            const canvas = document.createElement('canvas');
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            resolve(canvas.toDataURL('image/jpeg', quality));
+                        };
+                        img.onerror = reject;
+                        img.src = e.target.result;
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            async function uploadPhoto() {
+                if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
+
+                const schoolId = document.getElementById('photoSchool').value;
+                const className = document.getElementById('photoClass').value;
+                const studentId = document.getElementById('photoStudent').value;
+                const caption = document.getElementById('photoCaption').value.trim();
+                const fileInput = document.getElementById('photoFileInput');
+                const file = fileInput.files[0];
+
+                if (!file) { alert('Choose a picture first.'); return; }
+
+                const student = (store[schoolId] || []).find(s => String(s.id) === String(studentId));
+                if (!student) { alert('Please select a student.'); return; }
+
+                setSaveStatus('saving', 'Preparing picture...');
+
+                let dataUrl;
+                try {
+                    dataUrl = await resizeImage(file, 900, 0.72);
+                } catch(e) {
+                    alert('Could not read that picture.');
+                    setSaveStatus('error', 'Picture failed');
+                    return;
+                }
+
+                const rec = getOrCreateCertificate(student, schoolId, selectedLevel);
+
+                const photo = {
+                    id: 'ph_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8),
+                    cert_id: rec.id,
+                    student_name: student.name,
+                    level: selectedLevel,
+                    school_id: schoolId,
+                    class_name: className,
+                    caption: caption,
+                    data_url: dataUrl,
+                    created_at: new Date().toISOString()
+                };
+
+                photos.unshift(photo);
+                const storedLocally = persistPhotos();
+                const cloudOk = await addPhotoToCloud(photo);
+
+                fileInput.value = '';
+                document.getElementById('photoCaption').value = '';
+
+                renderPhotos();
+                renderAnalytics();
+
+                if (cloudOk) {
+                    setSaveStatus('cloud', '☁️ Picture saved & synced');
+                } else if (storedLocally) {
+                    setSaveStatus('cloud', 'Picture saved locally');
+                    if (!supabase) alert('Picture saved on this device only.\n\nConfigure cloud sync (⚙️) so students can verify it from any device.');
+                } else {
+                    setSaveStatus('error', 'Storage full — picture not saved');
+                    alert('Local storage is full and no cloud is configured. Please set up cloud sync (⚙️) to store pictures.');
+                }
+            }
+
+            function renderPhotos() {
+                const gallery = document.getElementById('photoGallery');
+                if (!gallery) return;
+
+                if (photos.length === 0) {
+                    gallery.innerHTML = `<div class="empty-message" style="grid-column:1/-1;">📭 No pictures posted yet.</div>`;
+                    return;
+                }
+
+                gallery.innerHTML = '';
+                photos.forEach(photo => {
+                    const card = document.createElement('div');
+                    card.className = 'photo-card';
+
+                    const img = document.createElement('img');
+                    img.src = photo.data_url;
+                    img.alt = photo.student_name || 'picture';
+                    img.loading = 'lazy';
+                    img.addEventListener('click', () => openPhotoViewer(photo));
+
+                    const meta = document.createElement('div');
+                    meta.className = 'photo-meta';
+                    meta.innerHTML = `
+                        <div class="photo-name">${escapeHtml(photo.student_name || '')}</div>
+                        <div class="photo-cert">🔖 ${escapeHtml(photo.cert_id || '')}</div>
+                        ${photo.caption ? `<div class="photo-caption">${escapeHtml(photo.caption)}</div>` : ''}
+                    `;
+
+                    const del = document.createElement('button');
+                    del.className = 'photo-delete';
+                    del.innerHTML = '✕';
+                    del.title = 'Delete picture';
+                    del.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
+                        if (!confirm('Delete this picture?')) return;
+                        photos = photos.filter(p => p.id !== photo.id);
+                        persistPhotos();
+                        await deletePhotoFromCloud(photo.id);
+                        renderPhotos();
+                        renderAnalytics();
+                        setSaveStatus('cloud', '☁️ Picture deleted');
+                    });
+
+                    card.appendChild(img);
+                    card.appendChild(meta);
+                    card.appendChild(del);
+                    gallery.appendChild(card);
+                });
+            }
+
+            function openPhotoViewer(photo) {
+                const existing = document.querySelector('.photo-viewer');
+                if (existing) existing.remove();
+
+                const overlay = document.createElement('div');
+                overlay.className = 'photo-viewer';
+                overlay.style.cssText = 'position:fixed;inset:0;background:rgba(8,30,18,0.93);z-index:30001;display:flex;align-items:center;justify-content:center;padding:2rem;flex-direction:column;gap:12px;cursor:zoom-out;';
+
+                const img = document.createElement('img');
+                img.src = photo.data_url;
+                img.style.cssText = 'max-width:90vw;max-height:78vh;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);display:block;';
+
+                const info = document.createElement('div');
+                info.style.cssText = 'color:#fff;text-align:center;font-size:0.9rem;';
+                info.innerHTML = `
+                    <div style="font-weight:700;">${escapeHtml(photo.student_name || '')}</div>
+                    <div style="font-family:monospace;color:#f0c040;font-size:0.8rem;margin-top:2px;">${escapeHtml(photo.cert_id || '')}</div>
+                    ${photo.caption ? `<div style="font-style:italic;color:#c8e6c8;font-size:0.8rem;margin-top:4px;">${escapeHtml(photo.caption)}</div>` : ''}
+                `;
+
+                overlay.appendChild(img);
+                overlay.appendChild(info);
+                overlay.addEventListener('click', () => overlay.remove());
+                document.body.appendChild(overlay);
+            }
+
+            // ==================== VERIFICATION ====================
+            function openVerifyModal() {
+                const existing = document.getElementById('verifyModal');
+                if (existing) existing.remove();
+
+                const modal = document.createElement('div');
+                modal.className = 'verify-modal';
+                modal.id = 'verifyModal';
+                modal.innerHTML = `
+                    <div class="verify-card">
+                        <h3><span>🔎</span><span>Verify a Certificate</span></h3>
+                        <p class="verify-hint">Enter the ID printed at the bottom of the certificate<br>(example: <strong>FPF-A1-AB12CD</strong>).</p>
+
+                        <div class="verify-input-row">
+                            <input type="text" id="verifyInput" placeholder="FPF-A1-XXXXXX" autocomplete="off" spellcheck="false">
+                            <button class="btn" id="verifyBtn">Verify</button>
+                        </div>
+
+                        <div id="verifyResult" class="verify-result"></div>
+
+                        <button class="btn" id="verifyCloseBtn" style="margin-top:1rem;width:100%;background:#f8f4e8;color:#a67c10;border:1px solid #e8d9a8;box-shadow:none;">Close</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                const input = document.getElementById('verifyInput');
+                const resultEl = document.getElementById('verifyResult');
+
+                document.getElementById('verifyCloseBtn').addEventListener('click', () => modal.remove());
+                modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+
+                document.getElementById('verifyBtn').addEventListener('click', () => handleVerify(input.value, resultEl));
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') { e.preventDefault(); handleVerify(input.value, resultEl); }
+                    else if (e.key === 'Escape') { modal.remove(); }
+                });
+
+                setTimeout(() => input.focus(), 100);
+            }
+
+            async function handleVerify(rawValue, resultEl) {
+                const raw = (rawValue || '').trim();
+                if (!raw) {
+                    resultEl.innerHTML = `<div class="verify-error">Please enter a certificate ID.</div>`;
+                    return;
+                }
+
+                const norm = raw.toUpperCase().replace(/\s+/g, '');
+                resultEl.innerHTML = `<div class="verify-loading">⏳ Checking the registry...</div>`;
+
+                let rec = certificates.find(c => String(c.id).toUpperCase() === norm);
+
+                if (!rec && supabase) {
+                    try {
+                        const { data, error } = await supabase
+                            .from('certificates')
+                            .select('*')
+                            .eq('id', norm)
+                            .maybeSingle();
+                        if (!error && data) {
+                            rec = data;
+                            if (!certificates.find(c => c.id === data.id)) {
+                                certificates.push(data);
+                                persistCertificates();
+                            }
+                        }
+                    } catch(e) {}
+                }
+
+                if (!rec) {
+                    resultEl.innerHTML = `
+                        <div class="verify-error">
+                            ❌ No certificate found with ID <strong>${escapeHtml(raw.toUpperCase())}</strong>.<br>
+                            Please check the ID printed on the certificate and try again.
+                        </div>`;
+                    return;
+                }
+
+                let certPhotos = photos.filter(p => String(p.cert_id).toUpperCase() === String(rec.id).toUpperCase());
+
+                if (certPhotos.length === 0 && supabase) {
+                    try {
+                        const { data } = await supabase.from('photos').select('*').eq('cert_id', rec.id);
+                        if (data && data.length) certPhotos = data;
+                    } catch(e) {}
+                }
+
+                const issued = new Date(rec.issued_at || Date.now());
+                const dateStr = issued.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                const school = SCHOOLS.find(s => s.id === rec.school_id);
+
+                resultEl.innerHTML = `
+                    <div class="verify-valid">✅ This certificate is genuine</div>
+                    <div class="verify-details">
+                        <div class="verify-row"><span>Name</span><strong>${escapeHtml(rec.student_name)}</strong></div>
+                        <div class="verify-row"><span>Level</span><strong>${escapeHtml(rec.level)}</strong></div>
+                        <div class="verify-row"><span>School</span><strong>${escapeHtml(school ? school.name : (rec.school_id || ''))}</strong></div>
+                        <div class="verify-row"><span>Class</span><strong>${escapeHtml(rec.class_name || '')}</strong></div>
+                        <div class="verify-row"><span>Issued</span><strong>${escapeHtml(dateStr)}</strong></div>
+                        <div class="verify-row"><span>ID</span><strong>${escapeHtml(rec.id)}</strong></div>
+                    </div>
+                    ${certPhotos.length ? `
+                        <div class="verify-photos" id="verifyPhotos"></div>
+                    ` : ''}
+                `;
+
+                if (certPhotos.length) {
+                    const wrap = document.getElementById('verifyPhotos');
+                    certPhotos.forEach(p => {
+                        const im = document.createElement('img');
+                        im.src = p.data_url;
+                        im.alt = rec.student_name || 'picture';
+                        im.addEventListener('click', () => openPhotoViewer(p));
+                        wrap.appendChild(im);
+                    });
                 }
             }
 
@@ -3187,13 +4010,23 @@
                 showSetupModal();
             });
 
+            document.getElementById('verifyOpenBtn').addEventListener('click', openVerifyModal);
+
+            // Picture form events
+            document.getElementById('photoSchool').addEventListener('change', populatePhotoStudentSelect);
+            document.getElementById('photoClass').addEventListener('change', populatePhotoStudentSelect);
+            document.getElementById('photoUploadBtn').addEventListener('click', uploadPhoto);
+
             // ==================== INIT ====================
             async function init() {
                 setupAuthUI();
                 applyLockState();
                 populateSchoolSelector();
                 loadSavedLogo();
+                loadLocalCertsPhotos();
+                populatePhotoSelects();
                 render();
+                renderPhotos();
 
                 if (!isUnlocked()) {
                     setTimeout(() => document.getElementById('adminPwd')?.focus(), 300);

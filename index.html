@@ -1819,6 +1819,7 @@
             <span class="cloud-icon" id="cloudIcon">☁️</span>
             <span class="cloud-text" id="cloudText">Connecting to cloud...</span>
             <button class="cloud-btn" id="cloudConfigBtn">⚙️ Configure</button>
+            <button class="cloud-btn" id="cloudShareBtn" style="display:none;">🔗 Copy phone link</button>
         </div>
 
         <div class="analytics-section" id="analyticsSection">
@@ -2082,12 +2083,52 @@
                 }
             }
 
+            // ==================== STORAGE AVAILABILITY ====================
+            // iOS Safari in Private Browsing (and some lockdown modes) throws on
+            // localStorage.setItem. Detect that up front so the app can explain
+            // the problem instead of silently behaving like "never configured".
+            let storageOk = true;
+
+            function checkStorageAvailable() {
+                try {
+                    const probe = '__fpf_probe__';
+                    localStorage.setItem(probe, '1');
+                    localStorage.removeItem(probe);
+                    return true;
+                } catch(e) {
+                    return false;
+                }
+            }
+
             // ==================== SUPABASE ====================
+            function buildConfigLink(url, key) {
+                // Config travels in the URL so a phone can be set up with one tap.
+                // Works even when localStorage is blocked.
+                try {
+                    const base = location.origin + location.pathname;
+                    return base +
+                        '?supa_url=' + encodeURIComponent(url) +
+                        '&supa_key=' + encodeURIComponent(key);
+                } catch(e) { return ''; }
+            }
+
             function getSupabaseConfig() {
+                // A) ?supa_url=...&supa_key=... → auto-save and use immediately
+                try {
+                    const p = new URLSearchParams(location.search);
+                    const u = p.get('supa_url');
+                    const k = p.get('supa_key');
+                    if (u && k) {
+                        const ok = saveSupabaseConfig(u, k);
+                        return { url: u, key: k, fromUrl: true, persisted: ok };
+                    }
+                } catch(e) {}
+
+                // B) normal localStorage path
                 try {
                     const url = localStorage.getItem(SUPABASE_URL_KEY);
                     const key = localStorage.getItem(SUPABASE_KEY_KEY);
-                    if (url && key) return { url, key };
+                    if (url && key) return { url, key, fromUrl: false, persisted: true };
                 } catch(e) {}
                 return null;
             }
@@ -2096,22 +2137,43 @@
                 try {
                     localStorage.setItem(SUPABASE_URL_KEY, url);
                     localStorage.setItem(SUPABASE_KEY_KEY, key);
-                } catch(e) {}
+                    return true;
+                } catch(e) {
+                    return false;   // blocked storage — config still works this session
+                }
             }
 
             function initSupabase() {
                 const config = getSupabaseConfig();
                 if (!config) {
-                    updateCloudStatus('setup', 'Not configured. Click ⚙️ to set up cloud sync.');
+                    if (!storageOk) {
+                        updateCloudStatus('error',
+                            'This browser is blocking local storage (Private Browsing?). Cloud config cannot be saved. Open in a normal tab.');
+                    } else {
+                        updateCloudStatus('setup', 'Not configured. Click ⚙️ to set up cloud sync.');
+                    }
+                    updateShareButton();
                     return false;
                 }
                 try {
                     supabase = window.supabase.createClient(config.url, config.key);
+                    updateShareButton();
+                    if (config.fromUrl && !config.persisted) {
+                        updateCloudStatus('local',
+                            'Connected from link, but this browser blocked storage — you will need the link again after closing.');
+                    }
                     return true;
                 } catch(e) {
                     updateCloudStatus('error', 'Cloud config error: ' + e.message);
                     return false;
                 }
+            }
+
+            function updateShareButton() {
+                const btn = document.getElementById('cloudShareBtn');
+                if (!btn) return;
+                const cfg = getSupabaseConfig();
+                btn.style.display = cfg ? 'inline-block' : 'none';
             }
 
             function updateCloudStatus(state, text) {
@@ -2179,11 +2241,13 @@ create table if not exists photos (
                         <h2 style="font-size:1.3rem;color:#0f4b28;margin-bottom:0.5rem;display:flex;align-items:center;justify-content:center;gap:10px;">☁️ Cloud Sync Setup</h2>
                         <p style="font-size:0.85rem;color:#4a6b4a;margin-bottom:1rem;line-height:1.5;text-align:center;">Enter your Supabase project credentials. Your data will be saved permanently to the cloud.</p>
 
+                        ${!storageOk ? `<div style="background:#fdecea;color:#c0392b;padding:10px 14px;border-radius:12px;font-size:0.8rem;margin-bottom:0.8rem;border:1px solid #f5b7b1;font-weight:600;line-height:1.5;">⚠️ This browser is blocking local storage (Private Browsing?). The config will work for this session only — use <strong>🔗 Copy phone link</strong> to keep access.</div>` : ''}
+
                         <label style="display:block;font-size:0.82rem;font-weight:700;color:#0f4b28;margin-bottom:0.4rem;margin-top:0.8rem;text-transform:uppercase;">Project URL</label>
-                        <input type="text" id="supaUrl" placeholder="https://xxxxxxxxxxxx.supabase.co" value="${escapeHtml(config.url)}" style="width:100%;padding:12px 14px;border:1px solid #c8dcc8;border-radius:14px;font-size:0.9rem;background:#f8fbf8;color:#1e2e1e;outline:none;font-family:monospace;">
+                        <input type="text" id="supaUrl" placeholder="https://xxxxxxxxxxxx.supabase.co" value="${escapeHtml(config.url || '')}" style="width:100%;padding:12px 14px;border:1px solid #c8dcc8;border-radius:14px;font-size:0.9rem;background:#f8fbf8;color:#1e2e1e;outline:none;font-family:monospace;">
 
                         <label style="display:block;font-size:0.82rem;font-weight:700;color:#0f4b28;margin-bottom:0.4rem;margin-top:0.8rem;text-transform:uppercase;">Anon Public Key</label>
-                        <input type="password" id="supaKey" placeholder="eyJhbGci..." value="${escapeHtml(config.key)}" style="width:100%;padding:12px 14px;border:1px solid #c8dcc8;border-radius:14px;font-size:0.9rem;background:#f8fbf8;color:#1e2e1e;outline:none;font-family:monospace;">
+                        <input type="password" id="supaKey" placeholder="eyJhbGci..." value="${escapeHtml(config.key || '')}" style="width:100%;padding:12px 14px;border:1px solid #c8dcc8;border-radius:14px;font-size:0.9rem;background:#f8fbf8;color:#1e2e1e;outline:none;font-family:monospace;">
 
                         <details style="margin-top:1rem;">
                             <summary style="cursor:pointer;font-size:0.8rem;font-weight:700;color:#1a6b3a;">📋 Required tables (click to show SQL)</summary>
@@ -2194,29 +2258,52 @@ create table if not exists photos (
                         ${errorMsg ? `<div style="background:#fdecea;color:#c0392b;padding:10px 14px;border-radius:12px;font-size:0.82rem;margin-top:1rem;border:1px solid #f5b7b1;font-weight:600;">⚠️ ${escapeHtml(errorMsg)}</div>` : ''}
                         <div id="setupMsg"></div>
 
-                        <div style="display:flex;gap:10px;margin-top:1.5rem;">
-                            <button class="btn" id="setupSaveBtn" style="flex:1;padding:12px 20px;">💾 Save & Connect</button>
-                            <button class="btn" id="setupCancelBtn" style="flex:1;padding:12px 20px;background:#f8f4e8;color:#a67c10;border:1px solid #e8d9a8;box-shadow:none;">Cancel</button>
+                        <div style="display:flex;gap:10px;margin-top:1.5rem;flex-wrap:wrap;">
+                            <button class="btn" id="setupSaveBtn" style="flex:1;min-width:140px;padding:12px 20px;">💾 Save &amp; Connect</button>
+                            <button class="btn" id="setupCancelBtn" style="flex:1;min-width:110px;padding:12px 20px;background:#f8f4e8;color:#a67c10;border:1px solid #e8d9a8;box-shadow:none;">Cancel</button>
                         </div>
+
+                        <button class="btn" id="setupShareBtn" style="width:100%;margin-top:10px;padding:12px 20px;background:#ffffff;color:#1a6b3a;border:1.5px solid #c8dcc8;box-shadow:none;">🔗 Copy phone link</button>
+                        <p style="font-size:0.72rem;color:#7a9a7a;margin-top:0.5rem;font-style:italic;line-height:1.5;text-align:center;">Open that link on the iPhone once — it configures the cloud automatically, even in Private Browsing.</p>
                     </div>
                 `;
                 document.body.appendChild(modal);
 
                 document.getElementById('setupCancelBtn').addEventListener('click', () => modal.remove());
 
-                document.getElementById('setupSaveBtn').addEventListener('click', async () => {
-                    const url = document.getElementById('supaUrl').value.trim();
-                    const key = document.getElementById('supaKey').value.trim();
-                    const msg = document.getElementById('setupMsg');
+                function readInputs() {
+                    return {
+                        url: document.getElementById('supaUrl').value.trim(),
+                        key: document.getElementById('supaKey').value.trim(),
+                        msg: document.getElementById('setupMsg')
+                    };
+                }
 
+                function validate(url, key, msg) {
                     if (!url || !key) {
                         msg.innerHTML = `<div style="background:#fdecea;color:#c0392b;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">Both URL and key are required.</div>`;
-                        return;
+                        return false;
                     }
                     if (!url.startsWith('http')) {
                         msg.innerHTML = `<div style="background:#fdecea;color:#c0392b;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">URL must start with https://</div>`;
-                        return;
+                        return false;
                     }
+                    return true;
+                }
+
+                document.getElementById('setupShareBtn').addEventListener('click', async () => {
+                    const { url, key, msg } = readInputs();
+                    if (!validate(url, key, msg)) return;
+                    const link = buildConfigLink(url, key);
+                    const ok = await copyToClipboard(link);
+                    msg.innerHTML = ok
+                        ? `<div style="background:#e8f5e8;color:#1a6b3a;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;word-break:break-all;">✅ Link copied. Open it on the phone:<br><span style="font-family:monospace;font-size:0.7rem;">${escapeHtml(link.substring(0, 70))}…</span></div>`
+                        : `<div style="background:#fef3e0;color:#a67c10;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;word-break:break-all;">📋 Copy this link manually:<br><span style="font-family:monospace;font-size:0.7rem;">${escapeHtml(link)}</span></div>`;
+                });
+
+                document.getElementById('setupSaveBtn').addEventListener('click', async () => {
+                    const { url, key, msg } = readInputs();
+                    if (!validate(url, key, msg)) return;
 
                     msg.innerHTML = `<div style="background:#e8f5e8;color:#1a6b3a;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">⏳ Testing connection...</div>`;
 
@@ -2224,14 +2311,45 @@ create table if not exists photos (
                         const testClient = window.supabase.createClient(url, key);
                         const { error } = await testClient.from('students').select('id').limit(1);
                         if (error && error.code !== 'PGRST116') throw new Error(error.message);
-                        saveSupabaseConfig(url, key);
-                        msg.innerHTML = `<div style="background:#e8f5e8;color:#1a6b3a;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">✅ Connected! Syncing data...</div>`;
+
+                        const persisted = saveSupabaseConfig(url, key);
                         supabase = testClient;
-                        setTimeout(async () => { modal.remove(); await syncFromCloud(); }, 800);
+
+                        if (persisted) {
+                            msg.innerHTML = `<div style="background:#e8f5e8;color:#1a6b3a;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">✅ Connected! Syncing data...</div>`;
+                        } else {
+                            msg.innerHTML = `<div style="background:#fef3e0;color:#a67c10;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;line-height:1.5;">⚠️ Connected, but this browser blocked saving the config.<br>Use <strong>🔗 Copy phone link</strong> before closing, or exit Private Browsing.</div>`;
+                        }
+
+                        updateShareButton();
+                        setTimeout(async () => {
+                            modal.remove();
+                            await syncFromCloud();
+                            await loadLogoSettings();
+                        }, 900);
                     } catch(e) {
                         msg.innerHTML = `<div style="background:#fdecea;color:#c0392b;padding:10px;border-radius:10px;font-size:0.82rem;margin-top:1rem;">❌ Connection failed: ${escapeHtml(e.message)}</div>`;
                     }
                 });
+            }
+
+            async function copyToClipboard(text) {
+                try {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(text);
+                        return true;
+                    }
+                } catch(e) {}
+                try {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    const ok = document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    return ok;
+                } catch(e) { return false; }
             }
 
             // ==================== CLOUD OPERATIONS ====================
@@ -4010,6 +4128,17 @@ create table if not exists photos (
                 showSetupModal();
             });
 
+            document.getElementById('cloudShareBtn').addEventListener('click', async () => {
+                if (!isUnlocked()) { alert('🔒 Admin locked. Please unlock first.'); return; }
+                const cfg = getSupabaseConfig();
+                if (!cfg) { alert('Configure the cloud first (⚙️).'); return; }
+                const link = buildConfigLink(cfg.url, cfg.key);
+                const ok = await copyToClipboard(link);
+                alert(ok
+                    ? '🔗 Link copied!\n\nSend it to the iPhone (WhatsApp, email, Notes…) and open it once in Safari. The cloud configures itself automatically.'
+                    : '📋 Copy this link manually and open it on the iPhone:\n\n' + link);
+            });
+
             document.getElementById('verifyOpenBtn').addEventListener('click', openVerifyModal);
 
             // Picture form events
@@ -4019,6 +4148,8 @@ create table if not exists photos (
 
             // ==================== INIT ====================
             async function init() {
+                storageOk = checkStorageAvailable();
+
                 setupAuthUI();
                 applyLockState();
                 populateSchoolSelector();
@@ -4032,11 +4163,15 @@ create table if not exists photos (
                     setTimeout(() => document.getElementById('adminPwd')?.focus(), 300);
                 }
 
+                if (!storageOk) {
+                    setSaveStatus('error', 'Storage blocked (Private Browsing?)');
+                }
+
                 if (initSupabase()) {
                     updateCloudStatus('connected', 'Connecting to cloud...');
                     await syncFromCloud();
                     await loadLogoSettings();
-                } else {
+                } else if (storageOk) {
                     updateCloudStatus('setup', 'Cloud not configured. Click ⚙️ to set up.');
                 }
             }

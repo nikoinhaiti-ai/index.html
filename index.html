@@ -508,6 +508,8 @@
         body.locked .paste-area textarea,
         body.locked .class-row select,
         body.locked .point-box,
+        body.locked .points-input,
+        body.locked .points-add-btn,
         body.locked .remove-student,
         body.locked .cert-btn,
         body.locked .class-download-all-btn,
@@ -1350,6 +1352,68 @@
             letter-spacing: 0.5px;
         }
 
+        /* ===== TYPE-IN POINTS ===== */
+        .points-input-row {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+            align-items: stretch;
+        }
+
+        .points-input {
+            flex: 1;
+            min-width: 0;
+            width: 100%;
+            padding: 5px 6px;
+            border: 1px solid #c8dcc8;
+            border-radius: 10px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            background: #ffffff;
+            color: #1e2e1e;
+            outline: none;
+            text-align: center;
+            font-family: inherit;
+            -moz-appearance: textfield;
+        }
+
+        .points-input::-webkit-outer-spin-button,
+        .points-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .points-input::placeholder {
+            color: #9ab09a;
+            font-weight: 500;
+            font-size: 0.64rem;
+        }
+
+        .points-input:focus {
+            border-color: #1a6b3a;
+            box-shadow: 0 0 0 3px rgba(26, 107, 58, 0.12);
+        }
+
+        .points-add-btn {
+            background: linear-gradient(135deg, #1a6b3a, #0f4b28);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 5px 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s;
+            line-height: 1.2;
+            flex-shrink: 0;
+        }
+
+        .points-add-btn:hover { background: #0a3a1e; transform: scale(0.96); }
+        .points-add-btn:active { transform: scale(0.92); }
+
+        .points-add-btn.minus { background: linear-gradient(135deg, #c0392b, #922b21); }
+        .points-add-btn.minus:hover { background: #7b241c; }
+
         .cert-btn {
             background: #f8f4e8;
             border: 1px solid #e8d9a8;
@@ -2032,6 +2096,7 @@
             🔒 <strong>Admin locked.</strong> Unlock to edit.<br>
             🎤 <strong>Voice:</strong> Click mic → say <em>"John Smith 2 points"</em> → auto-adds John with 2 pts.<br>
             ⚡ Or paste names (one per line) — add class — click boxes to give +2 points.<br>
+            ⌨️ <strong>Quick type:</strong> Type 2, 4, 6… in the box under a student's points → ➕ / ➖ to apply.<br>
             ✏️ Double-click a name to edit · 📥 Download All per Class · 🗑️ Delete All per Class · 🖨️ Print certificates.<br>
             📸 <strong>Pictures:</strong> Post a photo for a student — it is attached to the certificate ID.<br>
             🔎 <strong>Verification:</strong> Students enter the ID printed on their certificate to confirm it is genuine.<br>
@@ -2987,6 +3052,46 @@ create table if not exists photos (
                     totalDiv.textContent = `★ Total: ${student.score || 0} pts`;
                 }
 
+                // ===== TYPE-IN POINTS ROW (fullscreen) =====
+                const typedRowFs = document.createElement('div');
+                typedRowFs.style.cssText = 'display:flex;gap:10px;justify-content:center;align-items:center;margin-bottom:18px;flex-wrap:wrap;';
+                typedRowFs.innerHTML = `
+                    <input type="number" id="fsPointsInput" min="1" max="100" step="1"
+                        placeholder="Type points  e.g. 2, 4, 6"
+                        style="padding:10px 16px;border:1.5px solid #c8dcc8;border-radius:14px;font-size:1rem;font-weight:700;text-align:center;width:240px;background:#f8fbf8;color:#1e2e1e;outline:none;font-family:inherit;">
+                    <button id="fsAddPointsBtn" style="padding:10px 22px;border:none;border-radius:40px;background:linear-gradient(135deg,#1a6b3a,#0f4b28);color:#fff;font-weight:700;font-size:0.95rem;cursor:pointer;">➕ Add points</button>
+                    <button id="fsSubPointsBtn" style="padding:10px 22px;border:none;border-radius:40px;background:linear-gradient(135deg,#c0392b,#922b21);color:#fff;font-weight:700;font-size:0.95rem;cursor:pointer;">➖ Remove points</button>
+                `;
+
+                const fsInput = typedRowFs.querySelector('#fsPointsInput');
+                const fsApply = async (sign) => {
+                    if (!isUnlocked()) { alert('🔒 Admin locked.'); return; }
+                    const n = parseInt(fsInput.value, 10);
+                    if (!fsInput.value.trim() || isNaN(n) || n <= 0) { fsInput.value = ''; fsInput.focus(); return; }
+                    let ns = (student.score || 0) + sign * n;
+                    ns = Math.max(0, Math.min(100, ns));
+                    fsInput.value = '';
+                    if (ns === (student.score || 0)) return;
+                    student.score = ns;
+                    renderFullGrid();
+                    render();
+                    if (supabase) {
+                        setSaveStatus('saving', 'Saving...');
+                        const ok = await updateStudentScoreInCloud(student.id, student.score);
+                        setSaveStatus(ok ? 'cloud' : 'error', ok ? '☁️ Saved' : 'Save failed');
+                    } else {
+                        setSaveStatus('cloud', `★ ${student.score} pts (local)`);
+                    }
+                };
+                typedRowFs.querySelector('#fsAddPointsBtn').addEventListener('click', (e) => { e.stopPropagation(); fsApply(1); });
+                typedRowFs.querySelector('#fsSubPointsBtn').addEventListener('click', (e) => { e.stopPropagation(); fsApply(-1); });
+                fsInput.addEventListener('keydown', (e) => {
+                    e.stopPropagation();
+                    if (e.key === 'Enter') { e.preventDefault(); fsApply(1); }
+                });
+                fsInput.addEventListener('click', (e) => e.stopPropagation());
+
+                gridWrap.appendChild(typedRowFs);
                 gridWrap.appendChild(grid);
                 gridWrap.appendChild(totalDiv);
                 overlay.appendChild(gridWrap);
@@ -3041,6 +3146,29 @@ create table if not exists photos (
                     if (e.key === 'Enter') { e.preventDefault(); document.getElementById('editSaveBtn').click(); }
                     else if (e.key === 'Escape') { closeModal(); }
                 });
+            }
+
+            // ==================== TYPE-IN POINTS ====================
+            async function applyTypedPoints(student, schoolId, amount) {
+                if (!isUnlocked()) { alert('🔒 Admin locked. Please unlock to edit points.'); return; }
+                if (amount === null || amount === undefined || isNaN(amount)) return;
+
+                let newScore = (student.score || 0) + amount;
+                if (newScore < 0) newScore = 0;
+                if (newScore > 100) newScore = 100;
+                if (newScore === (student.score || 0)) return;
+
+                student.score = newScore;
+                render();
+
+                if (supabase) {
+                    setSaveStatus('saving', 'Saving points...');
+                    const ok = await updateStudentScoreInCloud(student.id, student.score);
+                    if (ok) setSaveStatus('cloud', '☁️ Points saved');
+                    else setSaveStatus('error', 'Save failed');
+                } else {
+                    setSaveStatus('cloud', `★ ${student.score} pts (local)`);
+                }
             }
 
             // ==================== RENDER ====================
@@ -3387,6 +3515,69 @@ create table if not exists photos (
                 totalBadge.className = 'total-badge';
                 totalBadge.textContent = `★ ${score} pts`;
                 card.appendChild(totalBadge);
+
+                // ===== TYPE-IN POINTS (2, 4, 6 …) =====
+                const typedRow = document.createElement('div');
+                typedRow.className = 'points-input-row';
+
+                const typedInput = document.createElement('input');
+                typedInput.type = 'number';
+                typedInput.className = 'points-input';
+                typedInput.placeholder = 'type 2, 4, 6…';
+                typedInput.min = '1';
+                typedInput.max = '100';
+                typedInput.step = '1';
+                typedInput.title = 'Type points (2, 4, 6…) then press Enter or ➕';
+
+                function readTyped() {
+                    const n = parseInt(typedInput.value, 10);
+                    if (!typedInput.value.trim() || isNaN(n) || n <= 0) {
+                        typedInput.value = '';
+                        typedInput.focus();
+                        return null;
+                    }
+                    return n;
+                }
+
+                typedInput.addEventListener('click', (e) => e.stopPropagation());
+                typedInput.addEventListener('keydown', (e) => {
+                    e.stopPropagation();
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const n = readTyped();
+                        if (n !== null) applyTypedPoints(student, schoolId, n);
+                    } else if (e.key === 'Escape') {
+                        typedInput.value = '';
+                        typedInput.blur();
+                    }
+                });
+
+                const plusBtn = document.createElement('button');
+                plusBtn.type = 'button';
+                plusBtn.className = 'points-add-btn';
+                plusBtn.innerHTML = '➕';
+                plusBtn.title = 'Add the typed points';
+                plusBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const n = readTyped();
+                    if (n !== null) applyTypedPoints(student, schoolId, n);
+                });
+
+                const minusBtn = document.createElement('button');
+                minusBtn.type = 'button';
+                minusBtn.className = 'points-add-btn minus';
+                minusBtn.innerHTML = '➖';
+                minusBtn.title = 'Remove the typed points';
+                minusBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const n = readTyped();
+                    if (n !== null) applyTypedPoints(student, schoolId, -n);
+                });
+
+                typedRow.appendChild(typedInput);
+                typedRow.appendChild(plusBtn);
+                typedRow.appendChild(minusBtn);
+                card.appendChild(typedRow);
 
                 const certBtn = document.createElement('button');
                 certBtn.className = 'cert-btn';
